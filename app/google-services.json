@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "158423086931",
+    "firebase_url": "https://hetzibeta.firebaseio.com",
+    "project_id": "hetzibeta",
+    "storage_bucket": "hetzibeta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158423086931:android:c0d3862dcd66b8c7",
+        "android_client_info": {
+          "package_name": "com.example.hetzi_beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158423086931-2bvshj8ahq4amjqcjuh13ddfccrf2g3h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD-we9y_Y_suu5n-VTjuZ9mnYSDWe-IYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158423086931-2bvshj8ahq4amjqcjuh13ddfccrf2g3h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

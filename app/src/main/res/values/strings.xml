@@ -2,4 +2,29 @@
     <string name="app_name">Hetzi_Beta</string>
     <string name="products">מוצרים</string>
     <string name="dev_welcome">ברוכים הבאים לגרסת הפיתוח של חצי</string>
+    <string name="main_activity">MainActivity</string>
+    <string name="quantity">כמות פריטים</string>
+    <string name="price">מחיר</string>
+    <string name="discount">הנחה</string>
+    <string name="sale_time">זמן למבצע</string>
+    <string name="product_name">שם המוצר</string>
+    <string name="publish_offer">פרסם מבצע</string>
+    <string-array name="discounts_array">
+        <item name="fifty">50</item>
+        <item name="sixty">60</item>
+        <item name="seventy">70</item>
+        <item name="eighty">80</item>
+        <item name="ninety">90</item>
+        <item name="hundred">100</item>
+    </string-array>
+    <string-array name="times_array">
+        <item name="time1">00:30</item>
+        <item name="time2">01:00</item>
+        <item name="time3">01:30</item>
+        <item name="time4">02:00</item>
+        <item name="time5">02:30</item>
+        <item name="time6">03:00</item>
+        <item name="time7">03:30</item>
+        <item name="time8">04:00</item>
+    </string-array>
 </resources>

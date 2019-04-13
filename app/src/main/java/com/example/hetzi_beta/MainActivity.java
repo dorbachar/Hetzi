@@ -7,8 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-    private Button mProductsButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickProducts(View view) {
-        Intent intent = new Intent(this, EditProductsActivity.class);
+        Intent intent = new Intent(this, EditOffersActivity.class);
         startActivity(intent);
     }
 }
