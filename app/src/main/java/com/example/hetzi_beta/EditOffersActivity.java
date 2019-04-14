@@ -9,6 +9,14 @@ import android.view.View;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/*
+* EditOffersActivity -
+* This is the activity which in it the retailer can add new offers and edit the existing ones.
+*
+* 14/04/19 - So far this activity contains only a FAB, from which the Product Details Pop-up is called.
+*
+* */
+
 public class EditOffersActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mOffersDatabaseReference;
@@ -21,6 +29,7 @@ public class EditOffersActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mOffersDatabaseReference = mFirebaseDatabase.getReference().child("offers");
 
+        // Setting up the FAB so it leads to the Product Details Pop-up
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

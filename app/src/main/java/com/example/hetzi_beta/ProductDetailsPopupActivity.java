@@ -10,19 +10,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.UploadTask;
+
+/*
+* ProductDetailsPopupActivity -
+* This is the Pop-up activity that appears when the retailer clicks '+' (FAB).
+* The form contains textual/spinner details, and photo upload that happens in an asynchronous manner,
+* using the 'UploadImageToStorage' class (overrides Asynctask).
+*
+* */
 
 public class ProductDetailsPopupActivity extends AppCompatActivity {
     // Product details that needs to be saved for a while
-    private String  p_photo_url;
+    public Uri  p_photo_url;
 
     // Variables for UI Items
     private ImageButton mPhotoPickerButton;
@@ -51,7 +55,6 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
         // Firebase variables initialization
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
-
         mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
         mOffersDatabaseReference = mFirebaseDatabase.getReference().child("offers");
 
@@ -91,13 +94,13 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
                 // Create offer from user input, and push to DB
                 Offer n_offer = new Offer   (
                                             mName.getText().toString(),
-                                            p_photo_url,
+                                            p_photo_url.toString(),  // photourl is updated on 'UploadImageToStorage'
                                             Integer.parseInt(mQuantity.getText().toString()),
                                             Integer.parseInt(mPrice.getText().toString()),
                                             Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
                                             timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
                                             );
-                mOffersDatabaseReference.push().setValue(n_offer);
+                mOffersDatabaseReference.push().setValue(n_offer); // Push to realtimeDB
                 finish();
             }
         });
@@ -114,31 +117,10 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
 
             // ~~~~~~ Upload Product Image to Firebase Storage  ~~~~~~ //
             Uri selectedImageUri = data.getData();
-            StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
-            photoRef.putFile(selectedImageUri)
-                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl();
-                        Boolean done = false;
-                        Toast.makeText(ProductDetailsPopupActivity.this, "Uplodaing image...", Toast.LENGTH_SHORT).show();
-                        while(!done) {
-                            // The try-catch here is basically so the url i'm trying to get later using downloadUrl
-                            // will be valid and the app won't crash. As long as the task is not complete, I just display
-                            // a toaster.
-                            try {
-                                downloadUrl.getResult();
-                            } catch (IllegalStateException e) {
-                                continue;
-                            }
-                            done = true;
-                        }
-                        p_photo_url = downloadUrl.getResult().toString();
-                        // Later, after the user finished the form, this url will be
-                        // used to build an Offer object and push to DB
-                    }
-            });
-
+            // Initializing a UploadImageToStorageTask and letting it handle the photo upload in the background
+            UploadImageToStorageTask up_task = new UploadImageToStorageTask();
+            ImageTaskParams task_params = new ImageTaskParams(selectedImageUri, mPhotoPickerButton, this);
+            up_task.execute(task_params);
         }
     }
 }

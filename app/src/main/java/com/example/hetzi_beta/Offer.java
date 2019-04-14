@@ -1,5 +1,12 @@
 package com.example.hetzi_beta;
 
+/*
+* Offer-
+* A simple, pretty straight-forward class built to contain an offer's details as specified in the
+* form. Details may vary later along the way.
+*
+* */
+
 public class Offer {
     private String  title;          // p_... stands for product
     private String  photo_url;

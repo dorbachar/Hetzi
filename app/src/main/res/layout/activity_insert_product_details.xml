@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".ProductDetailsPopupActivity">
 
@@ -14,7 +14,7 @@
             android:id="@+id/details_layout">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:orientation="vertical"
@@ -25,9 +25,8 @@
                     android:id="@+id/product_photo_picker"
                     android:src="@drawable/baseline_add_a_photo_black_36dp"
 
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
                     android:layout_gravity="center_horizontal"
                     />
 
@@ -35,6 +34,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:paddingBottom="10dp"
                     >
 
                     <EditText
@@ -51,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:paddingBottom="10dp"
+                        android:paddingBottom="5dp"
 
                         android:textSize="20sp"
                         />
@@ -61,6 +62,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:paddingBottom="10dp"
                     >
 
                     <EditText
@@ -78,7 +81,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:paddingBottom="10dp"
+                        android:paddingBottom="5dp"
 
                         android:textSize="20sp"
                         />
@@ -89,6 +92,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:paddingBottom="10dp"
                     >
 
                     <LinearLayout
@@ -116,8 +121,8 @@
                             android:layout_height="wrap_content"
                             android:text="@string/discount"
                             android:textSize="20sp"
-                            android:layout_gravity="bottom"
-                            android:paddingBottom="10dp"
+                            android:paddingBottom="5dp"
+                            android:paddingRight="10dp"
                             />
 
                     </LinearLayout>
@@ -142,7 +147,7 @@
                         android:text="@string/price"
                         android:textSize="20sp"
                         android:layout_gravity="bottom"
-                        android:paddingBottom="10dp"
+                        android:paddingBottom="5dp"
                         />
 
                     </LinearLayout>
@@ -151,7 +156,10 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right">
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:paddingBottom="10dp"
+                    >
 
                     <Spinner
                         android:id="@+id/time_Spinner"
@@ -165,7 +173,7 @@
                         android:text="@string/sale_time"
                         android:textSize="20sp"
                         android:layout_gravity="bottom"
-                        android:paddingBottom="10dp"
+                        android:paddingBottom="5dp"
                         />
 
                 </LinearLayout>
@@ -175,14 +183,13 @@
 
     <Button
         android:id="@+id/publish_button"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/publish_offer"
         android:background="@color/colorDiscount"
 
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         />
 
 
