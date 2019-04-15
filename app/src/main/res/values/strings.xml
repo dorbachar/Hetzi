@@ -9,6 +9,9 @@
     <string name="sale_time">זמן למבצע</string>
     <string name="product_name">שם המוצר</string>
     <string name="publish_offer">פרסם מבצע</string>
+    <string name="offer_add">הוספת מבצע</string>
+    <string name="shekel">\u20AA</string>
+    <string name="add_1_unit">הוסף אחד</string>
     <string-array name="discounts_array">
         <item name="fifty">50</item>
         <item name="sixty">60</item>

@@ -35,6 +35,7 @@ public class UploadImageToStorageTask extends AsyncTask<ImageTaskParams, Integer
         mFirebaseStorage = FirebaseStorage.getInstance();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
 
+        // TODO : problematic area. after here in some cases firebase_img_url is null and everything goes to fuck.
         StorageReference photoRef = mPhotosStorageReference.child(img_local_uri.getLastPathSegment());
         photoRef.putFile(img_local_uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
