@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -11,148 +11,184 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         card_view:cardCornerRadius="10dp"
-        card_view:cardElevation="10dp"
+        android:layout_marginBottom="20dp"
         >
-
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:background="@drawable/blog-featured-diabetes-20180406-1330"
+            android:id="@+id/background_image_RelativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/foodbg"
             >
 
-            <TextView
-                android:id="@+id/product_item_name_TextView"
-                android:text="@string/product_name"
-
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
 
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold"
-                />
+                android:background="@drawable/gradient_bg"
+                >
 
-            <TextView
-                android:id="@+id/product_item_time_TextView"
-                android:text="03:40"
+                <TextView
+                    android:id="@+id/product_item_name_TextView"
+                    android:text="@string/product_name"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/product_item_name_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_above="@id/product_item_time_TextView"
+                    android:layout_marginRight="30dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    />
 
-                />
+                <TextView
+                    android:id="@+id/product_item_time_TextView"
+                    android:text="03:40"
 
-            <TextView
-                android:id="@+id/makafkatan_TextView"
-                android:text="  -  "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_above="@id/precentage_textView"
+                    android:layout_marginRight="30dp"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/product_item_name_TextView"
-                android:layout_toLeftOf="@id/product_item_time_TextView"
-                 />
+                    />
 
-            <TextView
-                android:id="@+id/amount_TextView"
-                android:text="2 יחידות"
+                <TextView
+                    android:id="@+id/makafkatan_TextView"
+                    android:text="  -  "
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/product_item_name_TextView"
-                android:layout_toLeftOf="@id/makafkatan_TextView"
-                />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/product_item_time_TextView"
+                    android:layout_above="@id/precentage_textView"
+                    />
 
-            <TextView
-                android:id="@+id/precentage_textView"
-                android:text="50%"
+                <TextView
+                    android:id="@+id/amount_TextView"
+                    android:text="2"
 
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="10dp"
-                android:layout_below="@id/amount_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/makafkatan_TextView"
+                    android:layout_above="@id/precentage_textView"
+                    />
 
-                android:background="@color/colorDiscount"
-                android:gravity="center_horizontal"
-                android:textColor="@color/White"
-                />
+                <TextView
+                    android:id="@+id/yehidot_text"
+                    android:text=" יחידות"
 
-            <TextView
-                android:id="@+id/price_TextView"
-                android:text="20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/amount_TextView"
+                    android:layout_above="@id/precentage_textView"
+                    />
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/amount_TextView"
-                android:layout_toLeftOf="@id/precentage_textView"
+                <TextView
+                    android:id="@+id/precentage_textView"
+                    android:text="50"
 
-                android:textColor="@color/Black"
-                android:textStyle="bold" />
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_above="@id/orig_price_text_textView"
+                    android:layout_marginRight="30dp"
 
-            <TextView
-                android:text="@string/shekel"
+                    android:background="@color/colorDiscount"
+                    android:textColor="@color/White"
+                    />
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/amount_TextView"
-                android:layout_toLeftOf="@id/price_TextView"
+                <TextView
+                    android:id="@+id/percentage_notnumber_textView"
+                    android:text="%"
 
-                android:textColor="@color/Black"
-                android:textStyle="bold" />
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_above="@id/orig_price_text_textView"
+                    android:layout_toLeftOf="@id/precentage_textView"
+                    android:background="@color/colorDiscount"
+                    android:gravity="right"
+                    android:textColor="@color/White"
+                    />
 
-            <TextView
-                android:id="@+id/orig_price_text_textView"
-                android:text="מחיר מקורי "
+                <TextView
+                    android:id="@+id/price_TextView"
+                    android:text="20"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/price_TextView"
-                android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/percentage_notnumber_textView"
+                    android:layout_above="@id/orig_price_text_textView"
 
-                android:background="@drawable/text_strikethrough"
-                android:textStyle="italic"
-                />
+                    android:textColor="@color/Black"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/orig_price_textView"
-                android:text="40"
+                <TextView
+                    android:text="@string/shekel"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/price_TextView"
-                android:layout_toLeftOf="@id/orig_price_text_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/price_TextView"
+                    android:layout_above="@id/orig_price_text_textView"
 
-                android:background="@drawable/text_strikethrough"
-                android:textStyle="italic"
-                />
+                    android:textColor="@color/Black"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:text="@string/shekel"
+                <TextView
+                    android:id="@+id/orig_price_text_textView"
+                    android:text="מחיר מקורי "
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/price_TextView"
-                android:layout_toLeftOf="@id/orig_price_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="italic"
+                    android:textSize="10sp"
+                    />
 
-                android:background="@drawable/text_strikethrough"
-                android:textStyle="italic"
-                />
+                <TextView
+                    android:id="@+id/orig_price_textView"
+                    android:text="40"
 
-            <Button
-                android:id="@+id/add_1_button"
-                android:text="@string/add_1_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/orig_price_text_textView"
+                    android:layout_alignParentBottom="true"
 
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:layout_below="@id/amount_TextView"
-                android:background="@drawable/regular_button"
+                    android:textStyle="italic"
+                    android:textSize="10sp"
+                    />
 
-                android:textColor="@color/White"
-                android:textSize="10sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:text="@string/shekel"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/orig_price_textView"
+                    android:layout_alignParentBottom="true"
+
+                    android:textStyle="italic"
+                    android:textSize="10sp"
+                    />
+
+                <Button
+                    android:id="@+id/add_1_button"
+                    android:text="@string/add_1_unit"
+
+                    android:layout_width="80dp"
+                    android:layout_height="35dp"
+                    android:layout_below="@id/product_item_name_TextView"
+                    android:layout_marginLeft="40dp"
+                    android:background="@drawable/regular_button"
+
+                    android:textColor="@color/White"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
+
     </android.support.v7.widget.CardView>
 </LinearLayout>

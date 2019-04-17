@@ -7,18 +7,56 @@ package com.example.hetzi_beta;
 *
 * */
 
-public class Offer {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Offer implements Parcelable {
     private String  title;          // p_... stands for product
     private String  photo_url;
-    private int     quantity;
-    private int     orig_price;
-    private int     discount;
-    private int     time_in_secs; // TODO : decide on time format
+    private Integer     quantity;
+    private Float     orig_price;
+    private Integer     discount;
+    private Integer     time_in_secs; // TODO : TIME OVERHAUL
 
-    public Offer() {
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public Offer(String title, String photo_url, int quantity, int orig_price, int discount, int time_in_secs) {
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeString(title);
+        dest.writeString(photo_url);
+        dest.writeInt(quantity);
+        dest.writeFloat(orig_price);
+        dest.writeInt(discount);
+        dest.writeInt(time_in_secs);
+    }
+
+    public Offer(Parcel in) {
+        title = in.readString();
+        photo_url = in.readString();
+        quantity = in.readInt();
+        orig_price = in.readFloat();
+        discount = in.readInt();
+        time_in_secs = in.readInt();
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Offer createFromParcel(Parcel in) {
+            return new Offer(in);
+        }
+
+        public Offer[] newArray(int size) {
+            return new Offer[size];
+        }
+    };
+
+    public Offer() {
+
+    }
+
+    public Offer(String title, String photo_url, Integer quantity, Float orig_price, Integer discount, Integer time_in_secs) {
         this.title = title;
         this.photo_url = photo_url;
         this.quantity = quantity;
@@ -45,21 +83,21 @@ public class Offer {
 
     public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public int getQuantity() { return this.quantity; }
+    public Integer getQuantity() { return this.quantity; }
 
-    public void setOrigPrice(int orig_price) { this.orig_price = orig_price; }
+    public void setOrigPrice(Float orig_price) { this.orig_price = orig_price; }
 
-    public int getOrigPrice() { return this.orig_price; }
+    public Float getOrigPrice() { return this.orig_price; }
 
     public void setDiscount(int discount) { this.discount = discount; }
 
-    public int getDiscount() { return this.discount; }
+    public Integer getDiscount() { return this.discount; }
 
-    public int getTimeInSecs() {
+    public Integer getTimeInSecs() {
         return this.time_in_secs;
     }
 
-    public void setTimeInSecs(int time_in_secs) {
+    public void setTimeInSecs(Integer time_in_secs) {
         this.time_in_secs = time_in_secs;
     }
     }

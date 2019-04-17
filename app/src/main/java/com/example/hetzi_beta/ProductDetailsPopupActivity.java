@@ -2,6 +2,7 @@ package com.example.hetzi_beta;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,11 +11,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.UploadTask;
+
+import static com.example.hetzi_beta.EditOffersActivity.HTZ_ADD_OFFER;
 
 /*
 * ProductDetailsPopupActivity -
@@ -25,8 +32,12 @@ import com.google.firebase.database.FirebaseDatabase;
 * */
 
 public class ProductDetailsPopupActivity extends AppCompatActivity {
+    // Constants
+    public static final int HTZ_PHOTO_PICKER =  1;
+
     // Product details that needs to be saved for a while
     public Uri  p_photo_url;
+    public Integer upload_progress;
 
     // Variables for UI Items
     private ImageButton mPhotoPickerButton;
@@ -36,9 +47,6 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
     private EditText mName;
     private EditText mQuantity;
     private EditText mPrice;
-
-    // Constants
-    private static final int HTZ_PHOTO_PICKER =  1;
 
     // Firebase instance variables
     private FirebaseDatabase mFirebaseDatabase;
@@ -87,26 +95,39 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
             }
         });
 
-        //
+        // Retailer finished editing offer, and submiting the form
         mPublishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create offer from user input, and push to DB
-                Offer n_offer = new Offer   (
-                                            mName.getText().toString(),
-                                            p_photo_url.toString(),  // photourl is updated on 'UploadImageToStorage'
-                                            Integer.parseInt(mQuantity.getText().toString()),
-                                            Integer.parseInt(mPrice.getText().toString()),
-                                            Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
-                                            timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
-                                            );
-                mOffersDatabaseReference.push().setValue(n_offer); // Push to realtimeDB
-                finish();
+                if(p_photo_url == null) {
+                    Toast.makeText(ProductDetailsPopupActivity.this, R.string.item_must_have_photo, Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // Create offer from user input
+                    Offer n_offer = new Offer   (
+                            mName.getText().toString(),
+                            p_photo_url.toString(),  // photourl is updated on 'UploadImageToStorage'
+                            Integer.parseInt(mQuantity.getText().toString()),
+                            Float.parseFloat(mPrice.getText().toString()),
+                            Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
+                            timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
+                    );
+
+                    // Push to Firebase Realtime DataBase
+                    mOffersDatabaseReference.push().setValue(n_offer);
+
+                    // Return offer to EditOffersActivity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("offer", n_offer);
+                    setResult(HTZ_ADD_OFFER, resultIntent);
+                    finish();
+                }
             }
         });
     }
 
     public int timeFromStringToSecsAsInt(String input) {
+        // TODO : TIME OVERHAUL
         return 0;
     }
 
@@ -119,8 +140,61 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             // Initializing a UploadImageToStorageTask and letting it handle the photo upload in the background
             UploadImageToStorageTask up_task = new UploadImageToStorageTask();
-            ImageTaskParams task_params = new ImageTaskParams(selectedImageUri, mPhotoPickerButton, this);
-            up_task.execute(task_params);
+            up_task.execute(selectedImageUri);
+
+            // Glide handles the image replacement in the given ImageButton
+            Glide.with(this)
+                    .load(p_photo_url)
+                    .centerCrop()
+                    .into(mPhotoPickerButton);
         }
     }
+
+
+    // ----------------------------- UploadImageToStorageTask ----------------------------- //
+
+    private class UploadImageToStorageTask extends AsyncTask<Uri, Integer, Uri> {
+        private FirebaseStorage mFirebaseStorage;
+        private StorageReference mPhotosStorageReference;
+
+        @Override
+        protected Uri doInBackground(Uri... uris) {
+            // for now only one image
+            Uri img_local_uri = uris[0];
+            upload_progress = 0;
+
+            mFirebaseStorage = FirebaseStorage.getInstance();
+            mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
+
+            StorageReference photoRef = mPhotosStorageReference.child(img_local_uri.getLastPathSegment());
+            photoRef.putFile(img_local_uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    p_photo_url = uri;
+                                }
+                            });
+                        }
+                    });
+
+            return p_photo_url;
+        }
+
+        @Override
+        public void onPostExecute(Uri result) {
+            p_photo_url = result;
+
+        }
+
+        @Override
+        public void onProgressUpdate(Integer... progress) {
+            upload_progress = progress[0];
+        }
+    }
+
 }
+
+

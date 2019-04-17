@@ -30,4 +30,5 @@
         <item name="time7">03:30</item>
         <item name="time8">04:00</item>
     </string-array>
+    <string name="item_must_have_photo">לא לשכוח להוסיף תמונה!</string>
 </resources>
