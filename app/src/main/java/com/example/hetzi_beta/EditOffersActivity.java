@@ -6,14 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /*
 * EditOffersActivity -
@@ -34,7 +32,7 @@ public class EditOffersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_products);
+        setContentView(R.layout.activity_edit_offers);
         offers_list = new ArrayList<>();
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -50,7 +48,7 @@ public class EditOffersActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EditOffersActivity.this, ProductDetailsPopupActivity.class);
+                Intent intent = new Intent(EditOffersActivity.this, OfferDetailsPopupActivity.class);
                 startActivityForResult(intent, HTZ_ADD_OFFER);
             }
         });
@@ -58,8 +56,10 @@ public class EditOffersActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Offer created_offer = data.getParcelableExtra("offer");
-        offers_list.add(created_offer);
-        adapter.notifyDataSetChanged();
+        if(data != null) {
+            Offer created_offer = data.getParcelableExtra("offer");
+            offers_list.add(created_offer);
+            adapter.notifyDataSetChanged();
+        }
     }
 }

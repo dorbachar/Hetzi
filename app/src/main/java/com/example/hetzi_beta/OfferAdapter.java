@@ -8,10 +8,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 
@@ -26,7 +22,7 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
     public OfferViewholder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // called when a new ViewHolder instance is created by RecyclerView
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.item_product;
+        int layoutIdForListItem = R.layout.item_offer;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);

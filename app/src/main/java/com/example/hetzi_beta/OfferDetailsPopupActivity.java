@@ -24,14 +24,14 @@ import com.google.firebase.storage.UploadTask;
 import static com.example.hetzi_beta.EditOffersActivity.HTZ_ADD_OFFER;
 
 /*
-* ProductDetailsPopupActivity -
+* OfferDetailsPopupActivity -
 * This is the Pop-up activity that appears when the retailer clicks '+' (FAB).
 * The form contains textual/spinner details, and photo upload that happens in an asynchronous manner,
 * using the 'UploadImageToStorage' class (overrides Asynctask).
 *
 * */
 
-public class ProductDetailsPopupActivity extends AppCompatActivity {
+public class OfferDetailsPopupActivity extends AppCompatActivity {
     // Constants
     public static final int HTZ_PHOTO_PICKER =  1;
 
@@ -58,7 +58,7 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_insert_product_details);
+        setContentView(R.layout.activity_insert_offer_details);
 
         // Firebase variables initialization
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -100,7 +100,7 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(p_photo_url == null) {
-                    Toast.makeText(ProductDetailsPopupActivity.this, R.string.item_must_have_photo, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OfferDetailsPopupActivity.this, R.string.item_must_have_photo, Toast.LENGTH_SHORT).show();
                 } else {
 
                     // Create offer from user input
@@ -141,12 +141,6 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
             // Initializing a UploadImageToStorageTask and letting it handle the photo upload in the background
             UploadImageToStorageTask up_task = new UploadImageToStorageTask();
             up_task.execute(selectedImageUri);
-
-            // Glide handles the image replacement in the given ImageButton
-            Glide.with(this)
-                    .load(p_photo_url)
-                    .centerCrop()
-                    .into(mPhotoPickerButton);
         }
     }
 
@@ -185,7 +179,12 @@ public class ProductDetailsPopupActivity extends AppCompatActivity {
 
         @Override
         public void onPostExecute(Uri result) {
-            p_photo_url = result;
+            // Glide handles the image replacement in the given ImageButton
+            int dize = 0;
+            Glide.with(OfferDetailsPopupActivity.this)
+                    .load(result)
+                    .centerCrop()
+                    .into(mPhotoPickerButton);
 
         }
 

@@ -10,177 +10,166 @@
         android:layout_width="400dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        card_view:cardCornerRadius="10dp"
         android:layout_marginBottom="20dp"
-        >
+        card_view:cardCornerRadius="10dp">
+
         <RelativeLayout
             android:id="@+id/background_image_RelativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/foodbg"
-            >
+            android:background="@drawable/foodbg">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:background="@drawable/gradient_bg"
-                >
+                android:background="@drawable/gradient_bg">
 
                 <TextView
                     android:id="@+id/product_item_name_TextView"
-                    android:text="@string/product_name"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_above="@id/product_item_time_TextView"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="30dp"
+                    android:text="@string/product_name"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/product_item_time_TextView"
-                    android:text="03:40"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_above="@id/precentage_textView"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="30dp"
+                    android:text="03:40"
 
                     />
 
                 <TextView
                     android:id="@+id/makafkatan_TextView"
-                    android:text="  -  "
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/product_item_time_TextView"
                     android:layout_above="@id/precentage_textView"
-                    />
+                    android:layout_toLeftOf="@id/product_item_time_TextView"
+                    android:text="  -  " />
 
                 <TextView
                     android:id="@+id/amount_TextView"
-                    android:text="2"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/makafkatan_TextView"
                     android:layout_above="@id/precentage_textView"
-                    />
+                    android:layout_toLeftOf="@id/makafkatan_TextView"
+                    android:text="2" />
 
                 <TextView
                     android:id="@+id/yehidot_text"
-                    android:text=" יחידות"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/amount_TextView"
                     android:layout_above="@id/precentage_textView"
-                    />
+                    android:layout_toLeftOf="@id/amount_TextView"
+                    android:text=" יחידות" />
 
                 <TextView
                     android:id="@+id/precentage_textView"
-                    android:text="50"
+                    android:layout_width="25dp"
 
-                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_above="@id/orig_price_text_textView"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="30dp"
-
                     android:background="@color/colorDiscount"
-                    android:textColor="@color/White"
-                    />
+
+                    android:text="50"
+                    android:textColor="@color/White" />
 
                 <TextView
                     android:id="@+id/percentage_notnumber_textView"
-                    android:text="%"
-
                     android:layout_width="20dp"
+
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
                     android:layout_above="@id/orig_price_text_textView"
+                    android:layout_marginLeft="10dp"
                     android:layout_toLeftOf="@id/precentage_textView"
                     android:background="@color/colorDiscount"
                     android:gravity="right"
-                    android:textColor="@color/White"
-                    />
+                    android:text="%"
+                    android:textColor="@color/White" />
 
                 <TextView
                     android:id="@+id/price_TextView"
-                    android:text="20"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/percentage_notnumber_textView"
                     android:layout_above="@id/orig_price_text_textView"
+                    android:layout_toLeftOf="@id/percentage_notnumber_textView"
+                    android:text="20"
 
                     android:textColor="@color/Black"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:text="@string/shekel"
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/price_TextView"
                     android:layout_above="@id/orig_price_text_textView"
+                    android:layout_toLeftOf="@id/price_TextView"
+                    android:text="@string/shekel"
 
                     android:textColor="@color/Black"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/orig_price_text_textView"
-                    android:text="מחיר מקורי "
-
                     android:layout_width="wrap_content"
+
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="30dp"
                     android:layout_marginBottom="10dp"
-                    android:textStyle="italic"
+                    android:text="מחיר מקורי "
                     android:textSize="10sp"
-                    />
+                    android:textStyle="italic" />
 
                 <TextView
                     android:id="@+id/orig_price_textView"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/orig_price_text_textView"
                     android:text="40"
 
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/orig_price_text_textView"
-                    android:layout_alignParentBottom="true"
-
-                    android:textStyle="italic"
                     android:textSize="10sp"
-                    />
+                    android:textStyle="italic" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/orig_price_textView"
                     android:text="@string/shekel"
 
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/orig_price_textView"
-                    android:layout_alignParentBottom="true"
-
-                    android:textStyle="italic"
                     android:textSize="10sp"
-                    />
+                    android:textStyle="italic" />
 
                 <Button
                     android:id="@+id/add_1_button"
-                    android:text="@string/add_1_unit"
-
                     android:layout_width="80dp"
+
                     android:layout_height="35dp"
                     android:layout_below="@id/product_item_name_TextView"
                     android:layout_marginLeft="40dp"
                     android:background="@drawable/regular_button"
+                    android:text="@string/add_1_unit"
 
                     android:textColor="@color/White"
                     android:textSize="14sp"

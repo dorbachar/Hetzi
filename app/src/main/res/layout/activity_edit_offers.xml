@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:itemCount="3"
-        tools:listitem="@layout/item_product"
+        tools:listitem="@layout/item_offer"
         tools:orientation="vertical"
         tools:scrollbars="horizontal"
         tools:spanCount="1">
