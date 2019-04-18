@@ -1,8 +1,10 @@
 package com.example.hetzi_beta;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,13 +33,12 @@ import static com.example.hetzi_beta.EditOffersActivity.HTZ_ADD_OFFER;
 *
 * */
 
-public class OfferDetailsPopupActivity extends AppCompatActivity {
+public class OfferDetailsPopupActivity extends AppCompatActivity implements PhotoResultReciever.Receiver {
     // Constants
     public static final int HTZ_PHOTO_PICKER =  1;
 
-    // Product details that needs to be saved for a while
+    // Product details
     public Uri  p_photo_url;
-    public Integer upload_progress;
 
     // Variables for UI Items
     private ImageButton mPhotoPickerButton;
@@ -54,6 +55,9 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
 
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
+
+    // For PhotoService
+    PhotoResultReciever mPhotoResultReciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +130,17 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+        switch (resultCode) {
+            case PhotosService.HTZ_SHOW_RESULT:
+                if (resultData != null) {
+                    p_photo_url = Uri.parse(resultData.getString("uri"));
+                }
+        }
+    }
+
+    // TODO : Export to Utils
     public int timeFromStringToSecsAsInt(String input) {
         // TODO : TIME OVERHAUL
         return 0;
@@ -135,62 +150,32 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == HTZ_PHOTO_PICKER && resultCode == RESULT_OK) {
-
             // ~~~~~~ Upload Product Image to Firebase Storage  ~~~~~~ //
             Uri selectedImageUri = data.getData();
-            // Initializing a UploadImageToStorageTask and letting it handle the photo upload in the background
-            UploadImageToStorageTask up_task = new UploadImageToStorageTask();
-            up_task.execute(selectedImageUri);
-        }
-    }
 
-
-    // ----------------------------- UploadImageToStorageTask ----------------------------- //
-
-    private class UploadImageToStorageTask extends AsyncTask<Uri, Integer, Uri> {
-        private FirebaseStorage mFirebaseStorage;
-        private StorageReference mPhotosStorageReference;
-
-        @Override
-        protected Uri doInBackground(Uri... uris) {
-            // for now only one image
-            Uri img_local_uri = uris[0];
-            upload_progress = 0;
-
-            mFirebaseStorage = FirebaseStorage.getInstance();
-            mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
-
-            StorageReference photoRef = mPhotosStorageReference.child(img_local_uri.getLastPathSegment());
-            photoRef.putFile(img_local_uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    p_photo_url = uri;
-                                }
-                            });
-                        }
-                    });
-
-            return p_photo_url;
-        }
-
-        @Override
-        public void onPostExecute(Uri result) {
+            // TODO : Export to Utils
             // Glide handles the image replacement in the given ImageButton
-            int dize = 0;
             Glide.with(OfferDetailsPopupActivity.this)
-                    .load(result)
+                    .load(selectedImageUri)
                     .centerCrop()
                     .into(mPhotoPickerButton);
 
-        }
+            // TODO : move actual photo upload to mPublishButton.setOnClickListener
+//            mPhotoResultReciever = new PhotoResultReciever(new Handler());
+//            mPhotoResultReciever.setReceiver(this);
+//            PhotosService.enqueueWork(this, mPhotoResultReciever, PhotosService.HTZ_ACTION_UPLOAD, selectedImageUri);
 
-        @Override
-        public void onProgressUpdate(Integer... progress) {
-            upload_progress = progress[0];
+
+            FirebaseStorage mFirebaseStorage  = FirebaseStorage.getInstance();
+            StorageReference mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
+            StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+            UploadTask uploadTask = photoRef.putFile(selectedImageUri);
+            uploadTask.addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    p_photo_url = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+                }
+            });
         }
     }
 
