@@ -1,4 +1,4 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.Offers;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -8,43 +8,51 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
+import com.example.hetzi_beta.R;
+import static com.example.hetzi_beta.Utils.*;
+
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 /*
-* EditOffersActivity -
-* This is the activity which in it the retailer can add new offers and edit the existing ones.
-*
-* 14/04/19 - So far this activity contains only a FAB, from which the Product Details Pop-up is called.
-*
-* */
+ * EditOffersActivity -
+ * This is the activity which in it the retailer can add new offers and edit the existing ones.
+ *
+ * 14/04/19 - So far this activity contains only a FAB, from which the Product Details Pop-up is called.
+ *
+ * */
 
 public class EditOffersActivity extends AppCompatActivity {
-    public static final int HTZ_ADD_OFFER =  1;
-
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mOffersDatabaseReference;
     private ArrayList<Offer> offers_list;
-
     private OfferAdapter adapter;
+    private FloatingActionButton fab;
+    private RecyclerView rvOffers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_offers);
+
+        fab = findViewById(R.id.fab);
+        rvOffers = findViewById(R.id.offers_RecyclerView);
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
         offers_list = new ArrayList<>();
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mOffersDatabaseReference = mFirebaseDatabase.getReference().child("offers");
+        setupAdapter();
+        onClickFAB();
+    }
 
-        RecyclerView rvOffers = findViewById(R.id.offers_RecyclerView);
+    private void setupAdapter() {
+        // Set adapter for RecyclerView
         adapter = new OfferAdapter(offers_list);
         rvOffers.setAdapter(adapter);
-        rvOffers.setLayoutManager( new LinearLayoutManager(this));
+        rvOffers.setLayoutManager(new LinearLayoutManager(this));
+    }
 
+    private void onClickFAB() {
         // Setting up the FAB so it leads to the Product Details Pop-up
-        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,7 +64,8 @@ public class EditOffersActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null) {
+        if (data != null && requestCode == HTZ_ADD_OFFER) {
+            // from FAB
             Offer created_offer = data.getParcelableExtra("offer");
             offers_list.add(created_offer);
             adapter.notifyDataSetChanged();

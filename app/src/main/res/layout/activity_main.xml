@@ -15,15 +15,26 @@
         />
 
     <Button
-        android:id="@+id/products_button"
+    android:id="@+id/products_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/products"
+    android:layout_below="@id/welcome_dev"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="50dp"
+
+    android:onClick="onClickProducts"
+    />
+
+    <Button
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/products"
-        android:layout_below="@id/welcome_dev"
+        android:text="@string/login"
+        android:layout_below="@id/products_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-
-        android:onClick="onClickProducts"
+        android:layout_marginTop="30dp"
+        android:onClick="onClickLogin"
         />
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Hetzi_Beta</string>
     <string name="products">מוצרים</string>
+    <string name="login">התחברות</string>
     <string name="dev_welcome">ברוכים הבאים לגרסת הפיתוח של חצי</string>
     <string name="main_activity">MainActivity</string>
     <string name="quantity">כמות פריטים</string>
@@ -31,4 +32,7 @@
         <item name="time8">04:00</item>
     </string-array>
     <string name="item_must_have_photo">לא לשכוח להוסיף תמונה!</string>
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">2204429249646559</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb2204429249646559</string>
 </resources>

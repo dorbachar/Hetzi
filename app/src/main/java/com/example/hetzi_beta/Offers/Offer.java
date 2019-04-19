@@ -1,4 +1,4 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.Offers;
 
 /*
 * Offer-
@@ -11,10 +11,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Offer implements Parcelable {
-    private String  title;          // p_... stands for product
-    private String  photo_url;
+    private String      title;
+    private String      photo_url;
     private Integer     quantity;
-    private Float     orig_price;
+    private Float       orig_price;
     private Integer     discount;
     private Integer     time_in_secs; // TODO : TIME OVERHAUL
 
