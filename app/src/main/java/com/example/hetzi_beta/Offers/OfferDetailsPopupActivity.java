@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
@@ -42,12 +44,13 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     // UI Items
     private ImageView mPhotoPickerButton;
     private Button mPublishButton;
-    private Spinner mDiscountSpinner;
+    private SeekBar mDiscountSeekbar;
     private Spinner mTimeSpinner;
     private EditText mName;
     private EditText mQuantity;
     private EditText mPrice;
     private ProgressBar mUploadProgress;
+    private TextView mDiscountPercent;
 
     // Firebase instance variables (Storage and Realtime Database)
     private FirebaseDatabase mFirebaseDatabase;
@@ -63,25 +66,39 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         initSpinners();
         onClickPickPhoto();
         onClickPublish();
+
+        mDiscountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progress = progress / 10;
+                progress = progress * 10;
+                mDiscountSeekbar.setProgress(progress);
+                mDiscountPercent.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     private void disablePublishButton() {
-        mPublishButton.setBackground(getResources().getDrawable(R.drawable.disabled_button));
+        mPublishButton.setBackground(getResources().getDrawable(R.drawable.shape_disabled_button));
         mPublishButton.setEnabled(false);
     }
 
     private void enablePublishButton() {
-        mPublishButton.setBackground(getResources().getDrawable(R.drawable.enabled_button));
+        mPublishButton.setBackground(getResources().getDrawable(R.drawable.shape_enabled_button));
         mPublishButton.setEnabled(true);
     }
 
     private void initSpinners() {
-        // Init spinners (discount and time)
-        ArrayAdapter<CharSequence> discount_adapter =
-                ArrayAdapter.createFromResource(this,
-                R.array.discounts_array, android.R.layout.simple_spinner_dropdown_item);
-        mDiscountSpinner.setAdapter(discount_adapter);
-
         ArrayAdapter<CharSequence> time_adapter =
                 ArrayAdapter.createFromResource(this,
                 R.array.times_array, android.R.layout.simple_spinner_dropdown_item);
@@ -98,12 +115,13 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         // Attach members to xml elements
         mPhotoPickerButton  = findViewById(R.id.product_photo_picker);
         mPublishButton      = findViewById(R.id.publish_button);
-        mDiscountSpinner    = findViewById(R.id.discount_Spinner);
+        mDiscountSeekbar    = findViewById(R.id.discount_SeekBar);
         mTimeSpinner        = findViewById(R.id.time_Spinner);
         mName               = findViewById(R.id.product_name_EditText);
         mQuantity           = findViewById(R.id.quantity_EditText);
         mPrice              = findViewById(R.id.price_EditText);
         mUploadProgress     = findViewById(R.id.determinateBar);
+        mDiscountPercent    = findViewById(R.id.percent_number_TextView);
 
         // Listen to text changes
         mName       .addTextChangedListener(watcher);
@@ -138,7 +156,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                                 photo_firebase_uri.toString(),  // photourl is updated on 'UploadImageToStorage'
                                 Integer.parseInt(mQuantity.getText().toString()),
                                 Float.parseFloat(mPrice.getText().toString()),
-                                Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
+                                mDiscountSeekbar.getProgress(),
                                 Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
                                             );
 

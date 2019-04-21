@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".BusinessDetailsFragment"
+    android:id="@+id/frame_layout_fragment"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/background_image_offer_item"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_shop_background_photo3"
+            />
+
+        <ImageView
+            android:id="@+id/gradient_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+
+            android:background="@drawable/shape_gradient_bg"
+            />
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/logo_CircularImageView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/default_shop_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+
+
+            app:civ_border_color="#EEEEEE"
+            app:civ_border_width="4dp"
+            app:civ_shadow="true"
+            app:civ_shadow_radius="10"
+            app:civ_shadow_color="#9e9e9e"/>
+
+        <TextView
+            android:id="@+id/shop_name"
+            android:text="@string/shop_name"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logo_CircularImageView"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/Black"
+
+            android:layout_marginTop="10dp"
+
+            />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/follow_FancyButton"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/shop_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            fancy:fb_text="@string/follow"
+            fancy:fb_textSize="18dp"
+            fancy:fb_textColor="@color/White"
+            fancy:fb_defaultColor="@color/colorPrimaryLight"
+            fancy:fb_iconResource="@drawable/heart_button_custom"
+            fancy:fb_radius="20dp"
+            fancy:fb_iconPaddingTop="11.5dp"
+            fancy:fb_iconPaddingLeft="5dp"
+            fancy:fb_iconPosition="right"
+
+            />
+
+        <ImageView
+            android:id="@+id/horizontal_line_1"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_horizontal_line"
+            android:layout_below="@id/follow_FancyButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/social_LinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/horizontal_line_1"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            >
+
+
+            <ImageView
+
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/logo_instagram"
+
+                />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/logo_facebook"
+                android:layout_marginLeft="20dp"
+
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/shop_address_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="אבן גבירול 34 תל אביב"
+            android:layout_below="@id/social_LinearLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/shop_site_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="shopwebsite.il"
+            android:layout_below="@id/shop_address_TextView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            />
+
+        <TextView
+            android:id="@+id/shop_phonenumber_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="03-6448876"
+            android:layout_below="@id/shop_site_TextView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            />
+
+        <ImageView
+            android:id="@+id/horizontal_line_3"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_horizontal_line"
+            android:layout_below="@id/shop_phonenumber_TextView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            />
+
+    </RelativeLayout>
+
+
+</FrameLayout>

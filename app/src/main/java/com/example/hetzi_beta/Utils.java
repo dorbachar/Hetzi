@@ -6,6 +6,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.math.BigDecimal;
+
 public class Utils {
     // Constants
     public static final int HTZ_PHOTO_PICKER = 101;
@@ -27,5 +29,18 @@ public class Utils {
     public static Float priceAfterDiscount(Float orig_price, Integer discount) {
         float discount_percent = discount.floatValue() / 100;
         return orig_price * (1 - discount_percent);
+    }
+
+    /**
+     * Round to certain number of decimals
+     *
+     * @param d
+     * @param decimalPlace
+     * @return
+     */
+    public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 }

@@ -39,8 +39,8 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(@NonNull final OfferViewholder holder, int position) {
         // Called when RecyclerView wants to populate the view with data
         Offer   current_offer           = mOffers.get(position);
-        Float   price_after_discount    = Utils.priceAfterDiscount(current_offer.getOrigPrice(),
-                                                                        current_offer.getDiscount());
+        Float   price_after_discount    = Utils.round(Utils.priceAfterDiscount(current_offer.getOrigPrice(),
+                                                                        current_offer.getDiscount()), 2);
 
         Glide.with(mContext)
                 .load(current_offer.getPhotoUrl())

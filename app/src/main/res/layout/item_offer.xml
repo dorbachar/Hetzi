@@ -17,14 +17,14 @@
             android:id="@+id/background_image_offer_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/foodbg"
+            android:background="@drawable/default_offer_background_photo2"
             />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:background="@drawable/gradient_bg">
+            android:background="@drawable/shape_gradient_bg">
 
             <TextView
                 android:id="@+id/product_item_name_TextView"
@@ -169,7 +169,7 @@
                 android:layout_height="35dp"
                 android:layout_below="@id/product_item_name_TextView"
                 android:layout_marginLeft="40dp"
-                android:background="@drawable/regular_button"
+                android:background="@drawable/shape_regular_button"
                 android:text="@string/add_1_unit"
 
                 android:textColor="@color/White"

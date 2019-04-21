@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">Hetzi_Beta</string>
+    <string name="app_name">חצי</string>
+    <string name="hetzi">חצי</string>
     <string name="products">מוצרים</string>
     <string name="login">התחברות</string>
+    <string name="shop_page">עמוד עסק</string>
+    <string name="shop_name">שם החנות</string>
+    <string name="follow">עקוב</string>
     <string name="dev_welcome">ברוכים הבאים לגרסת הפיתוח של חצי</string>
     <string name="main_activity">MainActivity</string>
     <string name="quantity">כמות פריטים</string>
@@ -13,14 +17,6 @@
     <string name="offer_add">הוספת מבצע</string>
     <string name="shekel">\u20AA</string>
     <string name="add_1_unit">הוסף אחד</string>
-    <string-array name="discounts_array">
-        <item name="fifty">50</item>
-        <item name="sixty">60</item>
-        <item name="seventy">70</item>
-        <item name="eighty">80</item>
-        <item name="ninety">90</item>
-        <item name="hundred">100</item>
-    </string-array>
     <string-array name="times_array">
         <item name="time1">00:30</item>
         <item name="time2">01:00</item>
@@ -35,4 +31,7 @@
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_application_id" translatable="false">2204429249646559</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb2204429249646559</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
