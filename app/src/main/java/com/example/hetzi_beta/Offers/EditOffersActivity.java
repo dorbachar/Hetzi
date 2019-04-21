@@ -8,6 +8,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.ListPreloader;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.example.hetzi_beta.R;
 import static com.example.hetzi_beta.Utils.*;
 
@@ -29,19 +33,31 @@ public class EditOffersActivity extends AppCompatActivity {
     private OfferAdapter adapter;
     private FloatingActionButton fab;
     private RecyclerView rvOffers;
+    private ViewPreloadSizeProvider mPreloadSizeProvider;
+    private ListPreloader.PreloadModelProvider mPreloadModelProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_offers);
 
-        fab = findViewById(R.id.fab);
-        rvOffers = findViewById(R.id.offers_RecyclerView);
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        offers_list = new ArrayList<>();
+        fab                 = findViewById(R.id.fab);
+        rvOffers            = findViewById(R.id.offers_RecyclerView);
+        mFirebaseDatabase   = FirebaseDatabase.getInstance();
+        offers_list         = new ArrayList<>();
 
         setupAdapter();
         onClickFAB();
+        setupGlidePreloader();
+    }
+
+    private void setupGlidePreloader() {
+        // Glide preloader
+        mPreloadSizeProvider = new ViewPreloadSizeProvider();
+        mPreloadModelProvider = new MyPreloadModelProvider(offers_list, this);
+        RecyclerViewPreloader<String> preloader =
+                new RecyclerViewPreloader<>(Glide.with(this), mPreloadModelProvider, mPreloadSizeProvider, 10);
+        rvOffers.addOnScrollListener(preloader);
     }
 
     private void setupAdapter() {

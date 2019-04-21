@@ -1,7 +1,5 @@
 package com.example.hetzi_beta;
 
-import com.google.firebase.auth.FirebaseUser;
-
 public class User {
     private String fbase_uid;
     private boolean got_business_permissions;

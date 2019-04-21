@@ -7,5 +7,6 @@
     <color name="colorDiscount">#47D476</color>
 
     <color name="White">#FFFFFF</color>
+    <color name="Grey">#9e9e9e</color>
     <color name="Black">#000000</color>
 </resources>

@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
@@ -18,10 +20,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import static com.example.hetzi_beta.Utils.*;
+import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
+import static com.example.hetzi_beta.Utils.HTZ_PHOTO_PICKER;
 
 /*
  * OfferDetailsPopupActivity -
@@ -32,16 +36,18 @@ import static com.example.hetzi_beta.Utils.*;
 
 public class OfferDetailsPopupActivity extends AppCompatActivity {
     // Product details
-    public Uri p_photo_url;
+    public Uri photo_firebase_uri;
+    public boolean photo_done;
 
     // UI Items
-    private ImageButton mPhotoPickerButton;
+    private ImageView mPhotoPickerButton;
     private Button mPublishButton;
     private Spinner mDiscountSpinner;
     private Spinner mTimeSpinner;
     private EditText mName;
     private EditText mQuantity;
     private EditText mPrice;
+    private ProgressBar mUploadProgress;
 
     // Firebase instance variables (Storage and Realtime Database)
     private FirebaseDatabase mFirebaseDatabase;
@@ -53,12 +59,20 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_offer_popup);
-
         initViewsAndReferences();
         initSpinners();
-
         onClickPickPhoto();
         onClickPublish();
+    }
+
+    private void disablePublishButton() {
+        mPublishButton.setBackground(getResources().getDrawable(R.drawable.disabled_button));
+        mPublishButton.setEnabled(false);
+    }
+
+    private void enablePublishButton() {
+        mPublishButton.setBackground(getResources().getDrawable(R.drawable.enabled_button));
+        mPublishButton.setEnabled(true);
     }
 
     private void initSpinners() {
@@ -89,6 +103,15 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mName               = findViewById(R.id.product_name_EditText);
         mQuantity           = findViewById(R.id.quantity_EditText);
         mPrice              = findViewById(R.id.price_EditText);
+        mUploadProgress     = findViewById(R.id.determinateBar);
+
+        // Listen to text changes
+        mName       .addTextChangedListener(watcher);
+        mQuantity   .addTextChangedListener(watcher);
+        mPrice      .addTextChangedListener(watcher);
+
+        photo_done = false;
+        photo_firebase_uri = null;
     }
 
     private void onClickPickPhoto() {
@@ -109,51 +132,63 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mPublishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (p_photo_url == null) {
-                    // TODO : when uploading the photo is moved to here (clicking publish) - the toast is no longer needed.
-                    // In any case the displayed photo is local
-                    Toast.makeText(OfferDetailsPopupActivity.this, R.string.item_must_have_photo, Toast.LENGTH_SHORT).show();
-                } else {
+                // Create offer object from user input
+                Offer n_offer = new Offer   (
+                                mName.getText().toString(),
+                                photo_firebase_uri.toString(),  // photourl is updated on 'UploadImageToStorage'
+                                Integer.parseInt(mQuantity.getText().toString()),
+                                Float.parseFloat(mPrice.getText().toString()),
+                                Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
+                                Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
+                                            );
 
-                    // Create offer object from user input
-                    Offer n_offer = new Offer   (
-                                    mName.getText().toString(),
-                                    p_photo_url.toString(),  // photourl is updated on 'UploadImageToStorage'
-                                    Integer.parseInt(mQuantity.getText().toString()),
-                                    Float.parseFloat(mPrice.getText().toString()),
-                                    Integer.parseInt(mDiscountSpinner.getSelectedItem().toString()),
-                                    Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
-                                                );
+                // Push to Firebase Realtime DataBase
+                mOffersDatabaseReference.push().setValue(n_offer);
 
-                    // Push to Firebase Realtime DataBase
-                    mOffersDatabaseReference.push().setValue(n_offer);
-
-                    // Return offer to EditOffersActivity
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("offer", n_offer);
-                    setResult(HTZ_ADD_OFFER, resultIntent);
-                    finish();
-                }
+                // Return offer to EditOffersActivity
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("offer", n_offer);
+                setResult(HTZ_ADD_OFFER, resultIntent);
+                finish();
             }
         });
     }
 
-
+    private final TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        { }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {}
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (    mName.getText().toString().length() == 0 && mPrice.getText().toString().length() == 0 &&
+                    mQuantity.getText().toString().length() == 0 && !photo_done ) {
+                disablePublishButton();
+            } else if( photo_firebase_uri != null ) {
+                enablePublishButton();
+            }
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == HTZ_PHOTO_PICKER && resultCode == RESULT_OK) {
-            // ~~~~~~ Upload Product Image to Firebase Storage  ~~~~~~ //
+            // ~~~~~~ (1) Update the view immediately  ~~~~~~ //
             Uri selectedImageUri = data.getData();
             Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
 
-            mFirebaseStorage = FirebaseStorage.getInstance();
-            mPhotosStorageReference = mFirebaseStorage.getReference().child("product_photos");
+            // ~~~~~~ (2) Delete previous photo if existed  ~~~~~~ //
+            if(photo_firebase_uri != null) {
+                mFirebaseStorage.getReferenceFromUrl((photo_firebase_uri).toString()).delete();
+            }
 
+            // ~~~~~~ (3) Upload Image to Firebase Storage  ~~~~~~ //
+            // TODO : (?) move actual photo upload to onClickPublish (?)
             StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
-
-            // TODO : move actual photo upload to onClickPublish()
+            mUploadProgress.setProgress(0);
             UploadTask uploadTask = photoRef.putFile(selectedImageUri);
             uploadTask
             .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -163,10 +198,19 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        p_photo_url = uri;
+                        photo_firebase_uri = uri;
+                        photo_done = true;
+                        enablePublishButton();
                     }
                 });
             }
+            })
+            .addOnProgressListener(this, new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    mUploadProgress.setProgress(progress.intValue());
+                }
             });
         }
     }

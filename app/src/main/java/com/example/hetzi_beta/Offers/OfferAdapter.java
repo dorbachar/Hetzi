@@ -6,9 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
@@ -17,33 +18,34 @@ import java.util.ArrayList;
 
 public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter<OfferAdapter.OfferViewholder> {
     private ArrayList<Offer> mOffers;
+    private Context mContext;
 
-    public OfferAdapter(ArrayList<Offer> offers) {
+    OfferAdapter(ArrayList<Offer> offers) {
         mOffers = offers;
     }
 
     @Override
     public OfferViewholder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         // Called when a new ViewHolder instance is created by RecyclerView
-        Context         context      = viewGroup.getContext();
+        mContext                      = viewGroup.getContext();
         int             layout_id    = R.layout.item_offer;
-        LayoutInflater  inflater     = LayoutInflater.from(context);
+        LayoutInflater  inflater     = LayoutInflater.from(mContext);
         View            view         = inflater.inflate(layout_id, viewGroup, false);
 
         return new OfferViewholder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OfferViewholder holder, int position) {
+    public void onBindViewHolder(@NonNull final OfferViewholder holder, int position) {
         // Called when RecyclerView wants to populate the view with data
         Offer   current_offer           = mOffers.get(position);
         Float   price_after_discount    = Utils.priceAfterDiscount(current_offer.getOrigPrice(),
                                                                         current_offer.getDiscount());
 
-        // TODO : use https://bumptech.github.io/glide/int/recyclerview.html#recyclerviewpreloader
-        //        Glide.with(this)
-        //                .load(current_offer.getPhotoUrl())
-        //                .into(holder.background_image_RelativeLayout);
+        Glide.with(mContext)
+                .load(current_offer.getPhotoUrl())
+                .centerCrop()
+                .into(holder.background_image_offer_item);
 
         holder.amount_TextView      .setText(current_offer.getQuantity().toString());
         holder.time_TextView        .setText(current_offer.getTimeInSecs().toString()); // TODO : TIME OVERHAUL
@@ -60,7 +62,7 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
     }
 
     class OfferViewholder extends RecyclerView.ViewHolder {
-        RelativeLayout  background_image_RelativeLayout;
+        ImageView       background_image_offer_item;
         TextView        name_TextView;
         TextView        time_TextView;
         TextView        amount_TextView;
@@ -72,7 +74,7 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
             super(itemView);
 
             // Init all views
-            background_image_RelativeLayout = itemView.findViewById(R.id.background_image_RelativeLayout);
+            background_image_offer_item     = itemView.findViewById(R.id.background_image_offer_item);
             name_TextView                   = itemView.findViewById(R.id.product_item_name_TextView);
             time_TextView                   = itemView.findViewById(R.id.product_item_time_TextView);
             amount_TextView                 = itemView.findViewById(R.id.amount_TextView);
@@ -83,3 +85,5 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
         }
     }
 }
+
+

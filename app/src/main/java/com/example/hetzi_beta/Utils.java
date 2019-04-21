@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.hetzi_beta.Offers.OfferDetailsPopupActivity;
 
 public class Utils {
     // Constants
