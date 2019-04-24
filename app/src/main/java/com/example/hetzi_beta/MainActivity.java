@@ -1,13 +1,13 @@
 package com.example.hetzi_beta;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.Offers.EditOffersActivity;
+import com.example.hetzi_beta.Shops.ShopPageActivity;
 
 public class MainActivity extends AppCompatActivity {
     @Override

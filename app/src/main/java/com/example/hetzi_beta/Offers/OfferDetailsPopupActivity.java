@@ -181,10 +181,10 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         {}
         @Override
         public void afterTextChanged(Editable s) {
-            if (    mName.getText().toString().length() == 0 && mPrice.getText().toString().length() == 0 &&
-                    mQuantity.getText().toString().length() == 0 && !photo_done ) {
+            if (    mName.getText().toString().length() == 0 || mPrice.getText().toString().length() == 0 ||
+                    mQuantity.getText().toString().length() == 0 || !photo_done || photo_firebase_uri == null) {
                 disablePublishButton();
-            } else if( photo_firebase_uri != null ) {
+            } else {
                 enablePublishButton();
             }
         }

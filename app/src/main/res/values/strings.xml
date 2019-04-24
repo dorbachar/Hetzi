@@ -6,6 +6,7 @@
     <string name="shop_page">עמוד עסק</string>
     <string name="shop_name">שם החנות</string>
     <string name="follow">עקוב</string>
+    <string name="save_changes">שמור שינויים</string>
     <string name="dev_welcome">ברוכים הבאים לגרסת הפיתוח של חצי</string>
     <string name="main_activity">MainActivity</string>
     <string name="quantity">כמות פריטים</string>
@@ -17,6 +18,7 @@
     <string name="offer_add">הוספת מבצע</string>
     <string name="shekel">\u20AA</string>
     <string name="add_1_unit">הוסף אחד</string>
+    <string name="edit_offer">ערוך מבצע</string>
     <string-array name="times_array">
         <item name="time1">00:30</item>
         <item name="time2">01:00</item>

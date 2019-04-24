@@ -74,7 +74,7 @@ public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter
             super(itemView);
 
             // Init all views
-            background_image_offer_item     = itemView.findViewById(R.id.background_image_offer_item);
+            background_image_offer_item     = itemView.findViewById(R.id.shop_cover_photo_ImageView);
             name_TextView                   = itemView.findViewById(R.id.product_item_name_TextView);
             time_TextView                   = itemView.findViewById(R.id.product_item_time_TextView);
             amount_TextView                 = itemView.findViewById(R.id.amount_TextView);

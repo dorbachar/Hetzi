@@ -14,7 +14,7 @@
         card_view:cardCornerRadius="10dp">
 
         <ImageView
-            android:id="@+id/background_image_offer_item"
+            android:id="@+id/shop_cover_photo_ImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/default_offer_background_photo2"
@@ -170,7 +170,7 @@
                 android:layout_below="@id/product_item_name_TextView"
                 android:layout_marginLeft="40dp"
                 android:background="@drawable/shape_regular_button"
-                android:text="@string/add_1_unit"
+                android:text="@string/edit_offer"
 
                 android:textColor="@color/White"
                 android:textSize="14sp"
