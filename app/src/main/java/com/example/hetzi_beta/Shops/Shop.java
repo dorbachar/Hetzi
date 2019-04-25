@@ -10,6 +10,8 @@ public class Shop {
     private String website;
     private String physical_address; // TODO : - ON USER SIDE - add location on google maps (for now, and in the future open out map)
     private String phone_number;
+    private String instagram_uri;
+    private String facebook_uri;
 
     public Shop() {
 

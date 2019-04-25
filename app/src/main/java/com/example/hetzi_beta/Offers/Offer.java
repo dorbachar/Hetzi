@@ -17,6 +17,11 @@ public class Offer implements Parcelable {
     private Float       orig_price;
     private Integer     discount;
     private Integer     time_in_secs; // TODO : TIME OVERHAUL
+    private Integer     start_day;
+    private Integer     start_month;
+    private Integer     start_year;
+    private Integer     start_hour;
+    private Integer     start_minute;
 
     @Override
     public int describeContents() {
@@ -31,15 +36,25 @@ public class Offer implements Parcelable {
         dest.writeFloat(orig_price);
         dest.writeInt(discount);
         dest.writeInt(time_in_secs);
+        dest.writeInt(start_day);
+        dest.writeInt(start_month);
+        dest.writeInt(start_year);
+        dest.writeInt(start_hour);
+        dest.writeInt(start_minute);
     }
 
     public Offer(Parcel in) {
-        title = in.readString();
-        photo_url = in.readString();
-        quantity = in.readInt();
-        orig_price = in.readFloat();
-        discount = in.readInt();
-        time_in_secs = in.readInt();
+        title           = in.readString();
+        photo_url       = in.readString();
+        quantity        = in.readInt();
+        orig_price      = in.readFloat();
+        discount        = in.readInt();
+        time_in_secs    = in.readInt();
+        start_day       = in.readInt();
+        start_month     = in.readInt();
+        start_year      = in.readInt();
+        start_hour      = in.readInt();
+        start_minute    = in.readInt();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -56,13 +71,20 @@ public class Offer implements Parcelable {
 
     }
 
-    public Offer(String title, String photo_url, Integer quantity, Float orig_price, Integer discount, Integer time_in_secs) {
+    public Offer(String title, String photo_url, Integer quantity, Float orig_price, Integer discount,
+                 Integer time_in_secs, Integer start_day, Integer start_month, Integer start_year,
+                    Integer start_hour, Integer start_minute) {
         this.title = title;
         this.photo_url = photo_url;
         this.quantity = quantity;
         this.orig_price = orig_price;
         this.discount = discount;
         this.time_in_secs = time_in_secs;
+        this.start_day = start_day;
+        this.start_month = start_month;
+        this.start_year = start_year;
+        this.start_hour = start_hour;
+        this.start_minute = start_minute;
     }
 
     public String getTitle() {

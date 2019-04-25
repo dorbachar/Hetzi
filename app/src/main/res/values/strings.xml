@@ -12,7 +12,8 @@
     <string name="quantity">כמות פריטים</string>
     <string name="price">מחיר</string>
     <string name="discount">הנחה</string>
-    <string name="sale_time">זמן למבצע</string>
+    <string name="sale_time">משך המבצע</string>
+    <string name="date_start">זמן תחילת המבצע</string>
     <string name="product_name">שם המוצר</string>
     <string name="publish_offer">פרסם מבצע</string>
     <string name="offer_add">הוספת מבצע</string>

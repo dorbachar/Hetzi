@@ -1,8 +1,10 @@
 package com.example.hetzi_beta.Offers;
 
 import android.content.Intent;
+import java.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,9 +39,18 @@ import static com.example.hetzi_beta.Utils.HTZ_PHOTO_PICKER;
  * */
 
 public class OfferDetailsPopupActivity extends AppCompatActivity {
+    public class OfferStartDate {
+        public Integer     start_day;
+        public Integer     start_month;
+        public Integer     start_year;
+        public Integer     start_hour;
+        public Integer     start_minute;
+    }
+
     // Product details
     public Uri photo_firebase_uri;
     public boolean photo_done;
+    public OfferStartDate offer_date;
 
     // UI Items
     private ImageView mPhotoPickerButton;
@@ -51,6 +62,8 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     private EditText mPrice;
     private ProgressBar mUploadProgress;
     private TextView mDiscountPercent;
+    private Button mDateButton;
+    private Button mTimeButton;
 
     // Firebase instance variables (Storage and Realtime Database)
     private FirebaseDatabase mFirebaseDatabase;
@@ -64,9 +77,38 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_offer_popup);
         initViewsAndReferences();
         initSpinners();
+
+        resetTimeAndDate();
+
         onClickPickPhoto();
         onClickPublish();
+        onClickDateAndTime();
+        setupSeekBarListener();
 
+    }
+
+    private void resetTimeAndDate() {
+        final Calendar c = Calendar.getInstance();
+        displayChosenDate(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH), c.get(Calendar.YEAR));
+        displayChosenTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+    }
+
+    private void onClickDateAndTime() {
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
+            }
+        });
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(v);
+            }
+        });
+    }
+
+    private void setupSeekBarListener() {
         mDiscountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -122,6 +164,8 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mPrice              = findViewById(R.id.price_EditText);
         mUploadProgress     = findViewById(R.id.determinateBar);
         mDiscountPercent    = findViewById(R.id.percent_number_TextView);
+        mDateButton         = findViewById(R.id.actual_date_Button);
+        mTimeButton         = findViewById(R.id.actual_time_Button);
 
         // Listen to text changes
         mName       .addTextChangedListener(watcher);
@@ -130,6 +174,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
 
         photo_done = false;
         photo_firebase_uri = null;
+        offer_date = new OfferStartDate();
     }
 
     private void onClickPickPhoto() {
@@ -157,7 +202,9 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                                 Integer.parseInt(mQuantity.getText().toString()),
                                 Float.parseFloat(mPrice.getText().toString()),
                                 mDiscountSeekbar.getProgress(),
-                                Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString())
+                                Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString()),
+                                offer_date.start_day, offer_date.start_month, offer_date.start_year,
+                                offer_date.start_hour, offer_date.start_minute
                                             );
 
                 // Push to Firebase Realtime DataBase
@@ -233,6 +280,29 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         }
     }
 
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        ((DatePickerFragment) newFragment).setLaunchingActivity(this);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        ((TimePickerFragment) newFragment).setLaunchingActivity(this);
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void displayChosenTime(Integer hour, Integer minute) {
+        if (minute < 10) {
+            this.mTimeButton.setText(hour.toString() + ":0" + minute.toString());
+        } else {
+            this.mTimeButton.setText(hour.toString() + ":" + minute.toString());
+        }
+    }
+
+    public void displayChosenDate(Integer day, Integer month, Integer year) {
+        this.mDateButton.setText(day.toString() + "/" + month.toString() + "/" + year.toString());
+    }
 }
 
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Shops.ShopPageActivity">
 
-    <fragment class="com.example.hetzi_beta.Shops.ShopDetailsFragment"
+    <fragment class="com.example.hetzi_beta.Shops.EditShopFragment"
         android:id="@+id/shop_page_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -38,7 +38,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.example.hetzi_beta.Utils.HTZ_COVER_PHOTO_ULPOAD;
 import static com.example.hetzi_beta.Utils.HTZ_LOGO_ULPOAD;
 
-public class ShopDetailsFragment extends Fragment {
+public class EditShopFragment extends Fragment {
     // This important member holds the currently displayed shop. It's loaded from the DB if the user
     // previously created a shop page, and pushed to DB in the end if the user wants to save changes.
     Shop shop_on_display;
@@ -49,7 +49,7 @@ public class ShopDetailsFragment extends Fragment {
     Uri cover_uri;
     boolean logo_photo_ready;
     boolean cover_photo_ready;
-    boolean logo_photo_changed;
+    boolean logo_changed;
     boolean cover_photo_changed;
 
     // Views in the fragment
@@ -69,14 +69,14 @@ public class ShopDetailsFragment extends Fragment {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mShopPhotosStorageReference;
 
-    public ShopDetailsFragment() {
+    public EditShopFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // This callback will only be called when MyFragment is at least Started.
     }
 
     @Override
@@ -84,7 +84,6 @@ public class ShopDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root_view                  = inflater.inflate(R.layout.fragment_business_details,
                                                                     container, false);
-
         initViews(root_view);
 
         // Progress circles will be shown only while the photo is uploaded to the server
@@ -92,7 +91,7 @@ public class ShopDetailsFragment extends Fragment {
         mCoverProgress.setVisibility(View.GONE);
         logo_photo_ready = false;
         cover_photo_ready = false;
-        logo_photo_changed = false;
+        logo_changed = false;
         cover_photo_changed = false;
 
 
@@ -156,7 +155,7 @@ public class ShopDetailsFragment extends Fragment {
         mSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateShopFromViews(true);
+                updateShopDbFromViews();
                 disableSaveChangesButton();
             }
         });
@@ -180,21 +179,14 @@ public class ShopDetailsFragment extends Fragment {
                         // Note that the loop breaks after 1 time...
 
                         shop_on_display = postSnapshot.getValue(Shop.class); // Pull from DB
-
-                        // Update the view as per the info from DB
-                        mShopName           .setText(shop_on_display.getShopName());
-                        mPhysicalAddress    .setText(shop_on_display.getPhysicalAddress());
-                        mWebsite            .setText(shop_on_display.getWebsite());
-                        mPhoneNumber        .setText(shop_on_display.getPhone());
-                        Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getLogoUri()), mLogoCircularImageView);
-                        Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getCoverPhotoUri()), mShopCoverPhotoImageView);
+                        updateViewsFromShopMember();
 
                         // If any uri was downloaded, it is ready to be uploaded again if needed,
                         // than no reason for it to block SaveChanges button
                         if(shop_on_display.getLogoUri() != null) {
                             logo_uri = Uri.parse(shop_on_display.getLogoUri());
                             logo_photo_ready = true;
-                            logo_photo_changed = true;
+                            logo_changed = true;
                         }
                         if(shop_on_display.getCoverPhotoUri() != null) {
                             cover_uri = Uri.parse(shop_on_display.getCoverPhotoUri());
@@ -213,8 +205,14 @@ public class ShopDetailsFragment extends Fragment {
         });
     }
 
-    private boolean userExists(@NonNull String data_key, String firebase_uid) {
-        return data_key.equals(firebase_uid);
+    private void updateViewsFromShopMember() {
+        // Update the view as per the info from DB
+        mShopName           .setText(shop_on_display.getShopName());
+        mPhysicalAddress    .setText(shop_on_display.getPhysicalAddress());
+        mWebsite            .setText(shop_on_display.getWebsite());
+        mPhoneNumber        .setText(shop_on_display.getPhone());
+        Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getLogoUri()), mLogoCircularImageView);
+        Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getCoverPhotoUri()), mShopCoverPhotoImageView);
     }
 
     @Override
@@ -260,6 +258,10 @@ public class ShopDetailsFragment extends Fragment {
                                                     cover_photo_ready = true;
                                                     break;
                                             }
+
+                                            if(checkEnableSaveButton()) {
+                                                enableSaveChangesButton();
+                                            }
                                         }
                                     });
                         }
@@ -267,37 +269,44 @@ public class ShopDetailsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        showAskDialog();
-    }
-
-    private void showAskDialog() {
+    /*
+    * showAskDialog -
+    * Pops a dialog that prompts the user to save changes (or not).
+    * Called when the back button is pressed (from ShopPageActivity, using onBackPressed()).
+    *
+    * */
+    public void showAskDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("לשמור שינויים בפרטי החנות?").setCancelable(true)
                 .setNegativeButton("לא", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         cleanSession();
                         dialog.cancel();
+                        getActivity().finish();
                     }
                 })
                 .setPositiveButton("כן", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        updateShopFromViews(true);
+                        updateShopDbFromViews();
                         dialog.cancel();
+                        getActivity().finish();
                     }
                 });
         builder.show();
     }
 
+    private boolean userExists(@NonNull String key_from_db, String firebase_uid) {
+        return key_from_db.equals(firebase_uid);
+    }
+
+    /*
+    * cleanSession -
+    * If the logo or the cover photo were changed during this session, they were uploaded to the
+    * Firebase Storage, and for this, needs to be deleted (a lot of wasted storage space...).
+    *
+    * */
     private void cleanSession() {
-        if(logo_photo_changed) {
+        if(logo_changed) {
             mShopPhotosStorageReference.child(logo_uri.getLastPathSegment()).delete();
         }
         if(cover_photo_changed){
@@ -305,7 +314,12 @@ public class ShopDetailsFragment extends Fragment {
         }
     }
 
-    private void updateShopFromViews(boolean to_DB) {
+    /*
+    * updateShopDbFromViews -
+    * Used when user saves changes, in order to push the shop details as an entry to the DB.
+    *
+    * */
+    private void updateShopDbFromViews() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         // If this is not the first time saving, we need to delete the previous shop page first
@@ -321,13 +335,15 @@ public class ShopDetailsFragment extends Fragment {
         shop_on_display.setWebsite(mWebsite.getText().toString());
         shop_on_display.setPhysicalAddress(mPhysicalAddress.getText().toString());
 
-        // Push store as it on display now to the DB
-        if(to_DB) {
-            mShopsDatabaseReference.push().setValue(shop_on_display);
-        }
-
+        mShopsDatabaseReference.push().setValue(shop_on_display);
     }
 
+    /*
+    * This piece of code is a generic one, just to set up a text watcher. The watcher is used so
+    * that when an EditText's text was changed by the user, i'll be able to make the mSaveChanges
+    * button enabled.
+    *
+    * */
     private final TextWatcher watcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after)
@@ -337,24 +353,42 @@ public class ShopDetailsFragment extends Fragment {
         {}
         @Override
         public void afterTextChanged(Editable s) {
-            if (    mShopName.getText().toString().length() == 0 || mPhysicalAddress.getText().toString().length() == 0 ||
-                    mWebsite.getText().toString().length() == 0 ||  mPhoneNumber.getText().toString().length() == 0 ||
-                    !cover_photo_ready || !logo_photo_ready ) {
-                disableSaveChangesButton();
-            } else {
+            if ( checkEnableSaveButton() ) {
                 enableSaveChangesButton();
+            } else {
+                disableSaveChangesButton();
             }
         }
     };
 
-    private void disableSaveChangesButton() {
+    /*
+    * As it's called: used to check whether or not the user made changes in the current session.
+    * */
+    public boolean      changesMade() {
+        return mSaveChanges.isEnabled();
+    }
+
+    /*
+    * These 4 methods are simple and straight-forward, but together they put the logic behind
+    * enabling and disabling the mSaveChanges button.
+    *
+    * */
+    private boolean     checkEnableSaveButton() {
+        return !checkDisableSaveButton();
+    }
+    private boolean     checkDisableSaveButton() {
+        return emptyEditTextExists() || !cover_photo_ready || !logo_photo_ready;
+    }
+    private void        disableSaveChangesButton() {
         mSaveChanges.setBackground(getResources().getDrawable(R.drawable.shape_disabled_button));
         mSaveChanges.setEnabled(false);
     }
-
-    private void enableSaveChangesButton() {
+    private void        enableSaveChangesButton() {
         mSaveChanges.setBackground(getResources().getDrawable(R.drawable.shape_enabled_button));
         mSaveChanges.setEnabled(true);
     }
-
+    private boolean     emptyEditTextExists() {
+        return mShopName.getText().toString().length() == 0 || mPhysicalAddress.getText().toString().length() == 0 ||
+                mWebsite.getText().toString().length() == 0 || mPhoneNumber.getText().toString().length() == 0;
+    }
 }
