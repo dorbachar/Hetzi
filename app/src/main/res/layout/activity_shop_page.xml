@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Shops.ShopPageActivity">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".Shops.ShopPageActivity"
+    >
 
-    <fragment class="com.example.hetzi_beta.Shops.EditShopFragment"
-        android:id="@+id/shop_page_fragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
-        />
+        <fragment class="com.example.hetzi_beta.Shops.EditShopFragment"
+            android:id="@+id/shop_page_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-</android.support.constraint.ConstraintLayout>
+            />
+
+        <fragment class="com.example.hetzi_beta.Offers.EditableOffersListFragment"
+            android:id="@+id/offers_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            />
+
+    </LinearLayout>
+</ScrollView>

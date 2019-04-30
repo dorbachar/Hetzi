@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.example.hetzi_beta.Offers.EditableOffersListFragment;
 import com.example.hetzi_beta.R;
 
 public class ShopPageActivity extends FragmentActivity {

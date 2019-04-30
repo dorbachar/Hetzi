@@ -8,6 +8,7 @@ import android.view.View;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.Offers.EditOffersActivity;
 import com.example.hetzi_beta.Shops.ShopPageActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -29,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClickShopPage(View view) {
         Intent intent = new Intent(this, ShopPageActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickLogout(View view) {
+        FirebaseAuth.getInstance().signOut();
     }
 
 }

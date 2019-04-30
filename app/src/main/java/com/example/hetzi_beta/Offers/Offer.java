@@ -10,6 +10,8 @@ package com.example.hetzi_beta.Offers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Calendar;
+
 public class Offer implements Parcelable {
     private String      title;
     private String      photo_url;
@@ -17,11 +19,14 @@ public class Offer implements Parcelable {
     private Float       orig_price;
     private Integer     discount;
     private Integer     time_in_secs; // TODO : TIME OVERHAUL
+
     private Integer     start_day;
     private Integer     start_month;
     private Integer     start_year;
     private Integer     start_hour;
     private Integer     start_minute;
+
+    private boolean     is_active;
 
     @Override
     public int describeContents() {
@@ -41,6 +46,7 @@ public class Offer implements Parcelable {
         dest.writeInt(start_year);
         dest.writeInt(start_hour);
         dest.writeInt(start_minute);
+        dest.writeByte((byte) (is_active ? 1 : 0));
     }
 
     public Offer(Parcel in) {
@@ -55,6 +61,7 @@ public class Offer implements Parcelable {
         start_year      = in.readInt();
         start_hour      = in.readInt();
         start_minute    = in.readInt();
+        is_active       = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -85,6 +92,7 @@ public class Offer implements Parcelable {
         this.start_year = start_year;
         this.start_hour = start_hour;
         this.start_minute = start_minute;
+        this.is_active = shouldOfferBeActive(start_day, start_month, start_year, start_hour, start_minute);
     }
 
     public String getTitle() {
@@ -122,4 +130,21 @@ public class Offer implements Parcelable {
     public void setTimeInSecs(Integer time_in_secs) {
         this.time_in_secs = time_in_secs;
     }
+
+
+    public boolean isActive() {
+        return is_active;
     }
+    public void setActive(boolean is_active) {
+        this.is_active = is_active;
+    }
+
+    private boolean shouldOfferBeActive(Integer start_day, Integer start_month, Integer start_year,
+                                        Integer start_hour, Integer start_minute) {
+        final Calendar c = Calendar.getInstance();
+
+
+
+        return false;
+    }
+}

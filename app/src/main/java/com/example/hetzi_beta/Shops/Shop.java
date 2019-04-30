@@ -75,5 +75,19 @@ public class Shop {
         this.phone_number = phone;
     }
 
+    public String   getFacebookUri() {
+        return this.facebook_uri;
+    }
+    public void     setFacebookUri(String facebook_uri) {
+        this.facebook_uri = facebook_uri;
+    }
+
+    public String   getInstagramUri() {
+        return this.instagram_uri;
+    }
+    public void     setInstagramUri(String instagram_uri) {
+        this.instagram_uri = instagram_uri;
+    }
+
 
 }

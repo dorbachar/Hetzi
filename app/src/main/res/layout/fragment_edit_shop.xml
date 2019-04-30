@@ -68,7 +68,7 @@
             android:id="@+id/shop_name_EditText"
             android:hint="@string/shop_name"
 
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/logo_CircularImageView"
             android:layout_centerHorizontal="true"
@@ -134,7 +134,7 @@
             android:layout_marginTop="20dp"
             />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/social_LinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,21 +143,53 @@
             android:layout_centerHorizontal="true"
             >
 
-
             <ImageView
+                android:id="@+id/insta_logo_ImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/logo_instagram"
+
+                />
+
+            <TextView
+                android:id="@+id/shtrudel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@"
+                android:layout_toRightOf="@id/insta_logo_ImageView"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="5dp"
+                />
+
+            <EditText
+                android:id="@+id/insta_EditText"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/shtrudel"
+                android:maxLines="1"
                 />
 
             <ImageView
+                android:id="@+id/faceoosh_logo_ImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/logo_facebook"
-                android:layout_marginLeft="20dp"
+                android:layout_below="@id/insta_logo_ImageView"
+                android:maxLines="1"
+                android:layout_marginTop="15dp"
                 />
 
-        </LinearLayout>
+            <EditText
+                android:id="@+id/facebook_EditText"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/insta_logo_ImageView"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="10dp"
+                android:maxLines="1"
+                android:layout_toRightOf="@id/faceoosh_logo_ImageView" />
+
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/shop_address_EditText"

@@ -2,6 +2,7 @@ package com.example.hetzi_beta;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -34,7 +35,7 @@ public class Utils {
      * @param decimalPlace
      * @return
      */
-    public static float round(float d, int decimalPlace) {
+    public static Float round(float d, int decimalPlace) {
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
         return bd.floatValue();

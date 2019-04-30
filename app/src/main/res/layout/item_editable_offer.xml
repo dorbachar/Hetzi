@@ -14,7 +14,7 @@
         card_view:cardCornerRadius="10dp">
 
         <ImageView
-            android:id="@+id/shop_cover_photo_ImageView"
+            android:id="@+id/item_photo_ImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/default_offer_background_photo2"
@@ -163,7 +163,7 @@
                 android:textStyle="italic" />
 
             <Button
-                android:id="@+id/add_1_button"
+                android:id="@+id/edit_offer_Button"
                 android:layout_width="80dp"
 
                 android:layout_height="35dp"

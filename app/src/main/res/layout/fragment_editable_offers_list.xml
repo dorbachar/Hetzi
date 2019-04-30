@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Offers.EditableOffersListFragment">
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/offers_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_editable_offer"
+        tools:orientation="vertical"
+        tools:scrollbars="horizontal"
+        tools:spanCount="1"
+        android:nestedScrollingEnabled="false"
+        android:isScrollContainer="false"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        >
+
+        <TextView
+            android:id="@+id/no_sales"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_offers"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:id="@+id/add_offers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to_add"
+            />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

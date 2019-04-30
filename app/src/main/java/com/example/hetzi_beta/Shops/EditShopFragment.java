@@ -59,6 +59,8 @@ public class EditShopFragment extends Fragment {
     private EditText            mPhysicalAddress;
     private EditText            mWebsite;
     private EditText            mPhoneNumber;
+    private EditText            mFacebookLink;
+    private EditText            mInstagramLink;
     private FancyButton         mSaveChanges;
     private ProgressBar         mLogoProgress;
     private ProgressBar         mCoverProgress;
@@ -82,18 +84,17 @@ public class EditShopFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root_view                  = inflater.inflate(R.layout.fragment_business_details,
+        View root_view                  = inflater.inflate(R.layout.fragment_edit_shop,
                                                                     container, false);
         initViews(root_view);
 
         // Progress circles will be shown only while the photo is uploaded to the server
         mLogoProgress.setVisibility(View.GONE);
         mCoverProgress.setVisibility(View.GONE);
-        logo_photo_ready = false;
-        cover_photo_ready = false;
-        logo_changed = false;
-        cover_photo_changed = false;
-
+        logo_photo_ready        = false;
+        cover_photo_ready       = false;
+        logo_changed            = false;
+        cover_photo_changed     = false;
 
         attachListenersToEditTexts();
         disableSaveChangesButton();
@@ -125,6 +126,8 @@ public class EditShopFragment extends Fragment {
         mPhysicalAddress.addTextChangedListener(watcher);
         mWebsite.addTextChangedListener(watcher);
         mPhoneNumber.addTextChangedListener(watcher);
+        mFacebookLink.addTextChangedListener(watcher);
+        mInstagramLink.addTextChangedListener(watcher);
     }
 
     private void initViews(View root_view) {
@@ -137,6 +140,8 @@ public class EditShopFragment extends Fragment {
         mSaveChanges                    = root_view.findViewById(R.id.save_changes_FancyButton);
         mLogoProgress                   = root_view.findViewById(R.id.determinateCircleLogo);
         mCoverProgress                  = root_view.findViewById(R.id.determinateCircleCover);
+        mFacebookLink                   = root_view.findViewById(R.id.facebook_EditText);
+        mInstagramLink                  = root_view.findViewById(R.id.insta_EditText);
     }
 
     private void onClickImageView(ImageView mDestImageView, final int requestCode) {
@@ -211,6 +216,8 @@ public class EditShopFragment extends Fragment {
         mPhysicalAddress    .setText(shop_on_display.getPhysicalAddress());
         mWebsite            .setText(shop_on_display.getWebsite());
         mPhoneNumber        .setText(shop_on_display.getPhone());
+        mFacebookLink       .setText(shop_on_display.getFacebookUri());
+        mInstagramLink      .setText(shop_on_display.getInstagramUri());
         Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getLogoUri()), mLogoCircularImageView);
         Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getCoverPhotoUri()), mShopCoverPhotoImageView);
     }
@@ -259,9 +266,7 @@ public class EditShopFragment extends Fragment {
                                                     break;
                                             }
 
-                                            if(checkEnableSaveButton()) {
-                                                enableSaveChangesButton();
-                                            }
+                                            checkEnableSaveButton();
                                         }
                                     });
                         }
@@ -334,6 +339,8 @@ public class EditShopFragment extends Fragment {
         shop_on_display.setPhone(mPhoneNumber.getText().toString());
         shop_on_display.setWebsite(mWebsite.getText().toString());
         shop_on_display.setPhysicalAddress(mPhysicalAddress.getText().toString());
+        shop_on_display.setFacebookUri(mFacebookLink.getText().toString());
+        shop_on_display.setInstagramUri(mInstagramLink.getText().toString());
 
         mShopsDatabaseReference.push().setValue(shop_on_display);
     }
@@ -353,11 +360,7 @@ public class EditShopFragment extends Fragment {
         {}
         @Override
         public void afterTextChanged(Editable s) {
-            if ( checkEnableSaveButton() ) {
-                enableSaveChangesButton();
-            } else {
-                disableSaveChangesButton();
-            }
+            checkEnableSaveButton();
         }
     };
 
@@ -373,10 +376,14 @@ public class EditShopFragment extends Fragment {
     * enabling and disabling the mSaveChanges button.
     *
     * */
-    private boolean     checkEnableSaveButton() {
-        return !checkDisableSaveButton();
+    private void     checkEnableSaveButton() {
+        if ( !shouldDisableSaveChanges() ) {
+            enableSaveChangesButton();
+        } else {
+            disableSaveChangesButton();
+        }
     }
-    private boolean     checkDisableSaveButton() {
+    private boolean shouldDisableSaveChanges() {
         return emptyEditTextExists() || !cover_photo_ready || !logo_photo_ready;
     }
     private void        disableSaveChangesButton() {
@@ -390,5 +397,6 @@ public class EditShopFragment extends Fragment {
     private boolean     emptyEditTextExists() {
         return mShopName.getText().toString().length() == 0 || mPhysicalAddress.getText().toString().length() == 0 ||
                 mWebsite.getText().toString().length() == 0 || mPhoneNumber.getText().toString().length() == 0;
+
     }
 }

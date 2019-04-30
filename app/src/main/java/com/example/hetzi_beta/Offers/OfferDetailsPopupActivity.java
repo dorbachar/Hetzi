@@ -17,14 +17,16 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -53,31 +55,36 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     public OfferStartDate offer_date;
 
     // UI Items
-    private ImageView mPhotoPickerButton;
-    private Button mPublishButton;
-    private SeekBar mDiscountSeekbar;
-    private Spinner mTimeSpinner;
-    private EditText mName;
-    private EditText mQuantity;
-    private EditText mPrice;
-    private ProgressBar mUploadProgress;
-    private TextView mDiscountPercent;
-    private Button mDateButton;
-    private Button mTimeButton;
+    private ImageView       mPhotoPickerButton;
+    private Button          mPublishButton;
+    private SeekBar         mDiscountSeekbar;
+    private Spinner         mTimeSpinner;
+    private EditText        mName;
+    private EditText        mQuantity;
+    private EditText        mPrice;
+    private TextView        mDiscountPercent;
+    private Button          mDateButton;
+    private Button          mTimeButton;
+    private TextView        mAfterDiscount;
+    private ProgressBar     mPhotoProgress;
 
     // Firebase instance variables (Storage and Realtime Database)
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mOffersDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_offer_popup);
+
         initViewsAndReferences();
         initSpinners();
 
+        disablePublishButton();
+        mPhotoProgress.setVisibility(View.GONE);
         resetTimeAndDate();
 
         onClickPickPhoto();
@@ -85,12 +92,25 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         onClickDateAndTime();
         setupSeekBarListener();
 
+        Intent intent = getIntent();
+        if(!intent.getBooleanExtra("new", true)) {
+
+        }
     }
 
     private void resetTimeAndDate() {
         final Calendar c = Calendar.getInstance();
-        displayChosenDate(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH), c.get(Calendar.YEAR));
-        displayChosenTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+        int default_hour = c.get(Calendar.HOUR_OF_DAY) + 1;
+        int default_minute = 0;
+
+        displayChosenDate(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH)+1, c.get(Calendar.YEAR));
+        displayChosenTime(default_hour, default_minute);
+
+        offer_date.start_day    = c.get(Calendar.DAY_OF_MONTH);
+        offer_date.start_month  = c.get(Calendar.MONTH)+1;
+        offer_date.start_year   = c.get(Calendar.YEAR);
+        offer_date.start_hour   = default_hour;
+        offer_date.start_minute = default_minute;
     }
 
     private void onClickDateAndTime() {
@@ -112,10 +132,14 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mDiscountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Discount percent is in 10s
                 progress = progress / 10;
                 progress = progress * 10;
                 mDiscountSeekbar.setProgress(progress);
                 mDiscountPercent.setText(String.valueOf(progress));
+
+                // Updating the price after discount if needed
+                updatePriceAfterDiscount();
             }
 
             @Override
@@ -137,6 +161,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
 
     private void enablePublishButton() {
         mPublishButton.setBackground(getResources().getDrawable(R.drawable.shape_enabled_button));
+        mPublishButton.setTextColor(getResources().getColor(R.color.Black));
         mPublishButton.setEnabled(true);
     }
 
@@ -151,8 +176,8 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         // Firebase variables initialization
         mFirebaseDatabase           = FirebaseDatabase.getInstance();
         mFirebaseStorage            = FirebaseStorage.getInstance();
-        mPhotosStorageReference     = mFirebaseStorage.getReference().child("product_photos");
-        mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers");
+        mPhotosStorageReference     = mFirebaseStorage.getReference().child("product_photos/" + user.getUid());
+        mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers/" + user.getUid());
 
         // Attach members to xml elements
         mPhotoPickerButton  = findViewById(R.id.product_photo_picker);
@@ -162,10 +187,11 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mName               = findViewById(R.id.product_name_EditText);
         mQuantity           = findViewById(R.id.quantity_EditText);
         mPrice              = findViewById(R.id.price_EditText);
-        mUploadProgress     = findViewById(R.id.determinateBar);
         mDiscountPercent    = findViewById(R.id.percent_number_TextView);
         mDateButton         = findViewById(R.id.actual_date_Button);
         mTimeButton         = findViewById(R.id.actual_time_Button);
+        mAfterDiscount      = findViewById(R.id.after_discount_TextView);
+        mPhotoProgress      = findViewById(R.id.determinateCircle);
 
         // Listen to text changes
         mName       .addTextChangedListener(watcher);
@@ -195,27 +221,27 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mPublishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create offer object from user input
-                Offer n_offer = new Offer   (
-                                mName.getText().toString(),
-                                photo_firebase_uri.toString(),  // photourl is updated on 'UploadImageToStorage'
-                                Integer.parseInt(mQuantity.getText().toString()),
-                                Float.parseFloat(mPrice.getText().toString()),
-                                mDiscountSeekbar.getProgress(),
-                                Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString()),
-                                offer_date.start_day, offer_date.start_month, offer_date.start_year,
-                                offer_date.start_hour, offer_date.start_minute
-                                            );
+                    // Create offer object from user input
+                    Offer n_offer = new Offer   (
+                            mName.getText().toString(),
+                            photo_firebase_uri.toString(),  // photourl is updated on 'UploadImageToStorage'
+                            Integer.parseInt(mQuantity.getText().toString()),
+                            Float.parseFloat(mPrice.getText().toString()),
+                            mDiscountSeekbar.getProgress(),
+                            Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString()),
+                            offer_date.start_day, offer_date.start_month, offer_date.start_year,
+                            offer_date.start_hour, offer_date.start_minute
+                    );
 
-                // Push to Firebase Realtime DataBase
-                mOffersDatabaseReference.push().setValue(n_offer);
+                    // Push to Firebase Realtime DataBase
+                    mOffersDatabaseReference.push().setValue(n_offer);
 
-                // Return offer to EditOffersActivity
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("offer", n_offer);
-                setResult(HTZ_ADD_OFFER, resultIntent);
-                finish();
-            }
+                    // Return offer to EditableOffersListFragment
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("offer", n_offer);
+                    setResult(HTZ_ADD_OFFER, resultIntent);
+                    finish();
+                }
         });
     }
 
@@ -228,14 +254,38 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         {}
         @Override
         public void afterTextChanged(Editable s) {
-            if (    mName.getText().toString().length() == 0 || mPrice.getText().toString().length() == 0 ||
-                    mQuantity.getText().toString().length() == 0 || !photo_done || photo_firebase_uri == null) {
-                disablePublishButton();
-            } else {
-                enablePublishButton();
-            }
+            checkEnablePublishButton();
+            updatePriceAfterDiscount();
         }
     };
+
+    private void checkEnablePublishButton() {
+        // Take care of publish button
+        if ( emptyEditTextsExists() || !photoReady() ||
+                !isValidStartDate(offer_date.start_day, offer_date.start_month, offer_date.start_year,
+                        offer_date.start_hour, offer_date.start_minute )) {
+            disablePublishButton();
+        } else {
+            enablePublishButton();
+        }
+    }
+
+    private boolean photoReady() {
+        return photo_done && photo_firebase_uri != null;
+    }
+
+    private boolean emptyEditTextsExists() {
+        return mName.getText().toString().length() == 0 || mPrice.getText().toString().length() == 0 ||
+                mQuantity.getText().toString().length() == 0;
+    }
+
+    private void updatePriceAfterDiscount() {
+        // Fix after discount TextView
+        if (mPrice.getText().toString().length() != 0) {
+            mAfterDiscount.setText( Utils.round(Utils.priceAfterDiscount(Float.parseFloat(mPrice.getText().toString()),
+                    mDiscountSeekbar.getProgress()),2).toString() );
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -244,6 +294,9 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
             // ~~~~~~ (1) Update the view immediately  ~~~~~~ //
             Uri selectedImageUri = data.getData();
             Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
+            photo_done = false;
+            mPhotoProgress.setVisibility(View.VISIBLE);
+            checkEnablePublishButton();
 
             // ~~~~~~ (2) Delete previous photo if existed  ~~~~~~ //
             if(photo_firebase_uri != null) {
@@ -251,9 +304,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
             }
 
             // ~~~~~~ (3) Upload Image to Firebase Storage  ~~~~~~ //
-            // TODO : (?) move actual photo upload to onClickPublish (?)
             StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
-            mUploadProgress.setProgress(0);
             UploadTask uploadTask = photoRef.putFile(selectedImageUri);
             uploadTask
             .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -265,17 +316,11 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         photo_firebase_uri = uri;
                         photo_done = true;
-                        enablePublishButton();
+                        mPhotoProgress.setVisibility(View.GONE);
+                        checkEnablePublishButton();
                     }
                 });
             }
-            })
-            .addOnProgressListener(this, new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    mUploadProgress.setProgress(progress.intValue());
-                }
             });
         }
     }
@@ -302,6 +347,27 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
 
     public void displayChosenDate(Integer day, Integer month, Integer year) {
         this.mDateButton.setText(day.toString() + "/" + month.toString() + "/" + year.toString());
+    }
+
+    private boolean isValidStartDate(Integer start_day, Integer start_month, Integer start_year,
+                                     Integer start_hour, Integer start_minute) {
+        final Calendar c = Calendar.getInstance();
+
+        if(  start_year >= c.get(Calendar.YEAR)) {
+            if (start_month > c.get(Calendar.MONTH) + 1  ) {
+                return true;
+            } else if (start_month == c.get(Calendar.MONTH) + 1) {
+                if (start_day > c.get(Calendar.DAY_OF_MONTH))
+                    return true;
+                else if (start_day == c.get(Calendar.DAY_OF_MONTH)) {
+                    if (start_hour > c.get(Calendar.HOUR_OF_DAY))
+                            return true;
+                    else if(start_hour == c.get(Calendar.HOUR_OF_DAY))
+                        return start_minute >= c.get(Calendar.MINUTE);
+                }
+            }
+        }
+        return false;
     }
 }
 
