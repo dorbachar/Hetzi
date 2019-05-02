@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/shop_cover_photo_ImageView"
-            android:src="@drawable/default_shop_background_photo3"
+            android:src="@drawable/default_shop_background_photo4"
 
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -33,7 +33,7 @@
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/logo_CircularImageView"
-            android:src="@drawable/default_shop_logo"
+            android:src="@drawable/default_shop_logo3"
 
             android:layout_width="150dp"
             android:layout_height="150dp"

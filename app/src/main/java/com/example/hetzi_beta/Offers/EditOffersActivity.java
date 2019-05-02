@@ -24,44 +24,5 @@ public class EditOffersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_offers);
 
-        fab = findViewById(R.id.fab);
-
-        onClickFAB();
-    }
-
-    private void onClickFAB() {
-        // Setting up the FAB so it leads to the Product Details Pop-up
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EditOffersActivity.this, OfferDetailsPopupActivity.class);
-                intent.putExtra("new", true);
-                startActivityForResult(intent, HTZ_ADD_OFFER);
-            }
-        });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        EditableOffersListFragment offers_list_fragment = (EditableOffersListFragment) getSupportFragmentManager().findFragmentById(R.id.offers_fragment);
-
-        if (data != null && requestCode == HTZ_ADD_OFFER && offers_list_fragment != null) {
-            // from FAB
-            offers_list_fragment.mNoOffersTextView.setVisibility(View.GONE);
-            offers_list_fragment.mAddOffersTextView.setVisibility(View.GONE);
-            Offer created_offer = data.getParcelableExtra("offer");
-            offers_list_fragment.offers_list.add(created_offer);
-            offers_list_fragment.adapter.notifyDataSetChanged();
-        }
-    }
-
-    public void showLoading() {
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("טוען מבצעים");
-        dialog.show();
-    }
-
-    public void hideLoading() {
-        dialog.dismiss();
     }
 }

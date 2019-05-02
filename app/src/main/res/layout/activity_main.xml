@@ -14,38 +14,28 @@
         android:layout_marginTop="100dp"
         />
 
-    <Button
-    android:id="@+id/products_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/products"
-    android:layout_below="@id/welcome_dev"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="50dp"
 
-    android:onClick="onClickProducts"
-    />
+
+    <Button
+        android:id="@+id/business_hub_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Business Hub"
+        android:layout_below="@id/welcome_dev"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:onClick="onClickBusinessHub"
+        />
 
     <Button
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
-        android:layout_below="@id/products_button"
+        android:layout_below="@id/business_hub_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:onClick="onClickLogin"
-        />
-
-    <Button
-        android:id="@+id/shop_page_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/shop_page"
-        android:layout_below="@id/login_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:onClick="onClickShopPage"
         />
 
     <Button
@@ -53,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/logout"
-        android:layout_below="@id/shop_page_button"
+        android:layout_below="@id/login_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:onClick="onClickLogout"

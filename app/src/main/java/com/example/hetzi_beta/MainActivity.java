@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.Offers.EditOffersActivity;
 import com.example.hetzi_beta.Shops.ShopPageActivity;
@@ -15,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     public void onClickProducts(View view) {
@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickLogout(View view) {
         FirebaseAuth.getInstance().signOut();
+    }
+
+    public void onClickBusinessHub(View view) {
+        Intent intent = new Intent(this, BusinessHomeActivity.class);
+        startActivity(intent);
     }
 
 }

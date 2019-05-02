@@ -18,7 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Offers.EditOffersActivity"></activity>
+        <activity
+            android:name=".BusinessApp.HomePage.BusinessHomeActivity"
+            android:label="@string/title_activity_business_home"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".Offers.EditOffersActivity" />
         <activity android:name=".Shops.ShopPageActivity" />
         <activity android:name=".Login.LoginActivity" />
         <activity

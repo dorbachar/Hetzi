@@ -37,6 +37,7 @@ import java.util.ArrayList;
 public class EditableOffersListFragment extends Fragment {
     public TextView                             mNoOffersTextView;
     public TextView                             mAddOffersTextView;
+    private FloatingActionButton                fab;
 
     // Firebase related
     public FirebaseDatabase                     mFirebaseDatabase;
@@ -69,7 +70,9 @@ public class EditableOffersListFragment extends Fragment {
         mAddOffersTextView  = root_view.findViewById(R.id.add_offers);
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
         offers_list         = new ArrayList<>();
+        fab                 = root_view.findViewById(R.id.fab);
 
+        onClickFAB();
         setupAdapter();
         setupGlidePreloader();
 
@@ -84,6 +87,18 @@ public class EditableOffersListFragment extends Fragment {
 //        ((EditOffersActivity)getActivity()).hideLoading();
 
         return root_view;
+    }
+
+    private void onClickFAB() {
+        // Setting up the FAB so it leads to the Product Details Pop-up
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), OfferDetailsPopupActivity.class);
+                intent.putExtra("new", true);
+                startActivityForResult(intent, HTZ_ADD_OFFER);
+            }
+        });
     }
 
     private void setupGlidePreloader() {
@@ -124,5 +139,17 @@ public class EditableOffersListFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null && requestCode == HTZ_ADD_OFFER ) {
+            // from FAB
+            mNoOffersTextView.setVisibility(View.GONE);
+            mAddOffersTextView.setVisibility(View.GONE);
+            Offer created_offer = data.getParcelableExtra("offer");
+            offers_list.add(created_offer);
+            adapter.notifyDataSetChanged();
+        }
     }
 }
