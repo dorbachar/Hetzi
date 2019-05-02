@@ -167,6 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/shtrudel"
                 android:maxLines="1"
+                android:inputType="text"
                 />
 
             <ImageView
@@ -187,6 +188,7 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginTop="10dp"
                 android:maxLines="1"
+                android:inputType="text"
                 android:layout_toRightOf="@id/faceoosh_logo_ImageView" />
 
         </RelativeLayout>

@@ -34,6 +34,7 @@ public class DatePickerFragment extends DialogFragment
         launched_from.offer_date.start_month = month + 1;
         launched_from.offer_date.start_day = day;
         launched_from.displayChosenDate(day, month + 1, year);
+        launched_from.checkEnablePublishButton();
     }
 
     public void setLaunchingActivity(OfferDetailsPopupActivity launched_from) {

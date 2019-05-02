@@ -11,15 +11,17 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 public class Utils {
     // Constants
-    public static final int HTZ_PHOTO_PICKER = 101;
+    public static final int HTZ_GALLERY = 101;
     public static final int HTZ_ADD_OFFER = 102;
     public static final int HTZ_SIGN_IN = 103;
     public static final int HTZ_COVER_PHOTO_ULPOAD = 104;
     public static final int HTZ_LOGO_ULPOAD = 105;
+    public static final int HTZ_CAMERA = 106;
 
     // -------------- Math ------------- //
 
@@ -51,6 +53,13 @@ public class Utils {
     public static void updateViewImage(Activity activity, Uri image_uri, ImageView dest) {
         Glide.with(activity)
                 .load(image_uri)
+                .centerCrop()
+                .into(dest);
+    }
+
+    public static void updateViewImage(Activity activity, File image_as_file, ImageView dest) {
+        Glide.with(activity)
+                .load(image_as_file)
                 .centerCrop()
                 .into(dest);
     }

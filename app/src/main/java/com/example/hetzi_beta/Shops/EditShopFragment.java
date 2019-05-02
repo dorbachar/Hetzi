@@ -281,8 +281,8 @@ public class EditShopFragment extends Fragment {
     *
     * */
     public void showAskDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("לשמור שינויים בפרטי החנות?").setCancelable(true)
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.drawable.shape_dialog_round_corners);
+        builder.setMessage("לשמור שינויים בעמוד העסק?").setCancelable(true)
                 .setNegativeButton("לא", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         cleanSession();

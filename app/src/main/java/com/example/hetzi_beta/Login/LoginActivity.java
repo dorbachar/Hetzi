@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.example.hetzi_beta.BuildConfig;
 import com.example.hetzi_beta.R;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.AppThemeFirebaseAuth)
+                        .setLogo(R.drawable.logo)
                         .build(),
                 HTZ_SIGN_IN);
     }

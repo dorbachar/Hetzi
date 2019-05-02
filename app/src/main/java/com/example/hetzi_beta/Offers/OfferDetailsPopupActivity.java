@@ -1,13 +1,23 @@
 package com.example.hetzi_beta.Offers;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+
+import java.io.File;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
@@ -31,7 +40,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
-import static com.example.hetzi_beta.Utils.HTZ_PHOTO_PICKER;
+import static com.example.hetzi_beta.Utils.HTZ_CAMERA;
+import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
 
 /*
  * OfferDetailsPopupActivity -
@@ -49,10 +59,12 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         public Integer     start_minute;
     }
 
+    private File            photo_from_camera;
+
     // Product details
-    public Uri photo_firebase_uri;
-    public boolean photo_done;
-    public OfferStartDate offer_date;
+    public Uri              photo_firebase_uri;
+    public boolean          photo_done;
+    public OfferStartDate   offer_date;
 
     // UI Items
     private ImageView       mPhotoPickerButton;
@@ -208,10 +220,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), HTZ_PHOTO_PICKER);
+                showDialogPhotoOrGallery();
             }
         });
     }
@@ -259,7 +268,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         }
     };
 
-    private void checkEnablePublishButton() {
+    public void checkEnablePublishButton() {
         // Take care of publish button
         if ( emptyEditTextsExists() || !photoReady() ||
                 !isValidStartDate(offer_date.start_day, offer_date.start_month, offer_date.start_year,
@@ -290,10 +299,20 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == HTZ_PHOTO_PICKER && resultCode == RESULT_OK) {
+        if ((requestCode == HTZ_GALLERY || requestCode == HTZ_CAMERA) && resultCode == RESULT_OK) {
             // ~~~~~~ (1) Update the view immediately  ~~~~~~ //
-            Uri selectedImageUri = data.getData();
-            Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
+            Uri selectedImageUri = null;
+
+            if (requestCode == HTZ_CAMERA) {
+                selectedImageUri = Uri.fromFile(photo_from_camera);
+                Utils.updateViewImage(OfferDetailsPopupActivity.this, photo_from_camera, mPhotoPickerButton);
+            }
+            else if (requestCode == HTZ_GALLERY) {
+                selectedImageUri = data.getData();
+                Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
+            }
+
+
             photo_done = false;
             mPhotoProgress.setVisibility(View.VISIBLE);
             checkEnablePublishButton();
@@ -353,7 +372,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                                      Integer start_hour, Integer start_minute) {
         final Calendar c = Calendar.getInstance();
 
-        if(  start_year >= c.get(Calendar.YEAR)) {
+        if(  start_year == c.get(Calendar.YEAR)) {
             if (start_month > c.get(Calendar.MONTH) + 1  ) {
                 return true;
             } else if (start_month == c.get(Calendar.MONTH) + 1) {
@@ -366,8 +385,42 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                         return start_minute >= c.get(Calendar.MINUTE);
                 }
             }
+        } else if (start_year > c.get(Calendar.YEAR)) {
+            return true;
         }
         return false;
+    }
+
+    public void showDialogPhotoOrGallery() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.drawable.shape_dialog_round_corners);
+
+        builder.setMessage("לבחור מהגלריה או לפתוח מצלמה?").setCancelable(true)
+                .setNegativeButton("גלריה", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(pickPhoto , HTZ_GALLERY);
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("מצלמה", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File dir=
+                                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Timestamp(System.currentTimeMillis()));
+                        photo_from_camera = new File(dir, user.getUid() + timestamp + "from_camera.jpeg");
+                        i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo_from_camera));
+
+                        // Below 2 lines are to avoid FileUriExposedException
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+
+                        startActivityForResult(i, HTZ_CAMERA);
+                        dialog.cancel();
+                    }
+                });
+        builder.show();
     }
 }
 

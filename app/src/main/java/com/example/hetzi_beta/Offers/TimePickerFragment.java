@@ -33,6 +33,7 @@ public class TimePickerFragment extends DialogFragment
         launched_from.offer_date.start_hour = hourOfDay;
         launched_from.offer_date.start_minute = minute;
         launched_from.displayChosenTime(launched_from.offer_date.start_hour, launched_from.offer_date.start_minute);
+        launched_from.checkEnablePublishButton();
     }
 
     public void setLaunchingActivity(OfferDetailsPopupActivity launched_from) {
