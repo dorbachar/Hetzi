@@ -4,6 +4,7 @@
     <string name="products">מוצרים</string>
     <string name="login">התחברות</string>
     <string name="logout">התנתקות</string>
+    <string name="delete">הסרה</string>
     <string name="shop_page">עמוד עסק</string>
     <string name="shop_name">שם החנות</string>
     <string name="follow">עקוב</string>

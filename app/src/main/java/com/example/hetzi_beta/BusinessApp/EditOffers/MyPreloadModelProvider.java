@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.Offers;
+package com.example.hetzi_beta.BusinessApp.EditOffers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
+import com.example.hetzi_beta.Offers.Offer;
 
 import java.util.ArrayList;
 import java.util.Collections;

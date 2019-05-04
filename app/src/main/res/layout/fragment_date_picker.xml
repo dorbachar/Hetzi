@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Offers.DatePickerFragment">
+    tools:context=".BusinessApp.EditOffers.DatePickerFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

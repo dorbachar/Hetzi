@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.Shops;
+package com.example.hetzi_beta.BusinessApp;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
+import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.Utils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -277,7 +278,7 @@ public class EditShopFragment extends Fragment {
     /*
     * showAskDialog -
     * Pops a dialog that prompts the user to save changes (or not).
-    * Called when the back button is pressed (from ShopPageActivity, using onBackPressed()).
+    * Should be called when the back button is pressed (from BusinessHomeActivity, using onBackPressed()).
     *
     * */
     public void showAskDialog() {
@@ -376,14 +377,14 @@ public class EditShopFragment extends Fragment {
     * enabling and disabling the mSaveChanges button.
     *
     * */
-    private void     checkEnableSaveButton() {
+    private void        checkEnableSaveButton() {
         if ( !shouldDisableSaveChanges() ) {
             enableSaveChangesButton();
         } else {
             disableSaveChangesButton();
         }
     }
-    private boolean shouldDisableSaveChanges() {
+    private boolean     shouldDisableSaveChanges() {
         return emptyEditTextExists() || !cover_photo_ready || !logo_photo_ready;
     }
     private void        disableSaveChangesButton() {

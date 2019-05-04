@@ -1,6 +1,5 @@
-package com.example.hetzi_beta.Offers;
+package com.example.hetzi_beta.BusinessApp.EditOffers;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,11 +17,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
-import com.example.hetzi_beta.MainActivity;
+import com.example.hetzi_beta.Offers.Offer;
+import com.example.hetzi_beta.Offers.OfferAdapter;
+import com.example.hetzi_beta.Offers.OnClickButtonListener;
 import com.example.hetzi_beta.R;
 import static com.example.hetzi_beta.Utils.*;
 
-import com.example.hetzi_beta.Shops.Shop;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class EditableOffersListFragment extends Fragment {
+public class EditableOffersListFragment extends Fragment implements OnClickButtonListener {
     public TextView                             mNoOffersTextView;
     public TextView                             mAddOffersTextView;
     private FloatingActionButton                fab;
@@ -49,7 +48,7 @@ public class EditableOffersListFragment extends Fragment {
 
     // RecyclerView Related
     public ArrayList<Offer>                     offers_list;
-    public OfferAdapter                         adapter;
+    public OfferAdapter adapter;
     public RecyclerView                         rvOffers;
 
     @Override
@@ -63,14 +62,12 @@ public class EditableOffersListFragment extends Fragment {
         View root_view                  = inflater.inflate(R.layout.fragment_editable_offers_list,
                                             container, false);
 
-//        ((EditOffersActivity)getActivity()).showLoading();
-
         rvOffers            = root_view.findViewById(R.id.offers_RecyclerView);
         mNoOffersTextView   = root_view.findViewById(R.id.no_sales);
         mAddOffersTextView  = root_view.findViewById(R.id.add_offers);
-        mFirebaseDatabase   = FirebaseDatabase.getInstance();
-        offers_list         = new ArrayList<>();
         fab                 = root_view.findViewById(R.id.fab);
+        offers_list         = new ArrayList<>();
+        mFirebaseDatabase   = FirebaseDatabase.getInstance();
 
         onClickFAB();
         setupAdapter();
@@ -83,8 +80,6 @@ public class EditableOffersListFragment extends Fragment {
             Toast.makeText(getActivity(),"Business must be signed in!" +
                     " Please block this interaction for unsigned users",Toast.LENGTH_LONG).show();
         }
-
-//        ((EditOffersActivity)getActivity()).hideLoading();
 
         return root_view;
     }
@@ -112,7 +107,7 @@ public class EditableOffersListFragment extends Fragment {
 
     private void setupAdapter() {
         // Set adapter for RecyclerView
-        adapter = new OfferAdapter(offers_list);
+        adapter = new OfferAdapter(offers_list, this);
         rvOffers.setAdapter(adapter);
         rvOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -141,15 +136,77 @@ public class EditableOffersListFragment extends Fragment {
         });
     }
 
+    /*
+
+    * We get here in 2 situations: after creating a new Offer or after editing an existing one. In
+    * both cases, we can just check for duplicates (which will exist if it was an edit) and then
+    * add the new/modified offer to the list.
+    *
+    * */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null && requestCode == HTZ_ADD_OFFER ) {
-            // from FAB
             mNoOffersTextView.setVisibility(View.GONE);
             mAddOffersTextView.setVisibility(View.GONE);
             Offer created_offer = data.getParcelableExtra("offer");
-            offers_list.add(created_offer);
+
+            if (created_offer != null ) {
+                removeExistingOfferIfExists(created_offer);
+                offers_list.add(created_offer);
+            } else {
+                // created_offer == null indicated DELETE was clicked
+                String delete_key = data.getStringExtra("delete_key");
+                removeExistingOfferByKey(delete_key);
+                if(offers_list.size() == 0) {
+                    mNoOffersTextView.setVisibility(View.VISIBLE);
+                    mAddOffersTextView.setVisibility(View.VISIBLE);
+                }
+            }
+
+
             adapter.notifyDataSetChanged();
         }
+    }
+
+    /*
+    * removeExistingOfferIfExists -
+    *
+    * Simply loops through the list of Offers, and removes an Offer with target_offer's Firebase Key.
+    * Used to re-add the edited Offer after editing.
+    *
+    * */
+    public void removeExistingOfferIfExists(Offer target_offer) {
+        for (Offer curr_offer : offers_list) {
+            if (curr_offer.getFbKey().equals(target_offer.getFbKey())) {
+                offers_list.remove(curr_offer);
+                break;
+            }
+        }
+    }
+
+    public void removeExistingOfferByKey(String key) {
+        for (Offer curr_offer : offers_list) {
+            if (curr_offer.getFbKey().equals(key)) {
+                offers_list.remove(curr_offer);
+                break;
+            }
+        }
+    }
+
+    /*
+    * onClickButton -
+    *
+    * Implementation of OnClickButtonListener.onClickButton, so that when calling
+    * startActivityForResult, the onActivityResult method will be called as I want.
+    *
+    * */
+    @Override
+    public void onClickButton(View v, int position, ArrayList<Offer> offers) {
+        Offer from_item = offers.get(position);
+
+        Intent intent = new Intent(getActivity(), OfferDetailsPopupActivity.class);
+        intent.putExtra("new", false);
+        intent.putExtra("offer_fromRecycler", from_item);
+        startActivityForResult(intent, HTZ_ADD_OFFER);
     }
 }

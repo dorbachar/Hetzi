@@ -7,8 +7,6 @@ import android.view.View;
 
 import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
 import com.example.hetzi_beta.Login.LoginActivity;
-import com.example.hetzi_beta.Offers.EditOffersActivity;
-import com.example.hetzi_beta.Shops.ShopPageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,17 +16,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onClickProducts(View view) {
-        Intent intent = new Intent(this, EditOffersActivity.class);
-        startActivity(intent);
-    }
     public void onClickLogin(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void onClickShopPage(View view) {
-        Intent intent = new Intent(this, ShopPageActivity.class);
         startActivity(intent);
     }
 

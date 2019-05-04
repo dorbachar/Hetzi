@@ -1,6 +1,5 @@
-package com.example.hetzi_beta.Offers;
+package com.example.hetzi_beta.BusinessApp.EditOffers;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -8,7 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
-import com.example.hetzi_beta.Offers.OfferDetailsPopupActivity;
+import com.example.hetzi_beta.BusinessApp.EditOffers.OfferDetailsPopupActivity;
 
 import java.util.Calendar;
 

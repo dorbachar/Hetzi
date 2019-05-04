@@ -14,19 +14,20 @@ import java.util.Calendar;
 
 public class Offer implements Parcelable {
     private String      title;
-    private String      photo_url;
+    private String      photoUrl;
     private Integer     quantity;
-    private Float       orig_price;
+    private Float       origPrice;
     private Integer     discount;
-    private Integer     time_in_secs; // TODO : TIME OVERHAUL
+    private Integer     timeInSecs; // TODO : TIME OVERHAUL
 
-    private Integer     start_day;
-    private Integer     start_month;
-    private Integer     start_year;
-    private Integer     start_hour;
-    private Integer     start_minute;
+    public Integer s_day;
+    public Integer s_month;
+    public Integer s_year;
+    public Integer s_hour;
+    public Integer s_minute;
 
     private boolean     is_active;
+    private String      fbKey;
 
     @Override
     public int describeContents() {
@@ -36,32 +37,34 @@ public class Offer implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags){
         dest.writeString(title);
-        dest.writeString(photo_url);
+        dest.writeString(photoUrl);
         dest.writeInt(quantity);
-        dest.writeFloat(orig_price);
+        dest.writeFloat(origPrice);
         dest.writeInt(discount);
-        dest.writeInt(time_in_secs);
-        dest.writeInt(start_day);
-        dest.writeInt(start_month);
-        dest.writeInt(start_year);
-        dest.writeInt(start_hour);
-        dest.writeInt(start_minute);
+        dest.writeInt(timeInSecs);
+        dest.writeInt(s_day);
+        dest.writeInt(s_month);
+        dest.writeInt(s_year);
+        dest.writeInt(s_hour);
+        dest.writeInt(s_minute);
         dest.writeByte((byte) (is_active ? 1 : 0));
+        dest.writeString(fbKey);
     }
 
     public Offer(Parcel in) {
         title           = in.readString();
-        photo_url       = in.readString();
+        photoUrl = in.readString();
         quantity        = in.readInt();
-        orig_price      = in.readFloat();
+        origPrice = in.readFloat();
         discount        = in.readInt();
-        time_in_secs    = in.readInt();
-        start_day       = in.readInt();
-        start_month     = in.readInt();
-        start_year      = in.readInt();
-        start_hour      = in.readInt();
-        start_minute    = in.readInt();
+        timeInSecs = in.readInt();
+        s_day           = in.readInt();
+        s_month         = in.readInt();
+        s_year          = in.readInt();
+        s_hour          = in.readInt();
+        s_minute        = in.readInt();
         is_active       = in.readByte() != 0;
+        fbKey           = in.readString();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -74,25 +77,24 @@ public class Offer implements Parcelable {
         }
     };
 
-    public Offer() {
-
-    }
+    public Offer() {}
 
     public Offer(String title, String photo_url, Integer quantity, Float orig_price, Integer discount,
                  Integer time_in_secs, Integer start_day, Integer start_month, Integer start_year,
                     Integer start_hour, Integer start_minute) {
-        this.title = title;
-        this.photo_url = photo_url;
-        this.quantity = quantity;
-        this.orig_price = orig_price;
-        this.discount = discount;
-        this.time_in_secs = time_in_secs;
-        this.start_day = start_day;
-        this.start_month = start_month;
-        this.start_year = start_year;
-        this.start_hour = start_hour;
-        this.start_minute = start_minute;
-        this.is_active = shouldOfferBeActive(start_day, start_month, start_year, start_hour, start_minute);
+        this.title          = title;
+        this.photoUrl = photo_url;
+        this.quantity       = quantity;
+        this.origPrice = orig_price;
+        this.discount       = discount;
+        this.timeInSecs = time_in_secs;
+        this.s_day          = start_day;
+        this.s_month        = start_month;
+        this.s_year         = start_year;
+        this.s_hour         = start_hour;
+        this.s_minute       = start_minute;
+        this.is_active      = shouldOfferBeActive(start_day, start_month, start_year, start_hour, start_minute);
+        this.fbKey          = "none";
     }
 
     public String getTitle() {
@@ -104,31 +106,31 @@ public class Offer implements Parcelable {
     }
 
     public String getPhotoUrl() {
-        return this.photo_url;
+        return this.photoUrl;
     }
 
     public void setPhotoUrl(String photo_url) {
-        this.photo_url = photo_url;
+        this.photoUrl = photo_url;
     }
 
     public void setQuantity(int quantity) { this.quantity = quantity; }
 
     public Integer getQuantity() { return this.quantity; }
 
-    public void setOrigPrice(Float orig_price) { this.orig_price = orig_price; }
+    public void setOrigPrice(Float orig_price) { this.origPrice = orig_price; }
 
-    public Float getOrigPrice() { return this.orig_price; }
+    public Float getOrigPrice() { return this.origPrice; }
 
     public void setDiscount(int discount) { this.discount = discount; }
 
     public Integer getDiscount() { return this.discount; }
 
     public Integer getTimeInSecs() {
-        return this.time_in_secs;
+        return this.timeInSecs;
     }
 
     public void setTimeInSecs(Integer time_in_secs) {
-        this.time_in_secs = time_in_secs;
+        this.timeInSecs = time_in_secs;
     }
 
 
@@ -146,5 +148,40 @@ public class Offer implements Parcelable {
 
 
         return false;
+    }
+
+    public String getFbKey() {
+        return this.fbKey;
+    }
+    public void setFbKey(String new_key) {
+        this.fbKey = new_key;
+    }
+
+    public String getFieldFromString(String field_name) {
+        switch(field_name) {
+            case "title":
+                return title;
+            case "photoUrl":
+                return photoUrl;
+            case "quantity":
+                return quantity.toString();
+            case "origPrice":
+                return origPrice.toString();
+            case "discount":
+                return discount.toString();
+            case "timeInSecs":
+                return timeInSecs.toString();
+            case "s_day":
+                return s_day.toString();
+            case "s_month":
+                return s_month.toString();
+            case "s_year":
+                return s_year.toString();
+            case "s_hour":
+                return s_hour.toString();
+            case "s_minute":
+                return s_minute.toString();
+        }
+        return "none";
     }
 }

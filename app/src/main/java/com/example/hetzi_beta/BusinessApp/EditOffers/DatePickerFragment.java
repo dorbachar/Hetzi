@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.Offers;
+package com.example.hetzi_beta.BusinessApp.EditOffers;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import com.example.hetzi_beta.Offers.OfferDetailsPopupActivity;
+import com.example.hetzi_beta.BusinessApp.EditOffers.OfferDetailsPopupActivity;
 
 import java.util.Calendar;
 

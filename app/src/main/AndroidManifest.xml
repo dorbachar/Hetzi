@@ -25,11 +25,9 @@
             android:name=".BusinessApp.HomePage.BusinessHomeActivity"
             android:label="@string/title_activity_business_home"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Offers.EditOffersActivity" />
-        <activity android:name=".Shops.ShopPageActivity" />
         <activity android:name=".Login.LoginActivity" />
         <activity
-            android:name=".Offers.OfferDetailsPopupActivity"
+            android:name=".BusinessApp.EditOffers.OfferDetailsPopupActivity"
             android:theme="@style/PopUpTheme" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -38,6 +36,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.hetzi_beta.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
     </application>
 
 </manifest>

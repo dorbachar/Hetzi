@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".Shops.EditShopFragment"
+    tools:context=".BusinessApp.EditShopFragment"
     android:id="@+id/frame_layout_fragment"
     >
 

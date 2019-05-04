@@ -9,14 +9,12 @@ import android.view.View;
 import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
 import com.example.hetzi_beta.BusinessApp.SettingsFragment;
 import com.example.hetzi_beta.BusinessApp.StatsFragment;
-import com.example.hetzi_beta.Offers.EditableOffersListFragment;
+import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.Shops.EditShopFragment;
+import com.example.hetzi_beta.BusinessApp.EditShopFragment;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
-import java.util.List;
 
 
 public class BusinessHomeActivity extends AppCompatActivity {
@@ -70,11 +68,11 @@ public class BusinessHomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed () {
         // TODO : not working... see github for details
-        EditShopFragment edit_shop = (EditShopFragment) getSupportFragmentManager().findFragmentById(R.id.shop_page_fragment);
-        if(edit_shop != null && edit_shop.changesMade()) {
-            edit_shop.showAskDialog();
-        } else {
-            finish();
-        }
+//        EditShopFragment edit_shop = (EditShopFragment) getSupportFragmentManager().findFragmentById(R.id.shop_page_fragment);
+//        if(edit_shop != null && edit_shop.changesMade()) {
+//            edit_shop.showAskDialog();
+//        } else {
+//            finish();
+//        }
     }
 }
