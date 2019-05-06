@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.BusinessApp;
+package com.example.hetzi_beta.CustomerApp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 
 import com.example.hetzi_beta.R;
 
-public class SettingsFragment extends Fragment {
-    public SettingsFragment() {
+public class LiveSalesFragment extends Fragment {
+    public LiveSalesFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -20,6 +21,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        // Inflate the layouts for this fragment
+        return inflater.inflate(R.layout.fragment_live_sales, container, false);
     }
 }

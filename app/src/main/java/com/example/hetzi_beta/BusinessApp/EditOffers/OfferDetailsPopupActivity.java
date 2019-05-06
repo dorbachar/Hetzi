@@ -193,8 +193,8 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         mPrice                  .setText(in.getOrigPrice().toString());
         mDiscountPercent        .setText(in.getDiscount().toString());
 
-        displayChosenDate(in.s_day, in.s_month, in.s_year);
-        displayChosenTime(in.s_hour, in.s_minute);
+        displayChosenDate(in.getFromDate("day"), in.getFromDate("month"), in.getFromDate("year"));
+        displayChosenTime(in.getFromDate("hour"), in.getFromDate("minute"));
         updatePriceAfterDiscount();
     }
 
@@ -224,17 +224,14 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showDatePickerDialog(v);
-                modified_fields.add("s_day");
-                modified_fields.add("s_month");
-                modified_fields.add("s_year");
+                modified_fields.add("s_date");
             }
         });
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showTimePickerDialog(v);
-                modified_fields.add("s_day");
-                modified_fields.add("s_month");
+                modified_fields.add("s_date");
             }
         });
     }
@@ -378,7 +375,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Create offer object from user input
-                Offer n_offer = createOfferObjectFromView();
+                final Offer n_offer = createOfferObjectFromView();
                 if(!edit_mode) // edit_mode is for existing offers
                 {
                     // Push to Firebase Realtime DataBase
@@ -389,18 +386,14 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                             String key = databaseReference.getKey();
                             Map<String, Object> userUpdates = new HashMap<>();
                             userUpdates.put("fbKey", key);
+                            userUpdates.put("date", n_offer.getDate());
                             mOffersDatabaseReference.child(key).updateChildren(userUpdates);
                         }
                     });
                 } else {
                     Map<String, Object> userUpdates = new HashMap<>();
                     for(String field : modified_fields) {
-                        if(field.equals("title") || field.equals("photoUrl"))
-                            userUpdates.put(field, n_offer.getFieldFromString(field));
-                        else if(field.equals("origPrice"))
-                            userUpdates.put(field, Float.parseFloat(n_offer.getFieldFromString(field)));
-                        else
-                            userUpdates.put(field, Integer.parseInt(n_offer.getFieldFromString(field)));
+                        putField(n_offer, userUpdates, field);
                     }
                     mOffersDatabaseReference.child(edit_mode_fbKey).updateChildren(userUpdates);
                     n_offer.setFbKey(edit_mode_fbKey);
@@ -412,6 +405,15 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void putField(Offer n_offer, Map<String, Object> userUpdates, String field) {
+        if(field.equals("title") || field.equals("photoUrl") || field.equals("s_date"))
+            userUpdates.put(field, n_offer.getFieldFromString(field));
+        else if(field.equals("origPrice"))
+            userUpdates.put(field, Float.parseFloat(n_offer.getFieldFromString(field)));
+        else
+            userUpdates.put(field, Integer.parseInt(n_offer.getFieldFromString(field)));
     }
 
     /*

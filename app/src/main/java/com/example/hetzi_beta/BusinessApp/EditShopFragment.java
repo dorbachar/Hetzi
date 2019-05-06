@@ -278,7 +278,7 @@ public class EditShopFragment extends Fragment {
     /*
     * showAskDialog -
     * Pops a dialog that prompts the user to save changes (or not).
-    * Should be called when the back button is pressed (from BusinessHomeActivity, using onBackPressed()).
+    * Should be called when the back button is pressed (from CustomerHomeActivity, using onBackPressed()).
     *
     * */
     public void showAskDialog() {
@@ -329,6 +329,7 @@ public class EditShopFragment extends Fragment {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         // If this is not the first time saving, we need to delete the previous shop page first
+        // TODO : like in Offers, update the entry and don;t delete it ....
         if (userExists(mShopsDatabaseReference.getKey(), user.getUid())) {
             mShopsDatabaseReference.getRef().removeValue();
         }

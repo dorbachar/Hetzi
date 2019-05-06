@@ -28,7 +28,10 @@
         <activity android:name=".Login.LoginActivity" />
         <activity
             android:name=".BusinessApp.EditOffers.OfferDetailsPopupActivity"
-            android:theme="@style/PopUpTheme" />
+            android:theme="@style/PopupTheme" />
+        <activity
+            android:name=".CustomerApp.HomePage.CustomerHomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

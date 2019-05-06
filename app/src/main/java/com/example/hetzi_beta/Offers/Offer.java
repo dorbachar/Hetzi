@@ -10,7 +10,9 @@ package com.example.hetzi_beta.Offers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class Offer implements Parcelable {
     private String      title;
@@ -19,14 +21,8 @@ public class Offer implements Parcelable {
     private Float       origPrice;
     private Integer     discount;
     private Integer     timeInSecs; // TODO : TIME OVERHAUL
-
-    public Integer s_day;
-    public Integer s_month;
-    public Integer s_year;
-    public Integer s_hour;
-    public Integer s_minute;
-
-    private boolean     is_active;
+    private String      date;     // format : dd-mm-yyyy--hh-mm
+    private boolean     active;
     private String      fbKey;
 
     @Override
@@ -42,28 +38,20 @@ public class Offer implements Parcelable {
         dest.writeFloat(origPrice);
         dest.writeInt(discount);
         dest.writeInt(timeInSecs);
-        dest.writeInt(s_day);
-        dest.writeInt(s_month);
-        dest.writeInt(s_year);
-        dest.writeInt(s_hour);
-        dest.writeInt(s_minute);
-        dest.writeByte((byte) (is_active ? 1 : 0));
+        dest.writeString(date);
+        dest.writeByte((byte) (active ? 1 : 0));
         dest.writeString(fbKey);
     }
 
     public Offer(Parcel in) {
         title           = in.readString();
-        photoUrl = in.readString();
+        photoUrl        = in.readString();
         quantity        = in.readInt();
-        origPrice = in.readFloat();
+        origPrice       = in.readFloat();
         discount        = in.readInt();
-        timeInSecs = in.readInt();
-        s_day           = in.readInt();
-        s_month         = in.readInt();
-        s_year          = in.readInt();
-        s_hour          = in.readInt();
-        s_minute        = in.readInt();
-        is_active       = in.readByte() != 0;
+        timeInSecs      = in.readInt();
+        date = in.readString();
+        active = in.readByte() != 0;
         fbKey           = in.readString();
     }
 
@@ -83,18 +71,60 @@ public class Offer implements Parcelable {
                  Integer time_in_secs, Integer start_day, Integer start_month, Integer start_year,
                     Integer start_hour, Integer start_minute) {
         this.title          = title;
-        this.photoUrl = photo_url;
+        this.photoUrl       = photo_url;
         this.quantity       = quantity;
-        this.origPrice = orig_price;
+        this.origPrice      = orig_price;
         this.discount       = discount;
-        this.timeInSecs = time_in_secs;
-        this.s_day          = start_day;
-        this.s_month        = start_month;
-        this.s_year         = start_year;
-        this.s_hour         = start_hour;
-        this.s_minute       = start_minute;
-        this.is_active      = shouldOfferBeActive(start_day, start_month, start_year, start_hour, start_minute);
+        this.timeInSecs     = time_in_secs;
+        this.date           = formatDate(start_day, start_month, start_year, start_hour, start_minute);
+        this.active         = shouldOfferBeActive(start_day, start_month, start_year, start_hour, start_minute);
         this.fbKey          = "none";
+    }
+
+    private String formatDate(Integer start_day, Integer start_month, Integer start_year, Integer start_hour, Integer start_minute) {
+        String day = start_day >= 10 ? start_day.toString() : "0" + start_day.toString();
+        String month = start_month >= 10 ? start_month.toString() : "0" + start_month.toString();
+        String hour = start_hour >= 10 ? start_hour.toString() : "0" + start_hour.toString();
+        String minute = start_minute >= 10 ? start_minute.toString() : "0" + start_minute.toString();
+
+        return day + "-" + month + "-" + start_year.toString() + "--" + hour + "-" + minute;
+    }
+
+    public Integer getFromDate(String target) {
+        List<Integer> date_as_list = getDateAsList();
+
+        switch (target) {
+            case "day":
+                return date_as_list.get(0);
+            case "month":
+                return date_as_list.get(1);
+            case "year":
+                return date_as_list.get(2);
+            case "hour":
+                return date_as_list.get(3);
+            case "minute":
+                return date_as_list.get(4);
+        }
+
+        return -1;
+    }
+
+    private List<Integer> getDateAsList() {
+        List<Integer> date_as_list = new ArrayList<>();
+
+        char[] day = {date.charAt(0), date.charAt(1)};
+        char[] month = {date.charAt(3), date.charAt(4)};
+        char[] year = {date.charAt(6), date.charAt(7), date.charAt(8), date.charAt(9)};
+        char[] hour = {date.charAt(12), date.charAt(13)};
+        char[] minute = {date.charAt(15), date.charAt(16)};
+
+        date_as_list.add(Integer.parseInt(String.valueOf(day)));
+        date_as_list.add(Integer.parseInt(String.valueOf(month)));
+        date_as_list.add(Integer.parseInt(String.valueOf(year)));
+        date_as_list.add(Integer.parseInt(String.valueOf(hour)));
+        date_as_list.add(Integer.parseInt(String.valueOf(minute)));
+
+        return date_as_list;
     }
 
     public String getTitle() {
@@ -135,10 +165,10 @@ public class Offer implements Parcelable {
 
 
     public boolean isActive() {
-        return is_active;
+        return active;
     }
     public void setActive(boolean is_active) {
-        this.is_active = is_active;
+        this.active = is_active;
     }
 
     private boolean shouldOfferBeActive(Integer start_day, Integer start_month, Integer start_year,
@@ -157,6 +187,30 @@ public class Offer implements Parcelable {
         this.fbKey = new_key;
     }
 
+    public void setDate(Integer start_day, Integer start_month, Integer start_year) {
+        String day = start_day >= 10 ? start_day.toString() : "0" + start_day.toString();
+        String month = start_month >= 10 ? start_month.toString() : "0" + start_month.toString();
+
+        String date = day + "-" + month + "-" + start_year.toString();
+        String time = this.date.substring(10, 14);
+
+        this.date = date + "--" + time;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setTime(Integer start_hour, Integer start_minute) {
+        String hour = start_hour >= 10 ? start_hour.toString() : "0" + start_hour.toString();
+        String minute = start_minute >= 10 ? start_minute.toString() : "0" + start_minute.toString();
+
+        String time = hour + "-" + minute;
+        String date = this.date.substring(0, 7);
+
+        this.date = date + "--" + time;
+    }
+
     public String getFieldFromString(String field_name) {
         switch(field_name) {
             case "title":
@@ -171,16 +225,8 @@ public class Offer implements Parcelable {
                 return discount.toString();
             case "timeInSecs":
                 return timeInSecs.toString();
-            case "s_day":
-                return s_day.toString();
-            case "s_month":
-                return s_month.toString();
-            case "s_year":
-                return s_year.toString();
-            case "s_hour":
-                return s_hour.toString();
-            case "s_minute":
-                return s_minute.toString();
+            case "date":
+                return date;
         }
         return "none";
     }

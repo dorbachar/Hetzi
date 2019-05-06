@@ -48,7 +48,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
 
     // RecyclerView Related
     public ArrayList<Offer>                     offers_list;
-    public OfferAdapter adapter;
+    public OfferAdapter                         adapter;
     public RecyclerView                         rvOffers;
 
     @Override

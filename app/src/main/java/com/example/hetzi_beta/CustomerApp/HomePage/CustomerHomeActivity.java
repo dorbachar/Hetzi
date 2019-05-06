@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.BusinessApp.HomePage;
+package com.example.hetzi_beta.CustomerApp.HomePage;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -6,18 +6,23 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
+import com.example.hetzi_beta.BusinessApp.EditShopFragment;
 import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
 import com.example.hetzi_beta.BusinessApp.ShopSettingsFragment;
 import com.example.hetzi_beta.BusinessApp.StatsFragment;
-import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
+import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
+import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
+import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
+import com.example.hetzi_beta.CustomerApp.LiveSalesFragment;
+import com.example.hetzi_beta.CustomerApp.ShopsListFragment;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.BusinessApp.EditShopFragment;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 
-public class BusinessHomeActivity extends AppCompatActivity {
+public class CustomerHomeActivity extends AppCompatActivity {
 
     private SectionsPageAdapter     mSectionsPageAdapter;
     private ViewPager               mViewPager;
@@ -25,7 +30,7 @@ public class BusinessHomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_business_home);
+        setContentView(R.layout.activity_customer_home);
 
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.view_pager);
@@ -35,9 +40,9 @@ public class BusinessHomeActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.tab_icon_offers);
-        tabLayout.getTabAt(1).setIcon(R.drawable.tab_icon_shop_page);
-        tabLayout.getTabAt(2).setIcon(R.drawable.tab_icon_past_deals);
-        tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_stats);
+        tabLayout.getTabAt(1).setIcon(R.drawable.tab_icon_shops);
+        tabLayout.getTabAt(2).setIcon(R.drawable.tab_icon_favourites);
+        tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_discover);
         tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_settings);
 
         tabLayout.setTabTextColors(getResources().getColor(R.color.White), getResources().getColor(R.color.colorAccent));
@@ -56,11 +61,11 @@ public class BusinessHomeActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new EditableOffersListFragment(), "מבצעים");
-        adapter.addFragment(new EditShopFragment(), "עמוד עסק");
-        adapter.addFragment(new PastDealsFragment(), "עסקאות");
-        adapter.addFragment(new StatsFragment(), "תובנות");
-        adapter.addFragment(new ShopSettingsFragment(), "הגדרות");
+        adapter.addFragment(new LiveSalesFragment(), "מבצעים");
+        adapter.addFragment(new ShopsListFragment(), "חנויות");
+        adapter.addFragment(new FavouritesFragment(), "מועדפים");
+        adapter.addFragment(new DiscoverFragment(), "Discover");
+        adapter.addFragment(new CustomerSettingsFragment(), "הגדרות");
 
         viewPager.setAdapter(adapter);
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
+import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickBusinessHub(View view) {
         Intent intent = new Intent(this, BusinessHomeActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void onClickCustomersHub(View view) {
+        Intent intent = new Intent(this, CustomerHomeActivity.class);
         startActivity(intent);
     }
 
