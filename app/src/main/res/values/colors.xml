@@ -12,4 +12,5 @@
     <color name="LightGrey">#F5F5F5</color>
     <color name="Black">#000000</color>
     <color name="Red">#ba000d</color>
+    <color name="BgBlue">#e3f2fd</color>
 </resources>

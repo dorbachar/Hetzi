@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -62,5 +64,33 @@ public class Utils {
                 .load(image_as_file)
                 .centerCrop()
                 .into(dest);
+    }
+
+
+    public static void disableButton(Button button, Context context) {
+        button.setBackground(context.getResources().getDrawable(R.drawable.shape_disabled_button));
+        button.setEnabled(false);
+    }
+    public static void enableButton(Button button, Context context) {
+        button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));
+        button.setTextColor(context.getResources().getColor(R.color.Black));
+        button.setEnabled(true);
+    }
+
+    // hideKeyboard(getActivity()); // won't work!
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

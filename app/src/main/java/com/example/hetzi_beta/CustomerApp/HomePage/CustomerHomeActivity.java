@@ -6,15 +6,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
-import com.example.hetzi_beta.BusinessApp.EditShopFragment;
-import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
-import com.example.hetzi_beta.BusinessApp.ShopSettingsFragment;
-import com.example.hetzi_beta.BusinessApp.StatsFragment;
 import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
-import com.example.hetzi_beta.CustomerApp.LiveSalesFragment;
+import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
 import com.example.hetzi_beta.CustomerApp.ShopsListFragment;
 import com.example.hetzi_beta.R;
 

@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.hetzi_beta.BuildConfig;
+import com.example.hetzi_beta.Accounts.HtzAccount;
 import com.example.hetzi_beta.R;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +19,17 @@ import java.util.List;
 import static com.example.hetzi_beta.Utils.HTZ_SIGN_IN;
 
 public class LoginActivity extends AppCompatActivity {
+    // Firebase related
+    public FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mAccountsDatabaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mFirebaseDatabase           = FirebaseDatabase.getInstance();
+        mAccountsDatabaseReference  = mFirebaseDatabase.getReference().child("accounts");
 
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -47,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                HtzAccount account = new HtzAccount(user.getUid());
+//                mAccountsDatabaseReference.push().setValue(account);
                 Toast.makeText(this, "Welcome " + user.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
                 finish();
                 // ...

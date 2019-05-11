@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="40dp">
+
+    <TextView
+        android:id="@+id/setting_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="כותרת הגדרה"
+        android:textColor="@color/Red"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="30dp"
+        />
+
+    <TextView
+        android:id="@+id/setting_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="מידע נוכחי חשוף"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/setting_arrow"
+        />
+
+    <ImageView
+        android:id="@+id/setting_arrow"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/baseline_keyboard_arrow_left_red_48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        />
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.Offers;
+package com.example.hetzi_beta.BusinessApp.EditOffers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,17 +11,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.hetzi_beta.Offers.Offer;
+import com.example.hetzi_beta.Offers.OnClickButtonListener;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
 import java.util.ArrayList;
 
-public class OfferAdapter extends android.support.v7.widget.RecyclerView.Adapter<OfferAdapter.OfferViewholder> {
+public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Adapter<EditOfferAdapter.OfferViewholder> {
     private ArrayList<Offer> mOffers;
     private Context mContext;
     private OnClickButtonListener mOnClickButtonListener;
 
-    public OfferAdapter(ArrayList<Offer> offers, OnClickButtonListener mOnClickButtonListener) {
+    public EditOfferAdapter(ArrayList<Offer> offers, OnClickButtonListener mOnClickButtonListener) {
         mOffers = offers;
         this.mOnClickButtonListener = mOnClickButtonListener;
     }

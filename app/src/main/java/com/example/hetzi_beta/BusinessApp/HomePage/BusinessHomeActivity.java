@@ -4,30 +4,43 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
-import com.example.hetzi_beta.BusinessApp.ShopSettingsFragment;
-import com.example.hetzi_beta.BusinessApp.StatsFragment;
 import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
-import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.BusinessApp.EditShopFragment;
+import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
+import com.example.hetzi_beta.BusinessApp.ShopSettings.ShopSettingsFragment;
+import com.example.hetzi_beta.BusinessApp.StatsFragment;
+import com.example.hetzi_beta.R;
+import com.example.hetzi_beta.ToolbarActivity;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 
-public class BusinessHomeActivity extends AppCompatActivity {
+public class BusinessHomeActivity extends ToolbarActivity {
 
-    private SectionsPageAdapter     mSectionsPageAdapter;
-    private ViewPager               mViewPager;
+    private ViewPager mViewPager;
+    private Toolbar mToolbar;
+
+    String[] tab_titles = {
+            "מבצעים",
+            "עמוד עסק",
+            "עסקאות",
+            "תובנות",
+            "הגדרות"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business_home);
 
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+        mToolbar = findViewById(R.id.my_toolbar);
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.White));
+        setSupportActionBar(mToolbar);
+
         mViewPager = findViewById(R.id.view_pager);
         setupViewPager(mViewPager);
 
@@ -43,6 +56,23 @@ public class BusinessHomeActivity extends AppCompatActivity {
         tabLayout.setTabTextColors(getResources().getColor(R.color.White), getResources().getColor(R.color.colorAccent));
         tabLayout.setTabRippleColor(null);
 
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mToolbar.setTitle(tab_titles[tab.getPosition()]);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         // TODO : Works but screen glitches and EditTexts gets squeeshed
         KeyboardVisibilityEvent.setEventListener(this,
                 new KeyboardVisibilityEventListener() {
@@ -51,16 +81,17 @@ public class BusinessHomeActivity extends AppCompatActivity {
                         tabLayout.setVisibility(isOpen ? View.GONE : View.VISIBLE);
                     }
                 });
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new EditableOffersListFragment(), "מבצעים");
-        adapter.addFragment(new EditShopFragment(), "עמוד עסק");
-        adapter.addFragment(new PastDealsFragment(), "עסקאות");
-        adapter.addFragment(new StatsFragment(), "תובנות");
-        adapter.addFragment(new ShopSettingsFragment(), "הגדרות");
+        adapter.addFragment(new EditableOffersListFragment(), tab_titles[0]);
+        adapter.addFragment(new EditShopFragment(), tab_titles[1]);
+        adapter.addFragment(new PastDealsFragment(), tab_titles[2]);
+        adapter.addFragment(new StatsFragment(), tab_titles[3]);
+        adapter.addFragment(new ShopSettingsFragment(), tab_titles[4]);
 
         viewPager.setAdapter(adapter);
     }

@@ -111,7 +111,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         initViewsAndReferences();
         initSpinners();
 
-        disablePublishButton();
+        Utils.disableButton(mPublishButton, this);
         mPhotoProgress.setVisibility(View.GONE);
         resetTimeAndDate();
 
@@ -446,26 +446,10 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         if ( emptyEditTextsExists() || !photoReady() ||
                 !isValidStartDate(offer_date.start_day, offer_date.start_month, offer_date.start_year,
                         offer_date.start_hour, offer_date.start_minute )) {
-            disablePublishButton();
+            Utils.disableButton(mPublishButton, this);
         } else {
-            enablePublishButton();
+            Utils.enableButton(mPublishButton, this);
         }
-    }
-
-    /*
-    * enablePublishButton, disablePublishButton -
-    *
-    * Enable/disable the Publish Button, meaning take care of mPublishButton.setEnabled() and also
-     * change the background drawable to the relevant one.
-    * */
-    private void disablePublishButton() {
-        mPublishButton.setBackground(getResources().getDrawable(R.drawable.shape_disabled_button));
-        mPublishButton.setEnabled(false);
-    }
-    private void enablePublishButton() {
-        mPublishButton.setBackground(getResources().getDrawable(R.drawable.shape_enabled_button));
-        mPublishButton.setTextColor(getResources().getColor(R.color.Black));
-        mPublishButton.setEnabled(true);
     }
 
     /*

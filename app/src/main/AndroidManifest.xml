@@ -21,10 +21,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustPan">
+        <activity android:name=".ToolbarActivity"></activity>
+        <activity
+            android:name=".Login.ChangePasswordFragment"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BusinessApp.HomePage.BusinessHomeActivity"
-            android:label="@string/title_activity_business_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="חצי"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Login.LoginActivity" />
         <activity
             android:name=".BusinessApp.EditOffers.OfferDetailsPopupActivity"
@@ -39,6 +43,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.hetzi_beta.fileprovider"
@@ -46,7 +51,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

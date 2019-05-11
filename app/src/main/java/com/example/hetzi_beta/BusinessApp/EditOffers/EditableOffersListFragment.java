@@ -18,7 +18,6 @@ import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.example.hetzi_beta.Offers.Offer;
-import com.example.hetzi_beta.Offers.OfferAdapter;
 import com.example.hetzi_beta.Offers.OnClickButtonListener;
 import com.example.hetzi_beta.R;
 import static com.example.hetzi_beta.Utils.*;
@@ -48,7 +47,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
 
     // RecyclerView Related
     public ArrayList<Offer>                     offers_list;
-    public OfferAdapter                         adapter;
+    public EditOfferAdapter                     adapter;
     public RecyclerView                         rvOffers;
 
     @Override
@@ -107,7 +106,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
 
     private void setupAdapter() {
         // Set adapter for RecyclerView
-        adapter = new OfferAdapter(offers_list, this);
+        adapter = new EditOfferAdapter(offers_list, this);
         rvOffers.setAdapter(adapter);
         rvOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -150,7 +149,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
             mAddOffersTextView.setVisibility(View.GONE);
             Offer created_offer = data.getParcelableExtra("offer");
 
-            if (created_offer != null ) {
+            if ( created_offer != null ) {
                 removeExistingOfferIfExists(created_offer);
                 offers_list.add(created_offer);
             } else {
@@ -162,8 +161,6 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
                     mAddOffersTextView.setVisibility(View.VISIBLE);
                 }
             }
-
-
             adapter.notifyDataSetChanged();
         }
     }

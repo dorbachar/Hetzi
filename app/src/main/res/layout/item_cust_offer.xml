@@ -218,7 +218,7 @@
                 android:textStyle="italic" />
 
             <Button
-                android:id="@+id/edit_offer_Button"
+                android:id="@+id/add_one_Button"
                 android:layout_width="80dp"
 
                 android:layout_height="35dp"
