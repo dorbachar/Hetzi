@@ -10,9 +10,13 @@ package com.example.hetzi_beta.Offers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.threeten.bp.Instant;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class Offer implements Parcelable {
     private String      title;
@@ -21,7 +25,7 @@ public class Offer implements Parcelable {
     private Float       origPrice;
     private Integer     discount;
     private Integer     timeInSecs; // TODO : TIME OVERHAUL
-    private String      date;     // format : dd-mm-yyyy--hh-mm
+    private String      date;      // TODO : TIME OVERHAUL  replace these two members with start_instant and end_instant
     private boolean     active;
     private String      fbKey;
 
@@ -87,7 +91,12 @@ public class Offer implements Parcelable {
         String hour = start_hour >= 10 ? start_hour.toString() : "0" + start_hour.toString();
         String minute = start_minute >= 10 ? start_minute.toString() : "0" + start_minute.toString();
 
-        return day + "-" + month + "-" + start_year.toString() + "--" + hour + "-" + minute;
+        String isoDate = start_year.toString() + "-" + month + "-" + day + "T" + hour + ":" + minute + ":00.00Z"; //  ISO-8601 DateTime format
+        Instant instant_from_date = Instant.parse(isoDate);
+
+        String instant_as_string = instant_from_date.toString();
+
+        return isoDate;
     }
 
     public Integer getFromDate(String target) {
@@ -167,6 +176,7 @@ public class Offer implements Parcelable {
     public boolean isActive() {
         return active;
     }
+
     public void setActive(boolean is_active) {
         this.active = is_active;
     }
@@ -187,28 +197,8 @@ public class Offer implements Parcelable {
         this.fbKey = new_key;
     }
 
-    public void setDate(Integer start_day, Integer start_month, Integer start_year) {
-        String day = start_day >= 10 ? start_day.toString() : "0" + start_day.toString();
-        String month = start_month >= 10 ? start_month.toString() : "0" + start_month.toString();
-
-        String date = day + "-" + month + "-" + start_year.toString();
-        String time = this.date.substring(10, 14);
-
-        this.date = date + "--" + time;
-    }
-
     public String getDate() {
         return this.date;
-    }
-
-    public void setTime(Integer start_hour, Integer start_minute) {
-        String hour = start_hour >= 10 ? start_hour.toString() : "0" + start_hour.toString();
-        String minute = start_minute >= 10 ? start_minute.toString() : "0" + start_minute.toString();
-
-        String time = hour + "-" + minute;
-        String date = this.date.substring(0, 7);
-
-        this.date = date + "--" + time;
     }
 
     public String getFieldFromString(String field_name) {

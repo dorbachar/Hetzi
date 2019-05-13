@@ -11,6 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.ListPreloader;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
+import com.example.hetzi_beta.BusinessApp.EditOffers.MyPreloadModelProvider;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
@@ -35,6 +40,10 @@ public class LiveSalesFragment extends Fragment {
     private DatabaseReference mOffersDatabaseReference;
     private DatabaseReference mShopsDatabaseReference;
 
+    // Glide related
+    public ViewPreloadSizeProvider              mPreloadSizeProvider;
+    public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
+
     public LiveSalesFragment() {
         // Required empty public constructor
     }
@@ -53,14 +62,13 @@ public class LiveSalesFragment extends Fragment {
         setupAdapter();
         loadOffersFromDb();
 
-        // Inflate the layouts for this fragment
-        return inflater.inflate(R.layout.fragment_live_sales, container, false);
+        return root_view;
     }
 
     private void setupAdapter() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter            = new LiveSaleAdapter(deals_list);
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     public void loadOffersFromDb() {
@@ -122,5 +130,14 @@ public class LiveSalesFragment extends Fragment {
 
 
 
+    }
+
+    private void setupGlidePreloader() {
+        // Glide preloader
+        mPreloadSizeProvider = new ViewPreloadSizeProvider();
+        mPreloadModelProvider = new DealsPreloadModelProvider(deals_list, getActivity());
+        RecyclerViewPreloader<String> preloader =
+                new RecyclerViewPreloader<>(Glide.with(this), mPreloadModelProvider, mPreloadSizeProvider, 10);
+        recyclerView.addOnScrollListener(preloader);
     }
 }

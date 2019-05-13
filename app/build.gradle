@@ -53,6 +53,9 @@ dependencies {
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
     implementation 'com.github.medyo:fancybuttons:1.9.1'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
+
+    // TIME
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

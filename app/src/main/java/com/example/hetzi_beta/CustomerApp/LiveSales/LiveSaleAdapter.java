@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.BusinessApp.EditOffers.EditOfferAdapter;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
@@ -18,7 +19,6 @@ import com.example.hetzi_beta.Utils;
 import java.util.ArrayList;
 
 public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adapter<LiveSaleAdapter.SaleViewHolder> {
-    private static final String TAG = "LiveSaleAdapter";
     private ArrayList<Deal> mDeals;
     private Context mContext;
 
@@ -43,11 +43,11 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         Float   price_after_discount    = Utils.round(Utils.priceAfterDiscount(current_deal.getOffer().getOrigPrice(),
                 current_deal.getOffer().getDiscount()), 2);
 
-        // Offer Details // TODO : fix after adding Preloader to here too
-//        Glide.with(mContext)
-//                .load(current_deal.getOffer().getPhotoUrl())
-//                .centerCrop()
-//                .into(holder.background_image_offer_item);
+        // Offer Details
+        Glide.with(mContext)
+                .load(current_deal.getOffer().getPhotoUrl())
+                .centerCrop()
+                .into(holder.background_image_offer_item);
 
         holder.amount_TextView      .setText(current_deal.getOffer().getQuantity().toString());
         holder.time_TextView        .setText(current_deal.getOffer().getTimeInSecs().toString()); // TODO : TIME OVERHAUL
@@ -56,11 +56,11 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         holder.price_TextView       .setText(price_after_discount.toString());
         holder.precentage_TextView  .setText(current_deal.getOffer().getDiscount().toString());
 
-        // Shop Details // TODO : fix after adding Preloader to here too
-        ////        Glide.with(mContext)
-        ////                .load(current_deal.getShop().getLogoUri())
-        ////                .centerCrop()
-        ////                .into(holder.shopLogo);
+        // Shop Details
+        Glide.with(mContext)
+                .load(current_deal.getShop().getLogoUri())
+                .centerCrop()
+                .into(holder.shopLogo);
         holder.shopName             .setText(current_deal.getShop().getShopName());
     }
 
@@ -69,7 +69,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         return mDeals.size();
     }
 
-    class SaleViewHolder extends RecyclerView.ViewHolder {
+    class SaleViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
         // Offer Details
         ImageView               background_image_offer_item;
         TextView                name_TextView;

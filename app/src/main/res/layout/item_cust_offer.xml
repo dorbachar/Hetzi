@@ -10,7 +10,7 @@
         android:layout_width="400dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         card_view:cardCornerRadius="10dp">
 
         <ImageView
@@ -28,7 +28,10 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/Black_Transparent"
+                >
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/shop_logo_CircularImageView"
@@ -40,11 +43,8 @@
                     android:src="@drawable/default_shop_logo3"
                     android:layout_centerVertical="true"
 
-                    app:civ_border_color="#EEEEEE"
-                    app:civ_border_width="0dp"
-                    app:civ_shadow="true"
-                    app:civ_shadow_radius="10"
-                    app:civ_shadow_color="#9e9e9e"
+                    app:civ_border_width="1dp"
+                    app:civ_shadow="false"
                     />
 
                 <TextView
@@ -68,6 +68,7 @@
                     android:text=" קילומטר"
                     android:layout_marginLeft="30dp"
                     android:layout_centerVertical="true"
+                    android:textColor="@color/White"
                     />
 
                 <TextView
@@ -76,6 +77,15 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/kilometer"
                     android:text="1.6"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/White"
+                    />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_toRightOf="@id/distance_TextView"
+                    android:src="@drawable/baseline_room_white_48dp"
                     android:layout_centerVertical="true"
                     />
 
