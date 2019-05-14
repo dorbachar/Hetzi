@@ -52,7 +52,7 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
                 .into(holder.background_image_offer_item);
 
         holder.amount_TextView      .setText(current_offer.getQuantity().toString());
-        holder.time_TextView        .setText(current_offer.getTimeInSecs().toString()); // TODO : TIME OVERHAUL
+        holder.time_TextView        .setText(Utils.getTimeEstimateString(current_offer));
         holder.name_TextView        .setText(current_offer.getTitle());
         holder.orig_price_TextView  .setText(current_offer.getOrigPrice().toString());
         holder.price_TextView       .setText(price_after_discount.toString());
@@ -82,7 +82,7 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
             // Init all views
             background_image_offer_item     = itemView.findViewById(R.id.item_photo_ImageView);
             name_TextView                   = itemView.findViewById(R.id.product_item_name_TextView);
-            time_TextView                   = itemView.findViewById(R.id.product_item_time_TextView);
+            time_TextView                   = itemView.findViewById(R.id.estimate_time_TextView);
             amount_TextView                 = itemView.findViewById(R.id.amount_TextView);
             precentage_TextView             = itemView.findViewById(R.id.precentage_textView);
             price_TextView                  = itemView.findViewById(R.id.price_TextView);

@@ -12,14 +12,13 @@ import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
 import com.example.hetzi_beta.CustomerApp.ShopsListFragment;
 import com.example.hetzi_beta.R;
+import com.example.hetzi_beta.ToolbarActivity;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 
-public class CustomerHomeActivity extends AppCompatActivity {
-
-    private SectionsPageAdapter     mSectionsPageAdapter;
+public class CustomerHomeActivity extends ToolbarActivity {
     private ViewPager               mViewPager;
 
     @Override
@@ -27,7 +26,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_home);
 
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.view_pager);
         setupViewPager(mViewPager);
 

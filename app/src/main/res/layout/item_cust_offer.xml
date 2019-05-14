@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
 
                 android:layout_height="wrap_content"
-                android:layout_above="@id/product_item_time_TextView"
+                android:layout_above="@id/estimate_time_TextView"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="30dp"
                 android:text="@string/product_name"
@@ -104,15 +104,14 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/product_item_time_TextView"
+                android:id="@+id/estimate_time_TextView"
                 android:layout_width="wrap_content"
 
                 android:layout_height="wrap_content"
                 android:layout_above="@id/precentage_textView"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="30dp"
-                android:text="03:40"
+                android:layout_toLeftOf="@id/makafkatan_TextView"
 
+                android:text="מחר בצהריים"
                 />
 
             <TextView
@@ -121,7 +120,7 @@
 
                 android:layout_height="wrap_content"
                 android:layout_above="@id/precentage_textView"
-                android:layout_toLeftOf="@id/product_item_time_TextView"
+                android:layout_toLeftOf="@id/yehidot_text"
                 android:text="  -  " />
 
             <TextView
@@ -130,8 +129,10 @@
 
                 android:layout_height="wrap_content"
                 android:layout_above="@id/precentage_textView"
-                android:layout_toLeftOf="@id/makafkatan_TextView"
-                android:text="2" />
+                android:layout_alignParentRight="true"
+                android:text="2"
+                android:layout_marginRight="30dp"
+                />
 
             <TextView
                 android:id="@+id/yehidot_text"
@@ -240,6 +241,19 @@
                 android:textColor="@color/White"
                 android:textSize="14sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/offer_timer_EditText"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/add_one_Button"
+                android:text="02:01:52"
+                android:layout_marginLeft="30dp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                style="@style/ShadowText"
+                />
 
         </RelativeLayout>
 

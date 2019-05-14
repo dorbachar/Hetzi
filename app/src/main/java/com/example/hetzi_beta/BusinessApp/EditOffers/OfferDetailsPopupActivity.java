@@ -30,7 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -48,6 +47,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
 import static com.example.hetzi_beta.Utils.HTZ_CAMERA;
@@ -73,7 +75,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     private File                photo_from_camera;
     private String              photo_path_from_camera;
     private boolean             edit_mode;
-    private String              edit_mode_fbKey;
+    private String              curr_fbKey;
     private ArrayList<String>   modified_fields;
 
     // Product details
@@ -125,240 +127,67 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     }
 
     /*
-    * handleExistingOfferScenario -
-    *
-    * This method checks if there is an incoming Offer, and if so - loads the Offer details to view
-    * and sets the relevant memebers to their correct value.
-    * If there is now incoming Offer, only some adjustments to the UI and memebers handling is
-    * required.
-    *
-    * */
-    private void handleExistingOfferScenario() {
-        Intent intent = getIntent();
-        if( isExistingOffer(intent) ) {
-            Offer from_recycler = intent.getParcelableExtra("offer_fromRecycler");
-            putOfferInViews(from_recycler);
+     * onActivityResult -
+     *
+     * onActivityResult is long in this activity, because it handles photos which come from both
+     * Gallery and Camera.
+     *
+     * */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == HTZ_GALLERY || requestCode == HTZ_CAMERA) && resultCode == RESULT_OK) {
+            // ~~~~~~ (1) Update the view immediately, and save the image URI  ~~~~~~ //
+            Uri selectedImageUri = null;
 
-            edit_mode           = true;
-            edit_mode_fbKey     = from_recycler.getFbKey();
-            photo_firebase_uri  = Uri.parse(from_recycler.getPhotoUrl());
-            photo_done          = true;
-
-            mPublishButton.setText("שמור שינויים");
-        } else {
-            edit_mode = false;
-
-            // Set the Publish button width to match_parent, and hide the 'delete' button
-            ViewGroup.LayoutParams params = mPublishButton.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mPublishButton.setLayoutParams(params);
-            mDeleteButton.setVisibility(View.GONE);
-        }
-    }
-
-    private void onClickDelete() {
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialogConfirmDeletion();
+            if (requestCode == HTZ_CAMERA) {
+                File f = new File(photo_path_from_camera);
+                selectedImageUri = Uri.fromFile(f);
+                Utils.updateViewImage(OfferDetailsPopupActivity.this, photo_from_camera, mPhotoPickerButton);
             }
-        });
-    }
-
-    /*
-    * isExistingOffer - Relies on EXTRA to check if there is an existing Offer attached.
-    *
-    * @return : TRUE if an exisiting Offer is attached, FALSE otherwise.
-    *
-    * */
-    private boolean isExistingOffer(Intent intent) {
-        return !intent.getBooleanExtra("new", true);
-    }
-
-    /*
-    * putOfferInViews -
-    *
-    * This method handles setting all the views in the popup according to a given Offer.
-    *
-    * @param : Offer in - the Offer to set the views by.
-    *
-    * */
-    private void putOfferInViews(Offer in) {
-        Utils.updateViewImage(this, Uri.parse(in.getPhotoUrl()), mPhotoPickerButton);
-
-        mDiscountSeekbar        .setProgress(in.getDiscount());
-        mTimeSpinner            .setSelection(0); // TODO : TIME OVERHAUL
-        mName                   .setText(in.getTitle());
-        mQuantity               .setText(in.getQuantity().toString());
-        mPrice                  .setText(in.getOrigPrice().toString());
-        mDiscountPercent        .setText(in.getDiscount().toString());
-
-        displayChosenDate(in.getFromDate("day"), in.getFromDate("month"), in.getFromDate("year"));
-        displayChosenTime(in.getFromDate("hour"), in.getFromDate("minute"));
-        updatePriceAfterDiscount();
-    }
-
-    /*
-    * resetTimeAndDate -
-    *
-    * Resets the time and date both in display and in memory.
-    *
-    * */
-    private void resetTimeAndDate() {
-        final Calendar c = Calendar.getInstance();
-        int default_hour = c.get(Calendar.HOUR_OF_DAY) + 1; // since there is a time gap between user's click and the call to getInstance()
-        int default_minute = 0;
-
-        displayChosenDate(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH)+1, c.get(Calendar.YEAR));
-        displayChosenTime(default_hour, default_minute);
-
-        offer_date.start_day    = c.get(Calendar.DAY_OF_MONTH);
-        offer_date.start_month  = c.get(Calendar.MONTH)+1;
-        offer_date.start_year   = c.get(Calendar.YEAR);
-        offer_date.start_hour   = default_hour;
-        offer_date.start_minute = default_minute;
-    }
-
-    private void onClickDateAndTime() {
-        mDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(v);
-                modified_fields.add("s_date");
-            }
-        });
-        mTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTimePickerDialog(v);
-                modified_fields.add("s_date");
-            }
-        });
-    }
-
-    private void setupSeekBarListener() {
-        mDiscountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Discount percent is in 10s
-                progress = progress / 10;
-                progress = progress * 10;
-                mDiscountSeekbar.setProgress(progress);
-                mDiscountPercent.setText(String.valueOf(progress));
-
-                // Updating the price after discount if needed
-                updatePriceAfterDiscount();
-                modified_fields.add("discount");
+            else if (requestCode == HTZ_GALLERY) {
+                selectedImageUri = data.getData();
+                Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
             }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-    }
-    private void initSpinners() {
-        ArrayAdapter<CharSequence> time_adapter =
-                ArrayAdapter.createFromResource(this,
-                R.array.times_array, android.R.layout.simple_spinner_dropdown_item);
-        mTimeSpinner.setAdapter(time_adapter);
-    }
-    private void initViewsAndReferences() {
-        // Firebase variables initialization
-        mFirebaseDatabase           = FirebaseDatabase.getInstance();
-        mFirebaseStorage            = FirebaseStorage.getInstance();
-        mPhotosStorageReference     = mFirebaseStorage.getReference().child("product_photos/" + user.getUid());
-        mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers/" + user.getUid());
-
-        // Attach members to xml elements
-        mPhotoPickerButton  = findViewById(R.id.product_photo_picker);
-        mPublishButton      = findViewById(R.id.publish_button);
-        mDiscountSeekbar    = findViewById(R.id.discount_SeekBar);
-        mTimeSpinner        = findViewById(R.id.time_Spinner);
-        mName               = findViewById(R.id.product_name_EditText);
-        mQuantity           = findViewById(R.id.quantity_EditText);
-        mPrice              = findViewById(R.id.price_EditText);
-        mDiscountPercent    = findViewById(R.id.percent_number_TextView);
-        mDateButton         = findViewById(R.id.actual_date_Button);
-        mTimeButton         = findViewById(R.id.actual_time_Button);
-        mAfterDiscount      = findViewById(R.id.after_discount_TextView);
-        mPhotoProgress      = findViewById(R.id.determinateCircle);
-        mDeleteButton       = findViewById(R.id.delete_button);
-
-        // Listen to text changes
-        mName       .addTextChangedListener(nameWatcher);
-        mQuantity   .addTextChangedListener(quantityWatcher);
-        mPrice      .addTextChangedListener(priceWatcher);
-
-        photo_done = false;
-        photo_firebase_uri = null;
-        offer_date = new OfferStartDate();
-        modified_fields = new ArrayList<>();
-    }
-
-    /*
-    * Different watchers are needed in order to update the modified_fields list (for edit_mode).
-    * Except modified_fields, the logic in all of those watchers is the same.
-    *
-    * */
-    private final TextWatcher nameWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        { }
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {}
-        @Override
-        public void afterTextChanged(Editable s) {
-            modified_fields.add("title");
+            // right after updating the view, show the Progress Circle and disable the publish button
+            // until upload is done
+            photo_done = false;
+            mPhotoProgress.setVisibility(View.VISIBLE);
             checkEnablePublishButton();
-            updatePriceAfterDiscount();
-        }
-    };
-    private final TextWatcher quantityWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        { }
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {}
-        @Override
-        public void afterTextChanged(Editable s) {
-            modified_fields.add("quantity");
-            checkEnablePublishButton();
-            updatePriceAfterDiscount();
-        }
-    };
-    private final TextWatcher priceWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        { }
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {}
-        @Override
-        public void afterTextChanged(Editable s) {
-            modified_fields.add("origPrice");
-            checkEnablePublishButton();
-            updatePriceAfterDiscount();
-        }
-    };
 
-    private void onClickPickPhoto() {
-        // ImagePickerButton shows an image picker to upload a image for a message
-        mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogPhotoOrGallery();
+            // ~~~~~~ (2) Delete previous photo if existed  ~~~~~~ //
+            if(photo_firebase_uri != null) {
+                mFirebaseStorage.getReferenceFromUrl((photo_firebase_uri).toString()).delete();
             }
-        });
+
+            // ~~~~~~ (3) Upload Image to Firebase Storage  ~~~~~~ //
+            StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+            UploadTask uploadTask = photoRef.putFile(selectedImageUri);
+            uploadTask
+                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            // When upload is complete, we can remove the Progress Circle and possibly enable the Publish button
+                                            photo_firebase_uri = uri;
+                                            photo_done = true;
+                                            mPhotoProgress.setVisibility(View.GONE);
+                                            modified_fields.add("photoUrl");
+                                            checkEnablePublishButton();
+                                        }
+                                    });
+                        }
+                    });
+        }
     }
 
+
+
+    // -------------------------- Publish Button Related Methods ------------------------------- //
     /*
     * onClickPublish -
     *
@@ -380,48 +209,48 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                 {
                     // Push to Firebase Realtime DataBase
                     mOffersDatabaseReference.push().setValue(n_offer, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError,
-                                               DatabaseReference databaseReference) {
+                @Override
+                public void onComplete(DatabaseError databaseError,
+                                       DatabaseReference databaseReference) {
                             String key = databaseReference.getKey();
                             Map<String, Object> userUpdates = new HashMap<>();
                             userUpdates.put("fbKey", key);
-                            userUpdates.put("date", n_offer.getDate());
                             mOffersDatabaseReference.child(key).updateChildren(userUpdates);
+                            n_offer.setFbKey(key);
+
+                            // Return offer to EditableOffersListFragment
+                            // This code is duplicated (and not placed outside of the 'else') because
+                            // I have to update n_offer's fbKey before returning it to EditableOffersListFragment
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("offer", n_offer);
+                            setResult(HTZ_ADD_OFFER, resultIntent);
+                            finish();
                         }
                     });
                 } else {
                     Map<String, Object> userUpdates = new HashMap<>();
                     for(String field : modified_fields) {
-                        putField(n_offer, userUpdates, field);
+                        getUserUpdateFromString(n_offer, userUpdates, field);
                     }
-                    mOffersDatabaseReference.child(edit_mode_fbKey).updateChildren(userUpdates);
-                    n_offer.setFbKey(edit_mode_fbKey);
+                    mOffersDatabaseReference.child(curr_fbKey).updateChildren(userUpdates);
+
+                    // Return offer to EditableOffersListFragment
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("offer", n_offer);
+                    setResult(HTZ_ADD_OFFER, resultIntent);
+                    finish();
                 }
-                // Return offer to EditableOffersListFragment
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("offer", n_offer);
-                setResult(HTZ_ADD_OFFER, resultIntent);
-                finish();
+
             }
         });
     }
 
-    private void putField(Offer n_offer, Map<String, Object> userUpdates, String field) {
-        if(field.equals("title") || field.equals("photoUrl") || field.equals("s_date"))
-            userUpdates.put(field, n_offer.getFieldFromString(field));
-        else if(field.equals("origPrice"))
-            userUpdates.put(field, Float.parseFloat(n_offer.getFieldFromString(field)));
-        else
-            userUpdates.put(field, Integer.parseInt(n_offer.getFieldFromString(field)));
-    }
-
     /*
-    * createOfferObjectFromView -
-    *
-    * Creates an Offer object from the data currently in display and returns it.
-    *
-    * */
+     * createOfferObjectFromView -
+     *
+     * Creates an Offer object from the data currently in display and returns it.
+     *
+     * */
     private Offer createOfferObjectFromView() {
         return new Offer(
                 mName.getText().toString(),
@@ -429,10 +258,27 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                 Integer.parseInt(mQuantity.getText().toString()),
                 Float.parseFloat(mPrice.getText().toString()),
                 mDiscountSeekbar.getProgress(),
-                Utils.timeFromStringToSecsAsInt(mTimeSpinner.getSelectedItem().toString()),
+                mTimeSpinner.getSelectedItem().toString(),
                 offer_date.start_day, offer_date.start_month, offer_date.start_year,
                 offer_date.start_hour, offer_date.start_minute
         );
+    }
+
+    /*
+     * getUserUpdateFromString -
+     *
+     * Takes an offer and a map with user changes, and a field name as String.
+     * The method puts the value from n_offer, corresponding to the given field, in the \
+     * userUpdates map.
+     *
+     * */
+    private void getUserUpdateFromString(Offer n_offer, Map<String, Object> userUpdates, String field) {
+        if(field.equals("title") || field.equals("photoUrl") || field.equals("s_date"))
+            userUpdates.put(field, n_offer.getFieldFromString(field));
+        else if(field.equals("origPrice"))
+            userUpdates.put(field, Float.parseFloat(n_offer.getFieldFromString(field)));
+        else
+            userUpdates.put(field, Integer.parseInt(n_offer.getFieldFromString(field)));
     }
 
     /*
@@ -473,79 +319,136 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
                 mQuantity.getText().toString().length() == 0;
     }
 
-    /*
-    * updatePriceAfterDiscount -
-    *
-    * This method updates the TextView that displays the price after discount according to the price
-    * that's currently displayed in the Price TextView, and the discount as displayed in the SeekBar.
-    *
-    * */
-    private void updatePriceAfterDiscount() {
-        if (mPrice.getText().toString().length() != 0) {
-            mAfterDiscount.setText( Utils.round(Utils.priceAfterDiscount(Float.parseFloat(mPrice.getText().toString()),
-                    mDiscountSeekbar.getProgress()),2).toString() );
-        }
-    }
+    // ----------------------------------------------------------------------------------------- //
 
+
+
+    // ------------------------------- Edit Mode Related Methods ------------------------------- //
     /*
-    * onActivityResult -
-    *
-    * onActivityResult is long in this activity, because it handles photos which come from both
-     * Gallery and Camera.
+     * showDialogConfirmDeletion -
      *
-    * */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == HTZ_GALLERY || requestCode == HTZ_CAMERA) && resultCode == RESULT_OK) {
-            // ~~~~~~ (1) Update the view immediately, and save the image URI  ~~~~~~ //
-            Uri selectedImageUri = null;
+     * Pops a dialog that verifies that the user indeed wants to delete the Offer. If yes, the Offer
+     * is deleted from RecyclerView (using EXTRA to the Fragment) and Firebase.
+     *
+     * */
+    public void showDialogConfirmDeletion() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.drawable.shape_dialog_round_corners);
 
-            if (requestCode == HTZ_CAMERA) {
-                File f = new File(photo_path_from_camera);
-                selectedImageUri = Uri.fromFile(f);
-                Utils.updateViewImage(OfferDetailsPopupActivity.this, photo_from_camera, mPhotoPickerButton);
+        builder.setMessage("באמת למחוק?");
+        builder.setCancelable(true);
+
+        builder.setNegativeButton("לא", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
             }
-            else if (requestCode == HTZ_GALLERY) {
-                selectedImageUri = data.getData();
-                Utils.updateViewImage(OfferDetailsPopupActivity.this, selectedImageUri, mPhotoPickerButton);
+        });
+
+        builder.setPositiveButton("כן", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // Delete from Firebase
+                mOffersDatabaseReference.child(curr_fbKey).removeValue();
+
+                // Return info to remove the Offer from RecyclerView
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("offer", (Parcelable)null);
+                resultIntent.putExtra("delete_key", curr_fbKey);
+                setResult(HTZ_ADD_OFFER, resultIntent);
+                dialog.cancel();
+                finish();
             }
+        });
 
-            // right after updating the view, show the Progress Circle and disable the publish button
-            // until upload is done
-            photo_done = false;
-            mPhotoProgress.setVisibility(View.VISIBLE);
-            checkEnablePublishButton();
+        builder.show();
+    }
 
-            // ~~~~~~ (2) Delete previous photo if existed  ~~~~~~ //
-            if(photo_firebase_uri != null) {
-                mFirebaseStorage.getReferenceFromUrl((photo_firebase_uri).toString()).delete();
-            }
-
-            // ~~~~~~ (3) Upload Image to Firebase Storage  ~~~~~~ //
-            StorageReference photoRef = mPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
-            UploadTask uploadTask = photoRef.putFile(selectedImageUri);
-            uploadTask
-            .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    private void onClickDelete() {
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                taskSnapshot.getMetadata().getReference().getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        // When upload is complete, we can remove the Progress Circle and possibly enable the Publish button
-                        photo_firebase_uri = uri;
-                        photo_done = true;
-                        mPhotoProgress.setVisibility(View.GONE);
-                        modified_fields.add("photoUrl");
-                        checkEnablePublishButton();
-                    }
-                });
+            public void onClick(View v) {
+                showDialogConfirmDeletion();
             }
-            });
+        });
+    }
+
+    /*
+     * handleExistingOfferScenario -
+     *
+     * This method checks if there is an incoming Offer, and if so - loads the Offer details to view
+     * and sets the relevant memebers to their correct value.
+     * If there is now incoming Offer, only some adjustments to the UI and memebers handling is
+     * required.
+     *
+     * */
+    private void handleExistingOfferScenario() {
+        Intent intent = getIntent();
+        if( isExistingOffer(intent) ) {
+            Offer from_recycler = intent.getParcelableExtra("offer_fromRecycler");
+            putOfferInViews(from_recycler);
+
+            edit_mode           = true;
+            curr_fbKey          = from_recycler.getFbKey();
+            photo_firebase_uri  = Uri.parse(from_recycler.getPhotoUrl());
+            photo_done          = true;
+
+            mPublishButton.setText("שמור שינויים");
+        } else {
+            edit_mode = false;
+
+            // Set the Publish button width to match_parent, and hide the 'delete' button
+            ViewGroup.LayoutParams params = mPublishButton.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mPublishButton.setLayoutParams(params);
+            mDeleteButton.setVisibility(View.GONE);
         }
     }
 
+    /*
+     * isExistingOffer - Relies on EXTRA to check if there is an existing Offer attached.
+     *
+     * @return : TRUE if an exisiting Offer is attached, FALSE otherwise.
+     *
+     * */
+    private boolean isExistingOffer(Intent intent) {
+        return !intent.getBooleanExtra("new", true);
+    }
+
+    /*
+     * putOfferInViews -
+     *
+     * This method handles setting all the views in the popup according to a given Offer.
+     *
+     * @param : Offer in - the Offer to set the views by.
+     *
+     * */
+    private void putOfferInViews(Offer offer) {
+        Utils.updateViewImage(this, Uri.parse(offer.getPhotoUrl()), mPhotoPickerButton);
+
+        mDiscountSeekbar        .setProgress(offer.getDiscount());
+        mTimeSpinner            .setSelection(determineTimeSpinnerIndex(offer));
+        mName                   .setText(offer.getTitle());
+        mQuantity               .setText(offer.getQuantity().toString());
+        mPrice                  .setText(offer.getOrigPrice().toString());
+        mDiscountPercent        .setText(offer.getDiscount().toString());
+
+        displayChosenDate(offer.getFromDate("day"), offer.getFromDate("month"), offer.getFromDate("year"));
+        displayChosenTime(offer.getFromDate("hour"), offer.getFromDate("minute"));
+        updatePriceAfterDiscount();
+    }
+
+    private Integer determineTimeSpinnerIndex(Offer offer) {
+        Instant start = Instant.parse(offer.getS_time());
+        Instant end   = Instant.parse(offer.getE_time());
+
+        long gap = ChronoUnit.MINUTES.between(start, end);
+
+        return (int)((gap / 30) - 1);
+    }
+
+    // ----------------------------------------------------------------------------------------- //
+
+
+
+    // ------------------------------- Date/Time Related Methods ------------------------------- //
     /*
      * showDatePickerDialog, showTimePickerDialog -
      *
@@ -582,7 +485,6 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         this.mDateButton.setText(day.toString() + "/" + month.toString() + "/" + year.toString());
     }
 
-
     /*
     * isValidStartDate -
     *
@@ -613,12 +515,63 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     }
 
     /*
-    * showDialogPhotoOrGallery -
-    *
-    * Pops a dialog that encourages the user to pick a source for the picture, and launches the
-    * appropriate activity, corresponding to the user's choice.
-    *
-    * */
+     * resetTimeAndDate -
+     *
+     * Resets the time and date both in display and in memory.
+     *
+     * */
+    private void resetTimeAndDate() {
+        final Calendar c = Calendar.getInstance();
+        int default_hour = c.get(Calendar.HOUR_OF_DAY) + 1; // since there is a time gap between user's click and the call to getInstance()
+        int default_minute = 0;
+
+        displayChosenDate(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH)+1, c.get(Calendar.YEAR));
+        displayChosenTime(default_hour, default_minute);
+
+        offer_date.start_day    = c.get(Calendar.DAY_OF_MONTH);
+        offer_date.start_month  = c.get(Calendar.MONTH)+1;
+        offer_date.start_year   = c.get(Calendar.YEAR);
+        offer_date.start_hour   = default_hour;
+        offer_date.start_minute = default_minute;
+    }
+
+    private void onClickDateAndTime() {
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
+                modified_fields.add("s_date");
+            }
+        });
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(v);
+                modified_fields.add("s_date");
+            }
+        });
+    }
+    // ----------------------------------------------------------------------------------------- //
+
+
+    // -------------------------- Camera/Gallery Related Methods ------------------------------- //
+    private void onClickPickPhoto() {
+        // ImagePickerButton shows an image picker to upload a image for a message
+        mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogPhotoOrGallery();
+            }
+        });
+    }
+
+    /*
+     * showDialogPhotoOrGallery -
+     *
+     * Pops a dialog that encourages the user to pick a source for the picture, and launches the
+     * appropriate activity, corresponding to the user's choice.
+     *
+     * */
     public void showDialogPhotoOrGallery() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.drawable.shape_dialog_round_corners);
 
@@ -636,43 +589,6 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 startActivityCamera();
                 dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-    /*
-    * showDialogConfirmDeletion -
-    *
-    * Pops a dialog that verifies that the user indeed wants to delete the Offer. If yes, the Offer
-    * is deleted from RecyclerView (using EXTRA to the Fragment) and Firebase.
-    *
-    * */
-    public void showDialogConfirmDeletion() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.drawable.shape_dialog_round_corners);
-
-        builder.setMessage("באמת למחוק?");
-        builder.setCancelable(true);
-
-        builder.setNegativeButton("לא", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-
-        builder.setPositiveButton("כן", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // Delete from Firebase
-                mOffersDatabaseReference.child(edit_mode_fbKey).removeValue();
-
-                // Return info to remove the Offer from RecyclerView
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("offer", (Parcelable)null);
-                resultIntent.putExtra("delete_key", edit_mode_fbKey);
-                setResult(HTZ_ADD_OFFER, resultIntent);
-                dialog.cancel();
-                finish();
             }
         });
 
@@ -744,6 +660,138 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         photo_path_from_camera = image.getAbsolutePath();
         return image;
     }
+    // ----------------------------------------------------------------------------------------- //
+
+    // ------------------------------- Inits and Setups ---------------------------------------- //
+    private void setupSeekBarListener() {
+        mDiscountSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Discount percent is in 10s
+                progress = progress / 10;
+                progress = progress * 10;
+                mDiscountSeekbar.setProgress(progress);
+                mDiscountPercent.setText(String.valueOf(progress));
+
+                // Updating the price after discount if needed
+                updatePriceAfterDiscount();
+                modified_fields.add("discount");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+    private void initSpinners() {
+        ArrayAdapter<CharSequence> time_adapter =
+                ArrayAdapter.createFromResource(this,
+                        R.array.times_array, android.R.layout.simple_spinner_dropdown_item);
+        mTimeSpinner.setAdapter(time_adapter);
+    }
+    private void initViewsAndReferences() {
+        // Firebase variables initialization
+        mFirebaseDatabase           = FirebaseDatabase.getInstance();
+        mFirebaseStorage            = FirebaseStorage.getInstance();
+        mPhotosStorageReference     = mFirebaseStorage.getReference().child("product_photos/" + user.getUid());
+        mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers/" + user.getUid());
+
+        // Attach members to xml elements
+        mPhotoPickerButton  = findViewById(R.id.product_photo_picker);
+        mPublishButton      = findViewById(R.id.publish_button);
+        mDiscountSeekbar    = findViewById(R.id.discount_SeekBar);
+        mTimeSpinner        = findViewById(R.id.time_Spinner);
+        mName               = findViewById(R.id.product_name_EditText);
+        mQuantity           = findViewById(R.id.quantity_EditText);
+        mPrice              = findViewById(R.id.price_EditText);
+        mDiscountPercent    = findViewById(R.id.percent_number_TextView);
+        mDateButton         = findViewById(R.id.actual_date_Button);
+        mTimeButton         = findViewById(R.id.actual_time_Button);
+        mAfterDiscount      = findViewById(R.id.after_discount_TextView);
+        mPhotoProgress      = findViewById(R.id.determinateCircle);
+        mDeleteButton       = findViewById(R.id.delete_button);
+
+        // Listen to text changes
+        mName       .addTextChangedListener(nameWatcher);
+        mQuantity   .addTextChangedListener(quantityWatcher);
+        mPrice      .addTextChangedListener(priceWatcher);
+
+        photo_done = false;
+        photo_firebase_uri = null;
+        offer_date = new OfferStartDate();
+        modified_fields = new ArrayList<>();
+    }
+
+    /*
+     * updatePriceAfterDiscount -
+     *
+     * This method updates the TextView that displays the price after discount according to the price
+     * that's currently displayed in the Price TextView, and the discount as displayed in the SeekBar.
+     *
+     * */
+    private void updatePriceAfterDiscount() {
+        if (mPrice.getText().toString().length() != 0) {
+            mAfterDiscount.setText( Utils.round(Utils.priceAfterDiscount(Float.parseFloat(mPrice.getText().toString()),
+                    mDiscountSeekbar.getProgress()),2).toString() );
+        }
+    }
+    // ----------------------------------------------------------------------------------------- //
+
+    // ------------------------------------- Text Watchers ------------------------------------- //
+    /*
+     * Different watchers are needed in order to update the modified_fields list (for edit_mode).
+     * Except modified_fields, the logic in all of those watchers is the same.
+     *
+     * */
+    private final TextWatcher nameWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        { }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {}
+        @Override
+        public void afterTextChanged(Editable s) {
+            modified_fields.add("title");
+            checkEnablePublishButton();
+            updatePriceAfterDiscount();
+        }
+    };
+    private final TextWatcher quantityWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        { }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {}
+        @Override
+        public void afterTextChanged(Editable s) {
+            modified_fields.add("quantity");
+            checkEnablePublishButton();
+            updatePriceAfterDiscount();
+        }
+    };
+    private final TextWatcher priceWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        { }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {}
+        @Override
+        public void afterTextChanged(Editable s) {
+            modified_fields.add("origPrice");
+            checkEnablePublishButton();
+            updatePriceAfterDiscount();
+        }
+    };
+    // ----------------------------------------------------------------------------------------- //
 }
 
 

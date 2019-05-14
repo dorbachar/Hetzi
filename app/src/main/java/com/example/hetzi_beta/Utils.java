@@ -12,6 +12,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.hetzi_beta.Offers.Offer;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -43,11 +49,6 @@ public class Utils {
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
         return bd.floatValue();
-    }
-
-    public static int timeFromStringToSecsAsInt(String input) {
-        // TODO : TIME OVERHAUL
-        return 0;
     }
 
     // ------------- Android ----------- //
@@ -92,5 +93,68 @@ public class Utils {
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    // ------------- Hetzi ----------- //
+    public static String getTimeEstimateString(Offer offer) {
+        String estimate = "";
+
+        Instant start = Instant.parse(offer.getS_time());
+        ZonedDateTime z_start = start.atZone(ZoneId.of("Israel"));
+
+        Instant end   = Instant.parse(offer.getE_time());
+        ZonedDateTime z_end = end.atZone(ZoneId.of("Israel"));
+
+        if (end.isBefore(Instant.now())) {
+            return "המבצע נגמר";
+        }
+
+        if (start.isAfter(Instant.now())) {
+            // Display estimate of when it starts
+            estimate += "מתחיל ";
+            Long days = ChronoUnit.DAYS.between(Instant.now(), start);
+            if (days > 0) {
+                if(days==1){
+                    estimate += "מחר ";
+                } else if (days==2){
+                    estimate += "מחרתיים ";
+                } else if (days < 7){
+                    estimate += "בעוד " + days.toString() + " ימים";
+                    return estimate;
+                } else {
+                    return "לא בשבוע הקרוב";
+                }
+            } else {
+                estimate += "היום ";
+            }
+
+            // At what time
+            int hour = z_start.getHour();
+            if (hour < 12 && hour > 3) {
+                estimate += "בבוקר";
+            } else if (hour < 16) {
+                estimate += "בצהריים";
+            } else if (hour < 18) {
+                estimate += "אחר הצהריים";
+            } else if (hour < 22) {
+                estimate += "בערב";
+            } else {
+                estimate += "בלילה";
+            }
+        } else {
+            // Offer live right now
+            estimate = "נגמר בעוד ";
+            Integer hours = (int)ChronoUnit.HOURS.between(Instant.now(), end);
+            if (hours > 0) {
+                estimate += hours.toString();
+                estimate += " שעות!";
+            } else {
+                Integer minutes = (int)ChronoUnit.MINUTES.between(Instant.now(), end);
+                estimate += minutes.toString();
+                estimate += " דקות!";
+            }
+        }
+
+        return estimate;
     }
 }
