@@ -1,27 +1,35 @@
 package com.example.hetzi_beta.Shops;
 
+import com.example.hetzi_beta.HtzAddress;
+import com.example.hetzi_beta.Utils;
+
 public class Shop {
     private String name;
     private String fb_uid; // Firebase uid
     private String logo_uri;
     private String cover_uri;
     private String website;
-    private String address; // TODO : - ON USER SIDE - add location on google maps (for now, and in the future open out map)
+    private Double lon;
+    private Double lat;
     private String phone;
     private String insta;
     private String facebook;
 
     public Shop() {
+
     }
 
-    public Shop(String shop_name, String firebase_uid, String logo, String cover_photo, String website, String address, String phone_number) {
+    public Shop(String shop_name, String firebase_uid, String logo, String cover_photo, String website, String phone_number) {
         this.name           = shop_name;
         this.fb_uid         = firebase_uid;
         this.logo_uri       = logo;
         this.cover_uri      = cover_photo;
         this.website        = website;
-        this.address        = address;
         this.phone          = phone_number;
+
+        HtzAddress shop_full_address = Utils.SHOP_ADDRESS.get(shop_name);
+        this.lat            = shop_full_address.getLatitude();
+        this.lon            = shop_full_address.getLongtitude();
     }
 
 
@@ -33,18 +41,14 @@ public class Shop {
         this.name = name;
     }
 
-    public String   getShopUserUid() {
-        return this.fb_uid;
-    }
-
-    public String      getLogoUri() {
+    public String   getLogoUri() {
         return this.logo_uri;
     }
     public void     setLogoUri(String new_uri) {
         this.logo_uri = new_uri;
     }
 
-    public String      getCoverPhotoUri() {
+    public String   getCoverPhotoUri() {
         return this.cover_uri;
     }
     public void     setCoverPhotoUri(String new_uri) {
@@ -56,13 +60,6 @@ public class Shop {
     }
     public void     setWebsite(String website) {
         this.website = website;
-    }
-
-    public void     setPhysicalAddress(String physical_address) {
-        this.address = physical_address;
-    }
-    public String   getPhysicalAddress() {
-        return this.address;
     }
 
     public String   getPhone() {
@@ -86,5 +83,25 @@ public class Shop {
         this.insta = instagram_uri;
     }
 
+    public Double   getLon() {
+        return lon;
+    }
+    public void     setLon(Double lon) {
+        this.lon = lon;
+    }
 
+    public Double   getLat() {
+        return lat;
+    }
+    public void     setLat(Double lat) {
+        this.lat = lat;
+    }
+
+
+    public String   getFb_uid() {
+        return fb_uid;
+    }
+    public void     setFb_uid(String fb_uid) {
+        this.fb_uid = fb_uid;
+    }
 }

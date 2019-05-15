@@ -162,6 +162,12 @@ public class Offer implements Parcelable {
         return Instant.now().isBefore(end) && Instant.now().isAfter(start);
     }
 
+    public boolean hasEnded() {
+        Instant end   = Instant.parse(e_time);
+
+        return Instant.now().isAfter(end);
+    }
+
     public int totalDurationInSecs() {
         Instant start = Instant.parse(s_time);
         Instant end   = Instant.parse(e_time);

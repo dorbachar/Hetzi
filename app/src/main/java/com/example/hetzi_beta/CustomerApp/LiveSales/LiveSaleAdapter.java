@@ -51,6 +51,13 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         } else {
             resetTimer(holder, current_offer);
         }
+
+        if (current_offer.hasEnded()) {
+            Utils.disableButton(holder.mAddOneButton, mContext, "offer");
+            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.Grey));
+        } else {
+            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.White));
+        }
     }
 
     private void resetTimer(@NonNull final SaleViewHolder holder, final Offer current_offer) {

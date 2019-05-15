@@ -21,6 +21,8 @@ import org.threeten.bp.temporal.ChronoUnit;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
     // Constants
@@ -30,6 +32,12 @@ public class Utils {
     public static final int HTZ_COVER_PHOTO_ULPOAD = 104;
     public static final int HTZ_LOGO_ULPOAD = 105;
     public static final int HTZ_CAMERA = 106;
+
+    public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>()
+    {{
+        put("היונג מין סטור",   new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
+        put("החנות של שירה",    new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
+    }};
 
     // -------------- Math ------------- //
 
@@ -68,13 +76,27 @@ public class Utils {
     }
 
 
-    public static void disableButton(Button button, Context context) {
-        button.setBackground(context.getResources().getDrawable(R.drawable.shape_disabled_button));
+    public static void disableButton(Button button, Context context, String type) {
+        switch(type) {
+            case "round":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_disabled_button));
+                break;
+            case "offer":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_regular_button_disabled));
+                break;
+        }
         button.setEnabled(false);
     }
-    public static void enableButton(Button button, Context context) {
-        button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));
-        button.setTextColor(context.getResources().getColor(R.color.Black));
+    public static void enableButton(Button button, Context context, String type) {
+        switch(type) {
+            case "round":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));
+                button.setTextColor(context.getResources().getColor(R.color.Black));
+                break;
+            case "offer":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_regular_button));
+                break;
+        }
         button.setEnabled(true);
     }
 

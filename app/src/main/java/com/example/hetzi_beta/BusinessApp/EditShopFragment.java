@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
@@ -32,6 +33,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
@@ -57,7 +61,7 @@ public class EditShopFragment extends Fragment {
     private ImageView           mShopCoverPhotoImageView;
     private CircularImageView   mLogoCircularImageView;
     private EditText            mShopName;
-    private EditText            mPhysicalAddress;
+    private TextView            mPhysicalAddress;
     private EditText            mWebsite;
     private EditText            mPhoneNumber;
     private EditText            mFacebookLink;
@@ -67,10 +71,10 @@ public class EditShopFragment extends Fragment {
     private ProgressBar         mCoverProgress;
 
     // Firebase instance variables (Storage and Realtime Database)
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mShopsDatabaseReference;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mShopPhotosStorageReference;
+    private FirebaseDatabase    mFirebaseDatabase;
+    private DatabaseReference   mShopsDatabaseReference;
+    private FirebaseStorage     mFirebaseStorage;
+    private StorageReference    mShopPhotosStorageReference;
 
     public EditShopFragment() {
         // Required empty public constructor
@@ -90,8 +94,8 @@ public class EditShopFragment extends Fragment {
         initViews(root_view);
 
         // Progress circles will be shown only while the photo is uploaded to the server
-        mLogoProgress.setVisibility(View.GONE);
-        mCoverProgress.setVisibility(View.GONE);
+        mLogoProgress           .setVisibility(View.GONE);
+        mCoverProgress          .setVisibility(View.GONE);
         logo_photo_ready        = false;
         cover_photo_ready       = false;
         logo_changed            = false;
@@ -124,7 +128,6 @@ public class EditShopFragment extends Fragment {
     private void attachListenersToEditTexts() {
         // Add listeners to EditTexts
         mShopName.addTextChangedListener(watcher);
-        mPhysicalAddress.addTextChangedListener(watcher);
         mWebsite.addTextChangedListener(watcher);
         mPhoneNumber.addTextChangedListener(watcher);
         mFacebookLink.addTextChangedListener(watcher);
@@ -135,7 +138,7 @@ public class EditShopFragment extends Fragment {
         mShopCoverPhotoImageView        = root_view.findViewById(R.id.shop_cover_photo_ImageView);
         mLogoCircularImageView          = root_view.findViewById(R.id.logo_CircularImageView);
         mShopName                       = root_view.findViewById(R.id.shop_name_EditText);
-        mPhysicalAddress                = root_view.findViewById(R.id.shop_address_EditText);
+        mPhysicalAddress                = root_view.findViewById(R.id.shop_address_TextView);
         mWebsite                        = root_view.findViewById(R.id.shop_site_EditText);
         mPhoneNumber                    = root_view.findViewById(R.id.shop_phonenumber_EditText);
         mSaveChanges                    = root_view.findViewById(R.id.save_changes_FancyButton);
@@ -161,7 +164,7 @@ public class EditShopFragment extends Fragment {
         mSaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateShopDbFromViews();
+                pushShopToDbFromViews();
                 disableSaveChangesButton();
             }
         });
@@ -213,12 +216,21 @@ public class EditShopFragment extends Fragment {
 
     private void updateViewsFromShopMember() {
         // Update the view as per the info from DB
-        mShopName           .setText(shop_on_display.getShopName());
-        mPhysicalAddress    .setText(shop_on_display.getPhysicalAddress());
+        String shop_name = shop_on_display.getShopName();
+
+        mShopName           .setText(shop_name);
         mWebsite            .setText(shop_on_display.getWebsite());
         mPhoneNumber        .setText(shop_on_display.getPhone());
         mFacebookLink       .setText(shop_on_display.getFacebookUri());
         mInstagramLink      .setText(shop_on_display.getInstagramUri());
+
+        if (Utils.SHOP_ADDRESS.containsKey(shop_name)) {
+            mPhysicalAddress.setText(Utils.SHOP_ADDRESS.get(shop_name).getAddress());
+        } else {
+            mPhysicalAddress.setText("אין כתובת עדכנית במערכת");
+        }
+
+
         Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getLogoUri()), mLogoCircularImageView);
         Utils.updateViewImage(getActivity(), Uri.parse(shop_on_display.getCoverPhotoUri()), mShopCoverPhotoImageView);
     }
@@ -293,7 +305,7 @@ public class EditShopFragment extends Fragment {
                 })
                 .setPositiveButton("כן", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        updateShopDbFromViews();
+                        pushShopToDbFromViews();
                         dialog.cancel();
                         getActivity().finish();
                     }
@@ -321,30 +333,42 @@ public class EditShopFragment extends Fragment {
     }
 
     /*
-    * updateShopDbFromViews -
+    * pushShopToDbFromViews -
     * Used when user saves changes, in order to push the shop details as an entry to the DB.
     *
     * */
-    private void updateShopDbFromViews() {
+    private void pushShopToDbFromViews() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         // If this is not the first time saving, we need to delete the previous shop page first
-        // TODO : like in Offers, update the entry and don;t delete it ....
+        // TODO : like in Offers, update the entry and don't delete it ....
         if (userExists(mShopsDatabaseReference.getKey(), user.getUid())) {
             mShopsDatabaseReference.getRef().removeValue();
         }
 
         // Now properly set shop_on_display to contain the current info
-        shop_on_display.setShopName(mShopName.getText().toString());
+        String shop_name = mShopName.getText().toString();
+        shop_on_display.setShopName(shop_name);
         shop_on_display.setCoverPhotoUri(cover_uri.toString());
         shop_on_display.setLogoUri(logo_uri.toString());
         shop_on_display.setPhone(mPhoneNumber.getText().toString());
         shop_on_display.setWebsite(mWebsite.getText().toString());
-        shop_on_display.setPhysicalAddress(mPhysicalAddress.getText().toString());
         shop_on_display.setFacebookUri(mFacebookLink.getText().toString());
         shop_on_display.setInstagramUri(mInstagramLink.getText().toString());
 
+        if (Utils.SHOP_ADDRESS.containsKey(shop_name)) {
+            shop_on_display.setLat(Utils.SHOP_ADDRESS.get(shop_name).getLatitude());
+            shop_on_display.setLon(Utils.SHOP_ADDRESS.get(shop_name).getLongtitude());
+        } else {
+            // TODO : handle this case thoroughly
+        }
+
         mShopsDatabaseReference.push().setValue(shop_on_display);
+
+        String key                      = mShopsDatabaseReference.getKey();
+        Map<String, Object> userUpdates = new HashMap<>();
+
+        mShopsDatabaseReference.child(key).updateChildren(userUpdates);
     }
 
     /*
@@ -365,13 +389,6 @@ public class EditShopFragment extends Fragment {
             checkEnableSaveButton();
         }
     };
-
-    /*
-    * As it's called: used to check whether or not the user made changes in the current session.
-    * */
-    public boolean      changesMade() {
-        return mSaveChanges.isEnabled();
-    }
 
     /*
     * These 4 methods are simple and straight-forward, but together they put the logic behind

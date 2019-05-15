@@ -113,7 +113,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         initViewsAndReferences();
         initSpinners();
 
-        Utils.disableButton(mPublishButton, this);
+        Utils.disableButton(mPublishButton, this, "round");
         mPhotoProgress.setVisibility(View.GONE);
         resetTimeAndDate();
 
@@ -292,9 +292,9 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         if ( emptyEditTextsExists() || !photoReady() ||
                 !isValidStartDate(offer_date.start_day, offer_date.start_month, offer_date.start_year,
                         offer_date.start_hour, offer_date.start_minute )) {
-            Utils.disableButton(mPublishButton, this);
+            Utils.disableButton(mPublishButton, this, "round");
         } else {
-            Utils.enableButton(mPublishButton, this);
+            Utils.enableButton(mPublishButton, this, "round");
         }
     }
 

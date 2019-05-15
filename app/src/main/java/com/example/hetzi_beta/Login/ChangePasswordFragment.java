@@ -42,7 +42,7 @@ public class ChangePasswordFragment extends Fragment {
         mChangePassButton   = root_view.findViewById(R.id.change_pass_Button);
         mSuccess            = root_view.findViewById(R.id.success_ImageView);
 
-        Utils.disableButton(mChangePassButton, getActivity());
+        Utils.disableButton(mChangePassButton, getActivity(), "round");
 
         mOldPassword.addTextChangedListener(watcher);
         mNewPassword.addTextChangedListener(watcher);
@@ -62,7 +62,7 @@ public class ChangePasswordFragment extends Fragment {
                                 mSuccess.setImageResource(R.drawable.baseline_check_circle_green_48dp);
                                 FirebaseAuth.getInstance().getCurrentUser().updatePassword(mNewPassword.getText().toString());
                                 Toast.makeText(getActivity(),"סיסמא שונתה", Toast.LENGTH_SHORT).show();
-                                Utils.disableButton(mChangePassButton, getActivity());
+                                Utils.disableButton(mChangePassButton, getActivity(), "round");
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -95,7 +95,7 @@ public class ChangePasswordFragment extends Fragment {
         public void afterTextChanged(Editable s) {
             if (    mOldPassword.getText().toString().length() != 0 &&
                     mNewPassword.getText().toString().length() != 0) {
-                Utils.enableButton(mChangePassButton, getActivity());
+                Utils.enableButton(mChangePassButton, getActivity(), "round");
             }
         }
     };

@@ -1,21 +1,20 @@
 package com.example.hetzi_beta.CustomerApp.LiveSales;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
-import com.example.hetzi_beta.BusinessApp.EditOffers.MyPreloadModelProvider;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
@@ -44,6 +43,10 @@ public class LiveSalesFragment extends Fragment {
     public ViewPreloadSizeProvider              mPreloadSizeProvider;
     public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
 
+    // Views
+    public ProgressBar mLoadingCircle;
+    public TextView mLoadingText;
+
     public LiveSalesFragment() {
         // Required empty public constructor
     }
@@ -59,8 +62,12 @@ public class LiveSalesFragment extends Fragment {
         recyclerView        = root_view.findViewById(R.id.sales_RecyclerView);
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
 
+        mLoadingCircle  = root_view.findViewById(R.id.loading_circle_ProgressBar);
+        mLoadingText    = root_view.findViewById(R.id.loading_TextView);
+
         setupAdapter();
-        loadOffersFromDb();
+        loadAllOffersFromDb();
+        setupGlidePreloader();
 
         return root_view;
     }
@@ -71,7 +78,7 @@ public class LiveSalesFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
     }
 
-    public void loadOffersFromDb() {
+    public void loadAllOffersFromDb() {
         final Map<String, ArrayList<Offer>> offers_cache_map = new HashMap<>();
         final Map<Shop, ArrayList<Offer>> offers_n_stores_cache = new HashMap<>();
 
@@ -116,11 +123,25 @@ public class LiveSalesFragment extends Fragment {
                 Iterator it = offers_n_stores_cache.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry)it.next();
-                    for(Offer ofr : (ArrayList<Offer>)(pair.getValue())) {
-                        deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
+                    if (deals_list.size() == 0) {
+                        // Add all offers, since the list is empty
+                        for(Offer ofr : (ArrayList<Offer>)(pair.getValue())) {
+                            deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
+                        }
+                    } else {
+                        // Add only the non-existant offers
+                        for(Offer ofr : (ArrayList<Offer>)(pair.getValue())) {
+                            if (!offerInDealsList(ofr)) {
+                                deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
+                            }
+                        }
                     }
+
                 }
                 mAdapter.notifyDataSetChanged();
+
+                mLoadingCircle.setVisibility(View.GONE);
+                mLoadingText.setVisibility(View.GONE);
             }
 
             @Override
@@ -130,6 +151,15 @@ public class LiveSalesFragment extends Fragment {
 
 
 
+    }
+
+    private boolean offerInDealsList(Offer offer) {
+        for(Deal deal : deals_list) {
+            if(deal.getOffer().getFbKey().equals(offer.getFbKey())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setupGlidePreloader() {

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +66,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
         mNoOffersTextView   = root_view.findViewById(R.id.no_sales);
         mAddOffersTextView  = root_view.findViewById(R.id.add_offers);
         fab                 = root_view.findViewById(R.id.fab);
+
         offers_list         = new ArrayList<>();
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
 

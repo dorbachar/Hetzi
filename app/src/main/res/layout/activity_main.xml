@@ -3,61 +3,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity"
+    android:background="@drawable/splash_background">
 
-    <TextView
-        android:id="@+id/welcome_dev"
-        android:text="@string/dev_welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:layout_centerHorizontal="true"
+        android:src="@drawable/logo_white_shadow"
+        android:background="@color/Black_Transparent"
         android:layout_marginTop="100dp"
         />
 
 
-
-    <Button
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/business_hub_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Business Hub"
-        android:layout_below="@id/welcome_dev"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_width="120dp"
+        android:layout_height="90dp"
+        android:text="צד עסק"
+        android:layout_marginTop="300dp"
         android:onClick="onClickBusinessHub"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+
+        fancy:fb_iconResource="@drawable/splash_button_business"
+        fancy:fb_radius="80dp"
+        fancy:fb_fontIconSize="10dp"
+        fancy:fb_iconPosition="top"
+        fancy:fb_defaultColor="@color/colorDiscount"
+        fancy:fb_textSize="15dp"
+        fancy:fb_borderColor="@color/White"
+        fancy:fb_borderWidth="2dp"
+        fancy:fb_focusColor="@color/colorAccent"
         />
 
-    <Button
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/customers_hub_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Customers Hub"
-        android:layout_below="@id/business_hub_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_width="120dp"
+        android:layout_height="90dp"
+        android:text="צד לקוח"
+        android:layout_marginTop="300dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="50dp"
         android:onClick="onClickCustomersHub"
+        fancy:fb_borderColor="@color/White"
+        fancy:fb_borderWidth="2dp"
+
+        fancy:fb_iconResource="@drawable/splash_button_customer"
+        fancy:fb_radius="80dp"
+        fancy:fb_fontIconSize="40dp"
+        fancy:fb_iconPosition="top"
+        fancy:fb_defaultColor="@color/colorDiscount"
+        fancy:fb_textSize="15dp"
+        fancy:fb_focusColor="@color/colorAccent"
         />
 
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:layout_below="@id/customers_hub_button"
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:layout_width="120dp"
+        android:layout_height="40dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:onClick="onClickLogin"
-        />
+        android:text="מצב הדגמה"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
 
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:layout_below="@id/login_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:onClick="onClickLogout"
+        fancy:fb_radius="30dp"
+        fancy:fb_defaultColor="@color/Red"
+        fancy:fb_borderColor="@color/White"
+        fancy:fb_borderWidth="2dp"
         />
 
 </RelativeLayout>
