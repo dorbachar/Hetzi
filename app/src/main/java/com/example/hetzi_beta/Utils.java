@@ -34,17 +34,23 @@ import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class Utils {
     // Constants
-    public static final int HTZ_GALLERY = 101;
-    public static final int HTZ_ADD_OFFER = 102;
-    public static final int HTZ_SIGN_IN = 103;
-    public static final int HTZ_COVER_PHOTO_ULPOAD = 104;
-    public static final int HTZ_LOGO_ULPOAD = 105;
-    public static final int HTZ_CAMERA = 106;
+    public static final int     HTZ_GALLERY = 101;
+    public static final int     HTZ_ADD_OFFER = 102;
+    public static final int     HTZ_SIGN_IN = 103;
+    public static final int     HTZ_COVER_PHOTO_ULPOAD = 104;
+    public static final int     HTZ_LOGO_ULPOAD = 105;
+    public static final int     HTZ_CAMERA = 106;
+    public static final int     HTZ_LOCATION = 107;
+    public static final Double  HTZ_LOCATION_NOT_FOUND = 0.0;
+    public static final Float   HTZ_INVALID_DISTANCE = Float.valueOf(1000000000);
 
     public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>() {{
         put("היונג מין סטור", new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
         put("החנות של שירה", new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
     }};
+
+    public static Double user_lat = HTZ_LOCATION_NOT_FOUND;
+    public static Double user_lon = HTZ_LOCATION_NOT_FOUND;
 
     // -------------- Math ------------- //
 
@@ -151,6 +157,23 @@ public class Utils {
             } else {
                 // Permission is revoked
                 ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            // Permission is granted
+            return true;
+        }
+    }
+
+    public static boolean isLocationPermissionGranted(Activity context) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                return true;
+            } else {
+                // Permission is revoked
+                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, HTZ_LOCATION);
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation

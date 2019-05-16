@@ -28,7 +28,4 @@
         app:tabTextAppearance="@style/HetziTabText"
         />
 
-
-
-
 </LinearLayout>

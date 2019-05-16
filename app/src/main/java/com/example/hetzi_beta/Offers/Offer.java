@@ -168,6 +168,12 @@ public class Offer implements Parcelable {
         return Instant.now().isAfter(end);
     }
 
+    public boolean hasStarted() {
+        Instant start   = Instant.parse(s_time);
+
+        return Instant.now().isAfter(start);
+    }
+
     public int totalDurationInSecs() {
         Instant start = Instant.parse(s_time);
         Instant end   = Instant.parse(e_time);

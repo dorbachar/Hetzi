@@ -15,9 +15,13 @@ import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
 
 public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adapter<LiveSaleAdapter.SaleViewHolder> {
     private ArrayList<Deal> mDeals;
@@ -40,12 +44,16 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
 
     @Override
     public void onBindViewHolder(@NonNull final SaleViewHolder holder, int position) {
-        Deal current_deal = mDeals.get(position);
+        Deal current_deal   = mDeals.get(position);
         Offer current_offer = current_deal.getOffer();
 
         loadOffer(holder, current_deal, current_offer);
         loadShop(holder, current_deal);
 
+        setupTimer(holder, current_offer);
+    }
+
+    private void setupTimer(@NonNull SaleViewHolder holder, Offer current_offer) {
         if(current_offer.isActive()) {
             activateTimer(holder, current_offer);
         } else {
@@ -55,7 +63,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         if (current_offer.hasEnded()) {
             Utils.disableButton(holder.mAddOneButton, mContext, "offer");
             holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.Grey));
-        } else {
+        } else if (!current_offer.hasStarted()) {
             holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.White));
         }
     }
@@ -147,6 +155,16 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         holder.price_TextView       .setText(price_after_discount.toString());
         holder.precentage_TextView  .setText(current_offer.getDiscount().toString());
         holder.mTimer               .setText(resetTimer(current_offer));
+
+        Float dist = current_deal.calcDistanceFromSale();
+        if (dist.equals(HTZ_INVALID_DISTANCE)) {
+            holder.mDistance.setText(dist.toString());
+            holder.mKilometerWord.setVisibility(View.VISIBLE);
+        } else {
+            holder.mKilometerWord.setVisibility(View.GONE);
+            holder.mDistance.setText("מיקום כבוי");
+        }
+
     }
 
     private String resetTimer(Offer offer) {
@@ -172,6 +190,9 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         TextView                orig_price_TextView;
         Button                  mAddOneButton;
         TextView                mTimer;
+        TextView                mDistance;
+        TextView                mKilometerWord;
+
         // Shop Details
         ImageView               shopLogo;
         TextView                shopName;
@@ -190,7 +211,9 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
             mAddOneButton                   = itemView.findViewById(R.id.add_one_Button);
             shopLogo                        = itemView.findViewById(R.id.shop_logo_CircularImageView);
             shopName                        = itemView.findViewById(R.id.shop_name_TextView);
-            mTimer                          =itemView.findViewById(R.id.offer_timer_EditText);
+            mTimer                          = itemView.findViewById(R.id.offer_timer_EditText);
+            mDistance                       = itemView.findViewById(R.id.distance_TextView);
+            mKilometerWord                  = itemView.findViewById(R.id.kilometer);
         }
     }
 }
