@@ -1,11 +1,16 @@
 package com.example.hetzi_beta;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -24,6 +29,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
+import static com.firebase.ui.auth.AuthUI.TAG;
+
 public class Utils {
     // Constants
     public static final int HTZ_GALLERY = 101;
@@ -33,10 +41,9 @@ public class Utils {
     public static final int HTZ_LOGO_ULPOAD = 105;
     public static final int HTZ_CAMERA = 106;
 
-    public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>()
-    {{
-        put("היונג מין סטור",   new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
-        put("החנות של שירה",    new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
+    public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>() {{
+        put("היונג מין סטור", new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
+        put("החנות של שירה", new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
     }};
 
     // -------------- Math ------------- //
@@ -77,7 +84,7 @@ public class Utils {
 
 
     public static void disableButton(Button button, Context context, String type) {
-        switch(type) {
+        switch (type) {
             case "round":
                 button.setBackground(context.getResources().getDrawable(R.drawable.shape_disabled_button));
                 break;
@@ -87,8 +94,9 @@ public class Utils {
         }
         button.setEnabled(false);
     }
+
     public static void enableButton(Button button, Context context, String type) {
-        switch(type) {
+        switch (type) {
             case "round":
                 button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));
                 button.setTextColor(context.getResources().getColor(R.color.Black));
@@ -117,6 +125,40 @@ public class Utils {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public static boolean isReadStoragePermissionGranted(Activity context, int requestCode) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                return true;
+            } else {
+                // Permission is revoked
+                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            // Permission is granted
+            return true;
+        }
+    }
+
+    public static boolean isWriteStoragePermissionGranted(Activity context, int requestCode) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                return true;
+            } else {
+                // Permission is revoked
+                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            // Permission is granted
+            return true;
+        }
+    }
+
     // ------------- Hetzi ----------- //
     public static String getTimeEstimateString(Offer offer) {
         String estimate = "";
@@ -124,7 +166,7 @@ public class Utils {
         Instant start = Instant.parse(offer.getS_time());
         ZonedDateTime z_start = start.atZone(ZoneId.of("Israel"));
 
-        Instant end   = Instant.parse(offer.getE_time());
+        Instant end = Instant.parse(offer.getE_time());
         ZonedDateTime z_end = end.atZone(ZoneId.of("Israel"));
 
         if (end.isBefore(Instant.now())) {
@@ -136,11 +178,11 @@ public class Utils {
             estimate += "מתחיל ";
             Long days = ChronoUnit.DAYS.between(Instant.now(), start);
             if (days > 0) {
-                if(days==1){
+                if (days == 1) {
                     estimate += "מחר ";
-                } else if (days==2){
+                } else if (days == 2) {
                     estimate += "מחרתיים ";
-                } else if (days < 7){
+                } else if (days < 7) {
                     estimate += "בעוד " + days.toString() + " ימים";
                     return estimate;
                 } else {
@@ -166,12 +208,12 @@ public class Utils {
         } else {
             // Offer live right now
             estimate = "נגמר בעוד ";
-            Integer hours = (int)ChronoUnit.HOURS.between(Instant.now(), end);
+            Integer hours = (int) ChronoUnit.HOURS.between(Instant.now(), end);
             if (hours > 0) {
                 estimate += hours.toString();
                 estimate += " שעות!";
             } else {
-                Integer minutes = (int)ChronoUnit.MINUTES.between(Instant.now(), end);
+                Integer minutes = (int) ChronoUnit.MINUTES.between(Instant.now(), end);
                 estimate += minutes.toString();
                 estimate += " דקות!";
             }

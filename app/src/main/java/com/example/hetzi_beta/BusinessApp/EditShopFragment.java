@@ -41,6 +41,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.hetzi_beta.Utils.HTZ_COVER_PHOTO_ULPOAD;
+import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
 import static com.example.hetzi_beta.Utils.HTZ_LOGO_ULPOAD;
 
 public class EditShopFragment extends Fragment {
@@ -152,12 +153,18 @@ public class EditShopFragment extends Fragment {
         mDestImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), requestCode);
-            }
+                    if (Utils.isReadStoragePermissionGranted(getActivity(), requestCode)) {
+                        startActivityGallery(requestCode);
+                    }
+                }
         });
+    }
+
+    public void startActivityGallery(int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(Intent.createChooser(intent, "Complete action using"), requestCode);
     }
 
     private void onClickSaveChanges() {

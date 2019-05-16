@@ -2,6 +2,7 @@ package com.example.hetzi_beta.BusinessApp.HomePage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +24,11 @@ import com.google.firebase.auth.FirebaseUser;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
-
 public class BusinessHomeActivity extends ToolbarActivity {
 
     private ViewPager mViewPager;
     private Toolbar mToolbar;
-
+    private SectionsPageAdapter adapter;
     String[] tab_titles = {
             "מבצעים",
             "עמוד עסק",
@@ -41,6 +41,8 @@ public class BusinessHomeActivity extends ToolbarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business_home);
+
+        adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -97,8 +99,6 @@ public class BusinessHomeActivity extends ToolbarActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-
         adapter.addFragment(new EditableOffersListFragment(), tab_titles[0]);
         adapter.addFragment(new EditShopFragment(), tab_titles[1]);
         adapter.addFragment(new PastDealsFragment(), tab_titles[2]);
@@ -106,6 +106,12 @@ public class BusinessHomeActivity extends ToolbarActivity {
         adapter.addFragment(new ShopSettingsFragment(), tab_titles[4]);
 
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ((EditShopFragment)adapter.getItem(1)).startActivityGallery(requestCode);
     }
 
 //    @Override

@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -124,6 +125,16 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
         setupSeekBarListener();
 
         handleExistingOfferScenario();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == HTZ_GALLERY) {
+            startActivityGallery();
+        } else if (requestCode == HTZ_CAMERA) {
+            startActivityCamera();
+        }
     }
 
     /*
@@ -580,14 +591,18 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
 
         builder.setNegativeButton("גלריה", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                startActivityGallery();
+                if (Utils.isReadStoragePermissionGranted(OfferDetailsPopupActivity.this, HTZ_GALLERY) ) {
+                    startActivityGallery();
+                }
                 dialog.cancel();
             }
         });
 
         builder.setPositiveButton("מצלמה", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                startActivityCamera();
+                if (Utils.isWriteStoragePermissionGranted(OfferDetailsPopupActivity.this, HTZ_CAMERA) ) {
+                    startActivityCamera();
+                }
                 dialog.cancel();
             }
         });

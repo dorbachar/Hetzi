@@ -23,9 +23,6 @@
         android:windowSoftInputMode="adjustPan">
         <activity android:name=".ToolbarActivity"></activity>
         <activity
-            android:name=".Login.ChangePasswordFragment"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".BusinessApp.HomePage.BusinessHomeActivity"
             android:label="חצי"
             android:theme="@style/AppTheme.NoActionBar" />
