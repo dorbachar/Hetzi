@@ -12,6 +12,6 @@ public class ToolbarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toolbar);
 
-        AndroidThreeTen.init(this);
+
     }
 }

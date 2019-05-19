@@ -19,6 +19,12 @@
         <item name="android:windowBackground">@drawable/shape_dialog_round_corners</item>
     </style>
 
+    <style name="PopupThemeBlueBg" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/shape_dialog_round_corners_blugbg</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

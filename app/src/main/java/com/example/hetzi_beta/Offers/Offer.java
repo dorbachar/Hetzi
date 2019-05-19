@@ -19,6 +19,7 @@ import org.threeten.bp.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.hetzi_beta.Utils.round;
 import static java.lang.Integer.parseInt;
 
 public class Offer implements Parcelable {
@@ -289,5 +290,10 @@ public class Offer implements Parcelable {
 
     public void setFbKey(String fbKey) {
         this.fbKey = fbKey;
+    }
+
+    public Float priceAfterDiscount() {
+        float discount_percent = discount.floatValue() / 100;
+        return round(origPrice * (1 - discount_percent),2);
     }
 }

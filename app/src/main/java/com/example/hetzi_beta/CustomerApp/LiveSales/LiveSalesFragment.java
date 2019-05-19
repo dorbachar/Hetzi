@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -15,9 +16,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
+import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
+import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
+import com.example.hetzi_beta.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class LiveSalesFragment extends Fragment {
+public class LiveSalesFragment extends Fragment implements OnClickButtonListenerDeals {
     private RecyclerView recyclerView;
     public LiveSaleAdapter mAdapter;
     public ArrayList<Deal> deals_list = new ArrayList<>();
@@ -74,7 +78,7 @@ public class LiveSalesFragment extends Fragment {
 
     private void setupAdapter() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter            = new LiveSaleAdapter(deals_list);
+        mAdapter            = new LiveSaleAdapter(deals_list, this);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -169,5 +173,34 @@ public class LiveSalesFragment extends Fragment {
         RecyclerViewPreloader<String> preloader =
                 new RecyclerViewPreloader<>(Glide.with(this), mPreloadModelProvider, mPreloadSizeProvider, 10);
         recyclerView.addOnScrollListener(preloader);
+    }
+
+    /*
+     * onClickButtonOffers -
+     *
+     * Implementation of OnClickButtonListenerOffers.onClickButtonOffers, so that when calling
+     * startActivityForResult, the onActivityResult method will be called as I want.
+     *
+     * */
+    @Override
+    public void onClickButtonDeals(View v, int position, ArrayList<Deal> deals, TextView card_quantity) {
+        // (1) Update the shopping cart
+        Deal from_item = deals.get(position);
+
+        ShoppingCart cart = ShoppingCart.getInstance();
+        cart.addDeal(from_item);
+
+        CustomerHomeActivity caller = (CustomerHomeActivity) getActivity();
+        caller.cartNotifPlus();
+
+        // (2) Update the offer card
+        Integer current_displayed_quantity = Integer.parseInt(card_quantity.getText().toString());
+        current_displayed_quantity--;
+        card_quantity.setText(current_displayed_quantity.toString());
+
+        // (3) Disable the 'Add One' button if needed
+        if (current_displayed_quantity == 0) {
+            Utils.disableButton((Button)v, getActivity(), "offer");
+        }
     }
 }

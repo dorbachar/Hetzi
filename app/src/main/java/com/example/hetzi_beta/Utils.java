@@ -53,10 +53,9 @@ public class Utils {
     public static Double user_lon = HTZ_LOCATION_NOT_FOUND;
 
     // -------------- Math ------------- //
-
-    public static Float priceAfterDiscount(Float orig_price, Integer discount) {
+    public static Float priceAfterDiscount(Float origPrice, Integer discount) {
         float discount_percent = discount.floatValue() / 100;
-        return orig_price * (1 - discount_percent);
+        return round(origPrice * (1 - discount_percent),2);
     }
 
     /**

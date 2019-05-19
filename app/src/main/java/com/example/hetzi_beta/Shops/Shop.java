@@ -5,7 +5,8 @@ import com.example.hetzi_beta.Utils;
 
 public class Shop {
     private String name;
-    private String fb_uid; // Firebase uid
+    private String fb_uid; // Firebase connected user uid
+    private String fbKey; // Firebase unique random key
     private String logo_uri;
     private String cover_uri;
     private String website;
@@ -98,10 +99,18 @@ public class Shop {
     }
 
 
-    public String   getFb_uid() {
+    public String getUid() {
         return fb_uid;
     }
     public void     setFb_uid(String fb_uid) {
         this.fb_uid = fb_uid;
+    }
+
+    public String getFbKey() {
+        return fbKey;
+    }
+
+    public void setFbKey(String fbKey) {
+        this.fbKey = fbKey;
     }
 }

@@ -752,8 +752,8 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
      * */
     private void updatePriceAfterDiscount() {
         if (mPrice.getText().toString().length() != 0) {
-            mAfterDiscount.setText( Utils.round(Utils.priceAfterDiscount(Float.parseFloat(mPrice.getText().toString()),
-                    mDiscountSeekbar.getProgress()),2).toString() );
+            mAfterDiscount.setText( Utils.priceAfterDiscount(Float.parseFloat(mPrice.getText().toString()),
+                    mDiscountSeekbar.getProgress()).toString() );
         }
     }
     // ----------------------------------------------------------------------------------------- //

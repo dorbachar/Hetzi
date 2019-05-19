@@ -12,6 +12,7 @@ import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
 import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AndroidThreeTen.init(this);
 
         FancyButton business_button = findViewById(R.id.business_hub_button);
         FancyButton customer_button = findViewById(R.id.customers_hub_button);

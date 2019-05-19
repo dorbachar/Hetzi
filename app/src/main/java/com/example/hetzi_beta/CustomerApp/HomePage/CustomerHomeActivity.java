@@ -1,22 +1,25 @@
 package com.example.hetzi_beta.CustomerApp.HomePage;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.TextureView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
+import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
 import com.example.hetzi_beta.CustomerApp.ShopsListFragment;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.ToolbarActivity;
+import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,25 +28,60 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+
+import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
 import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
 
-public class CustomerHomeActivity extends ToolbarActivity {
-    private ViewPager mViewPager;
-    private FusedLocationProviderClient fusedLocationClient;
+public class CustomerHomeActivity extends AppCompatActivity {
+    private ViewPager                       mViewPager;
+    private FusedLocationProviderClient     fusedLocationClient;
+    private Toolbar                         mToolbar;
+    private TextView                        mToolbarTitle;
+    private FancyButton                     mNotifNumber;
+    private ImageView                       mCartButton;
 
-    @SuppressLint("MissingPermission")
+    String[] toolbar_titles = {
+            "כל המבצעים",
+            "כל החנויות",
+            "מועדפים",
+            "DISCOVER",
+            "הגדרות"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_home);
 
-        mViewPager = findViewById(R.id.view_pager);
+        // Toolbar related
+        mToolbar        = findViewById(R.id.my_toolbar);
+        mNotifNumber    = findViewById(R.id.notif_num);
+        mToolbarTitle   = mToolbar.findViewById(R.id.toolbar_title_TextView);
+        mNotifNumber.setVisibility(View.GONE);
+
+        mViewPager      = findViewById(R.id.view_pager);
         setupViewPager(mViewPager);
 
         final TabLayout tabLayout = setupTabLayout();
         setupKeyboardVisibility(tabLayout);
 
+        getUserLocation();
+
+        mCartButton     = mToolbar.findViewById(R.id.cart_icon_ImageView);
+        mCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerHomeActivity.this, ViewCartPopupActivity.class);
+                intent.putExtra("new", true);
+                startActivityForResult(intent, HTZ_ADD_OFFER);
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getUserLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (Utils.isLocationPermissionGranted(this)) {
@@ -61,14 +99,7 @@ public class CustomerHomeActivity extends ToolbarActivity {
                         }
                     });
         }
-
     }
-
-
-
-
-
-
 
     private void setupKeyboardVisibility(final TabLayout tabLayout) {
         // TODO : Works but screen glitches and EditTexts gets squeeshed
@@ -91,8 +122,27 @@ public class CustomerHomeActivity extends ToolbarActivity {
         tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_discover);
         tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_settings);
 
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mToolbarTitle.setText(toolbar_titles[tab.getPosition()]);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         tabLayout.setTabTextColors(getResources().getColor(R.color.White), getResources().getColor(R.color.colorAccent));
         tabLayout.setTabRippleColor(null);
+
         return tabLayout;
     }
 
@@ -106,6 +156,29 @@ public class CustomerHomeActivity extends ToolbarActivity {
         adapter.addFragment(new CustomerSettingsFragment(), "הגדרות");
 
         viewPager.setAdapter(adapter);
+    }
+
+    public void cartNotifPlus() {
+        ShoppingCart cart = ShoppingCart.getInstance();
+        Integer curr_size = cart.getSize();
+
+        if (curr_size == 1) {
+            mNotifNumber.setVisibility(View.VISIBLE);
+        }
+
+        mNotifNumber.setText(curr_size.toString());
+    }
+
+    public void cartNotifMinus(Integer amount) {
+        ShoppingCart cart = ShoppingCart.getInstance();
+        Integer curr_size = cart.getSize();
+        cart.setSize(curr_size - amount);
+
+        if (curr_size == 0) {
+            mNotifNumber.setVisibility(View.GONE);
+        }
+
+        mNotifNumber.setText(curr_size.toString());
     }
 
 //    @Override

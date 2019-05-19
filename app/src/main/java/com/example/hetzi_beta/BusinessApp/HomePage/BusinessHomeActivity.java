@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
@@ -24,15 +25,25 @@ import com.google.firebase.auth.FirebaseUser;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
-public class BusinessHomeActivity extends ToolbarActivity {
+public class BusinessHomeActivity extends AppCompatActivity {
 
-    private ViewPager mViewPager;
-    private Toolbar mToolbar;
-    private SectionsPageAdapter adapter;
+    private ViewPager               mViewPager;
+    private Toolbar                 mToolbar;
+    private TextView                mToolbarTitle;
+    private SectionsPageAdapter     adapter;
+
     String[] tab_titles = {
             "מבצעים",
             "עמוד עסק",
             "עסקאות",
+            "תובנות",
+            "הגדרות"
+    };
+
+    String[] toolbar_titles = {
+            "המבצעים שלי",
+            "עמוד העסק שלי",
+            "עסקאות עבר",
             "תובנות",
             "הגדרות"
     };
@@ -51,41 +62,13 @@ public class BusinessHomeActivity extends ToolbarActivity {
             startActivity(intent);
             finish();
         } else {
-            mToolbar = findViewById(R.id.my_toolbar);
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.White));
-            setSupportActionBar(mToolbar);
+            mToolbar        = findViewById(R.id.my_toolbar);
+            mToolbarTitle   = mToolbar.findViewById(R.id.toolbar_title_TextView);
 
             mViewPager = findViewById(R.id.view_pager);
             setupViewPager(mViewPager);
 
-            final TabLayout tabLayout = findViewById(R.id.tabs);
-            tabLayout.setupWithViewPager(mViewPager);
-
-            tabLayout.getTabAt(0).setIcon(R.drawable.tab_icon_offers);
-            tabLayout.getTabAt(1).setIcon(R.drawable.tab_icon_shop_page);
-            tabLayout.getTabAt(2).setIcon(R.drawable.tab_icon_past_deals);
-            tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_stats);
-            tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_settings);
-
-            tabLayout.setTabTextColors(getResources().getColor(R.color.White), getResources().getColor(R.color.colorAccent));
-            tabLayout.setTabRippleColor(null);
-
-            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    mToolbar.setTitle(tab_titles[tab.getPosition()]);
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-
-                }
-            });
+            final TabLayout tabLayout = setupTabLayout();
 
             // TODO : Works but screen glitches and EditTexts gets squeeshed
             KeyboardVisibilityEvent.setEventListener(this,
@@ -96,6 +79,39 @@ public class BusinessHomeActivity extends ToolbarActivity {
                         }
                     });
         }
+    }
+
+    private TabLayout setupTabLayout() {
+        final TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.tab_icon_offers);
+        tabLayout.getTabAt(1).setIcon(R.drawable.tab_icon_shop_page);
+        tabLayout.getTabAt(2).setIcon(R.drawable.tab_icon_past_deals);
+        tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_stats);
+        tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_settings);
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mToolbarTitle.setText(toolbar_titles[tab.getPosition()]);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        tabLayout.setTabTextColors(getResources().getColor(R.color.White), getResources().getColor(R.color.colorAccent));
+        tabLayout.setTabRippleColor(null);
+
+        return tabLayout;
     }
 
     private void setupViewPager(ViewPager viewPager) {

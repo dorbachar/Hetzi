@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +18,6 @@ import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.example.hetzi_beta.Offers.Offer;
-import com.example.hetzi_beta.Offers.OnClickButtonListener;
 import com.example.hetzi_beta.R;
 import static com.example.hetzi_beta.Utils.*;
 
@@ -33,7 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class EditableOffersListFragment extends Fragment implements OnClickButtonListener {
+public class EditableOffersListFragment extends Fragment implements OnClickButtonListenerOffers {
     public TextView                             mNoOffersTextView;
     public TextView                             mAddOffersTextView;
     private FloatingActionButton                fab;
@@ -193,14 +191,14 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
     }
 
     /*
-    * onClickButton -
+    * onClickButtonOffers -
     *
-    * Implementation of OnClickButtonListener.onClickButton, so that when calling
+    * Implementation of OnClickButtonListenerOffers.onClickButtonOffers, so that when calling
     * startActivityForResult, the onActivityResult method will be called as I want.
     *
     * */
     @Override
-    public void onClickButton(View v, int position, ArrayList<Offer> offers) {
+    public void onClickButtonOffers(View v, int position, ArrayList<Offer> offers) {
         Offer from_item = offers.get(position);
 
         Intent intent = new Intent(getActivity(), OfferDetailsPopupActivity.class);

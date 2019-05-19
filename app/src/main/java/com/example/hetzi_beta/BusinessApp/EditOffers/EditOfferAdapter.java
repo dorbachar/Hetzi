@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.Offers.Offer;
-import com.example.hetzi_beta.Offers.OnClickButtonListener;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
@@ -21,9 +20,9 @@ import java.util.ArrayList;
 public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Adapter<EditOfferAdapter.OfferViewholder> {
     private ArrayList<Offer> mOffers;
     private Context mContext;
-    private OnClickButtonListener mOnClickButtonListener;
+    private OnClickButtonListenerOffers mOnClickButtonListener;
 
-    public EditOfferAdapter(ArrayList<Offer> offers, OnClickButtonListener mOnClickButtonListener) {
+    public EditOfferAdapter(ArrayList<Offer> offers, OnClickButtonListenerOffers mOnClickButtonListener) {
         mOffers = offers;
         this.mOnClickButtonListener = mOnClickButtonListener;
     }
@@ -43,8 +42,7 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
     public void onBindViewHolder(@NonNull final OfferViewholder holder, int position) {
         // Called when RecyclerView wants to populate the view with data
         Offer   current_offer           = mOffers.get(position);
-        Float   price_after_discount    = Utils.round(Utils.priceAfterDiscount(current_offer.getOrigPrice(),
-                                                                        current_offer.getDiscount()), 2);
+        Float   price_after_discount    = current_offer.priceAfterDiscount();
 
         Glide.with(mContext)
                 .load(current_offer.getPhotoUrl())
@@ -74,9 +72,9 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
         TextView                price_TextView;
         TextView                orig_price_TextView;
         Button                  mEditOfferButton;
-        OnClickButtonListener   mOnClickButtonListener;
+        OnClickButtonListenerOffers mOnClickButtonListener;
 
-        public OfferViewholder(View itemView, OnClickButtonListener mOnClickButtonListener) {
+        public OfferViewholder(View itemView, OnClickButtonListenerOffers mOnClickButtonListener) {
             super(itemView);
 
             // Init all views
@@ -95,7 +93,7 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
 
         @Override
         public void onClick(View v) {
-            mOnClickButtonListener.onClickButton(v, getAdapterPosition(), mOffers);
+            mOnClickButtonListener.onClickButtonOffers(v, getAdapterPosition(), mOffers);
         }
     }
 }

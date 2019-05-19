@@ -15,8 +15,6 @@ import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +24,11 @@ import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
 public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adapter<LiveSaleAdapter.SaleViewHolder> {
     private ArrayList<Deal> mDeals;
     private Context mContext;
+    private OnClickButtonListenerDeals mOnClickButtonListener;
 
-    public LiveSaleAdapter(ArrayList<Deal> deals) {
+    public LiveSaleAdapter(ArrayList<Deal> deals, OnClickButtonListenerDeals mOnClickButtonListener) {
         mDeals = deals;
+        this.mOnClickButtonListener = mOnClickButtonListener;
     }
 
     @NonNull
@@ -39,7 +39,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         LayoutInflater  inflater     = LayoutInflater.from(mContext);
         View            view         = inflater.inflate(layout_id, viewGroup, false);
 
-        return new SaleViewHolder(view);
+        return new SaleViewHolder(view, mOnClickButtonListener);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         Float   price_after_discount    = Utils.round(Utils.priceAfterDiscount(current_deal.getOffer().getOrigPrice(),
                 current_deal.getOffer().getDiscount()), 2);
 
-        holder.amount_TextView      .setText(current_offer.getQuantity().toString());
+        holder.quantity_TextView.setText(current_offer.getQuantity().toString());
         holder.time_TextView        .setText(Utils.getTimeEstimateString(current_offer));
         holder.name_TextView        .setText(current_offer.getTitle());
         holder.orig_price_TextView  .setText(current_offer.getOrigPrice().toString());
@@ -179,32 +179,33 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         return mDeals.size();
     }
 
-    class SaleViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
+    class SaleViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder  implements View.OnClickListener {
         // Offer Details
-        ImageView               background_image_offer_item;
-        TextView                name_TextView;
-        TextView                time_TextView;
-        TextView                amount_TextView;
-        TextView                precentage_TextView;
-        TextView                price_TextView;
-        TextView                orig_price_TextView;
-        Button                  mAddOneButton;
-        TextView                mTimer;
-        TextView                mDistance;
-        TextView                mKilometerWord;
+        ImageView                   background_image_offer_item;
+        TextView                    name_TextView;
+        TextView                    time_TextView;
+        TextView                    quantity_TextView;
+        TextView                    precentage_TextView;
+        TextView                    price_TextView;
+        TextView                    orig_price_TextView;
+        Button                      mAddOneButton;
+        TextView                    mTimer;
+        TextView                    mDistance;
+        TextView                    mKilometerWord;
+        OnClickButtonListenerDeals  mOnClickButtonListener;
 
         // Shop Details
         ImageView               shopLogo;
         TextView                shopName;
 
-        public SaleViewHolder(@NonNull View itemView) {
+        public SaleViewHolder(@NonNull View itemView, OnClickButtonListenerDeals mOnClickButtonListener) {
             super(itemView);
 
             // Init all views
             background_image_offer_item     = itemView.findViewById(R.id.item_photo_ImageView);
             name_TextView                   = itemView.findViewById(R.id.product_item_name_TextView);
             time_TextView                   = itemView.findViewById(R.id.estimate_time_TextView);
-            amount_TextView                 = itemView.findViewById(R.id.amount_TextView);
+            quantity_TextView               = itemView.findViewById(R.id.amount_TextView);
             precentage_TextView             = itemView.findViewById(R.id.precentage_textView);
             price_TextView                  = itemView.findViewById(R.id.price_TextView);
             orig_price_TextView             = itemView.findViewById(R.id.orig_price_textView);
@@ -214,6 +215,14 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
             mTimer                          = itemView.findViewById(R.id.offer_timer_EditText);
             mDistance                       = itemView.findViewById(R.id.distance_TextView);
             mKilometerWord                  = itemView.findViewById(R.id.kilometer);
+            this.mOnClickButtonListener     = mOnClickButtonListener;
+
+            mAddOneButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mOnClickButtonListener.onClickButtonDeals(v, getAdapterPosition(), mDeals, quantity_TextView);
         }
     }
 }

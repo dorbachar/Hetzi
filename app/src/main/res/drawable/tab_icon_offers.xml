@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- selected state -->
-    <item android:drawable="@drawable/shopping_cart_selected"
+    <item android:drawable="@drawable/baseline_shopping_basket_white_48dp_selected"
         android:state_selected="true"
         android:state_pressed="false" />
     <!-- unselected state (default) -->
-    <item android:drawable="@drawable/shopping_cart_unselected" />
+    <item android:drawable="@drawable/baseline_shopping_basket_white_48dp" />
 </selector>
