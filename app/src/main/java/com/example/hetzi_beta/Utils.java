@@ -1,12 +1,14 @@
 package com.example.hetzi_beta;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +20,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.Offers.Offer;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
@@ -204,7 +209,7 @@ public class Utils {
                     estimate += "מחר ";
                 } else if (days == 2) {
                     estimate += "מחרתיים ";
-                } else if (days < 7) {
+                } else if (days <= 7) {
                     estimate += "בעוד " + days.toString() + " ימים";
                     return estimate;
                 } else {
@@ -242,5 +247,27 @@ public class Utils {
         }
 
         return estimate;
+    }
+
+    @SuppressLint("MissingPermission")
+    public static void updateUserLocation(Activity activity) {
+        FusedLocationProviderClient fusedLocationClient;
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+
+        if (Utils.isLocationPermissionGranted(activity)) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                Utils.user_lat = location.getLatitude();
+                                Utils.user_lon = location.getLongitude();
+                            } else {
+                                Utils.user_lat = HTZ_LOCATION_NOT_FOUND;
+                                Utils.user_lon = HTZ_LOCATION_NOT_FOUND;
+                            }
+                        }
+                    });
+        }
     }
 }

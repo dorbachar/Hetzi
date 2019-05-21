@@ -1,5 +1,7 @@
 package com.example.hetzi_beta.CustomerApp.LiveSales;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +25,9 @@ import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.Utils;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,9 +35,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
 public class LiveSalesFragment extends Fragment implements OnClickButtonListenerDeals {
     private RecyclerView recyclerView;
@@ -48,8 +57,16 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
     public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
 
     // Views
-    public ProgressBar mLoadingCircle;
-    public TextView mLoadingText;
+    public ProgressBar      mLoadingCircle;
+    public TextView         mLoadingText;
+
+    // Filter Buttons
+    public ImageView    mDistanceFilter;
+    public ImageView    mTimeFilter;
+    public ImageView    mPriceFilter;
+    public TextView     mDistanceFilterText;
+    public TextView     mTimeFilterText;
+    public TextView     mPriceFilterText;
 
     public LiveSalesFragment() {
         // Required empty public constructor
@@ -69,11 +86,88 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
         mLoadingCircle  = root_view.findViewById(R.id.loading_circle_ProgressBar);
         mLoadingText    = root_view.findViewById(R.id.loading_TextView);
 
+        setupFilterButtons(root_view);
+        Utils.updateUserLocation(getActivity());
+
         setupAdapter();
         loadAllOffersFromDb();
         setupGlidePreloader();
 
         return root_view;
+    }
+
+    private void setupFilterButtons(View root_view) {
+        mDistanceFilterText     = root_view.findViewById(R.id.distance_filter_TextView);
+        mTimeFilterText         = root_view.findViewById(R.id.time_filter_TextView);
+        mPriceFilterText        = root_view.findViewById(R.id.price_filter_TextView);
+
+        mDistanceFilter         = root_view.findViewById(R.id.distance_filter_ImageView);
+        mDistanceFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyFilter("distance");
+            }
+        });
+        mTimeFilter     = root_view.findViewById(R.id.time_filter_ImageView);
+        mTimeFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyFilter("time");
+            }
+        });
+        mPriceFilter = root_view.findViewById(R.id.price_filter_ImageView);
+        mPriceFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyFilter("price");
+            }
+        });
+    }
+
+    private void applyFilter(String filter) {
+        updateFilterIcons(filter);
+
+        for(Deal curr_deal : deals_list) { // TODO : export to a background task!
+            if(curr_deal.getSortFilter().equals(filter)) {
+                return;
+            }
+            curr_deal.setSortFilter(filter);
+        }
+        Collections.sort(deals_list);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void updateFilterIcons(String filter) {
+        Integer primaryDark = getResources().getColor(R.color.colorPrimaryDark);
+        Integer primary     = getResources().getColor(R.color.colorPrimary);
+
+        // button_colors[0] : distance, 1 : time, 2 : price
+        Integer[] button_colors = new Integer[]{primary, primary, primary};
+
+        switch(filter) {
+            case "distance":
+                button_colors[0] = primaryDark;
+                mDistanceFilter.setImageResource(R.drawable.filter_location_selected);
+                mTimeFilter.setImageResource(R.drawable.filter_time_unselected);
+                mPriceFilter.setImageResource(R.drawable.filter_dollar_unselected);
+                break;
+            case "time":
+                button_colors[1] = primaryDark;
+                mDistanceFilter.setImageResource(R.drawable.filter_location_unselected);
+                mTimeFilter.setImageResource(R.drawable.filter_time_selected);
+                mPriceFilter.setImageResource(R.drawable.filter_dollar_unselected);
+                break;
+            case "price":
+                button_colors[2] = primaryDark;
+                mDistanceFilter.setImageResource(R.drawable.filter_location_unselected);
+                mTimeFilter.setImageResource(R.drawable.filter_time_unselected);
+                mPriceFilter.setImageResource(R.drawable.filter_dollar_selected);
+                break;
+        }
+
+        mDistanceFilterText .setTextColor(button_colors[0]);
+        mTimeFilterText     .setTextColor(button_colors[1]);
+        mPriceFilterText    .setTextColor(button_colors[2]);
     }
 
     private void setupAdapter() {

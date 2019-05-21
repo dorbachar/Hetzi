@@ -59,10 +59,10 @@
             />
 
         <TextView
-            android:id="@+id/onepiece_TextView"
+            android:id="@+id/short_description_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="מחיר ליחידה"
+            android:text="מחיר ליחידה, חנות"
             android:layout_below="@id/title_TextView"
             android:layout_alignParentRight="true"
             />
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/shekel"
-            android:layout_toLeftOf="@id/onepiece_TextView"
+            android:layout_toLeftOf="@id/short_description_TextView"
             android:layout_below="@id/title_TextView"
             />
 

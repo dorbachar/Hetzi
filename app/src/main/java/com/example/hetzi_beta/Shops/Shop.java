@@ -1,7 +1,12 @@
 package com.example.hetzi_beta.Shops;
 
+import android.location.Location;
+
 import com.example.hetzi_beta.HtzAddress;
 import com.example.hetzi_beta.Utils;
+
+import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
+import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
 public class Shop {
     private String name;
@@ -112,5 +117,17 @@ public class Shop {
 
     public void setFbKey(String fbKey) {
         this.fbKey = fbKey;
+    }
+
+    public Float calcDistanceFromUser() {
+        float[] res = new float[1];
+
+        if (Utils.user_lat == HTZ_LOCATION_NOT_FOUND || Utils.user_lon == HTZ_LOCATION_NOT_FOUND) {
+            return HTZ_INVALID_DISTANCE;
+        }
+
+        Location.distanceBetween(Utils.user_lat, Utils.user_lon, lat, lon, res);
+
+        return Utils.round(res[0] / 1000,1);
     }
 }

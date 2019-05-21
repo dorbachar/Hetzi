@@ -64,29 +64,31 @@
                     android:id="@+id/kilometer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft ="true"
                     android:text=" קילומטר"
-                    android:layout_marginLeft="30dp"
                     android:layout_centerVertical="true"
                     android:textColor="@color/White"
+                    android:layout_toLeftOf="@id/distance_TextView"
                     />
 
                 <TextView
                     android:id="@+id/distance_TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/kilometer"
                     android:text="1.6"
                     android:layout_centerVertical="true"
                     android:textColor="@color/White"
+                    android:layout_toLeftOf="@id/gps_icon"
                     />
 
                 <ImageView
+                    android:id="@+id/gps_icon"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:layout_toRightOf="@id/distance_TextView"
                     android:src="@drawable/baseline_room_white_48dp"
                     android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="280dp"
+                    android:layout_marginLeft="5dp"
                     />
 
             </RelativeLayout>
@@ -235,6 +237,7 @@
                 android:layout_height="35dp"
                 android:layout_below="@id/product_item_name_TextView"
                 android:layout_marginLeft="30dp"
+                android:layout_alignParentLeft="true"
                 android:background="@drawable/shape_regular_button"
                 android:text="@string/add_1_unit"
 
@@ -250,6 +253,7 @@
                 android:layout_above="@id/add_one_Button"
                 android:text="02:01:52"
                 android:layout_marginLeft="30dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginBottom="6dp"
                 android:gravity="center"
                 android:textSize="24sp"

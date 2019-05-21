@@ -58,7 +58,7 @@ import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
 
 /*
  * OfferDetailsPopupActivity -
- * This is the Pop-up activity that appears when the retailer clicks '+' (FAB).
+ * This is the Pop-up mContext that appears when the retailer clicks '+' (FAB).
  * The form contains textual/spinner details, and photo upload.
  *
  * */
@@ -140,7 +140,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     /*
      * onActivityResult -
      *
-     * onActivityResult is long in this activity, because it handles photos which come from both
+     * onActivityResult is long in this mContext, because it handles photos which come from both
      * Gallery and Camera.
      *
      * */
@@ -204,7 +204,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
     *
     * Launched when the user clicks 'Publish Offer'.
     * This method creates an Offer object based on the values currently filled in all the fields
-    * of the popup activity, and pushes this Offer to Firebase Realtime DataBase.
+    * of the popup mContext, and pushes this Offer to Firebase Realtime DataBase.
     *
     * In addition, it puts the offer as EXTRA to the intent (Offer is a Parcelable object) so that
     * it can be displayed in the RecyclerView of the Offers List, instead of pulling it from Firebase again.
@@ -580,7 +580,7 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
      * showDialogPhotoOrGallery -
      *
      * Pops a dialog that encourages the user to pick a source for the picture, and launches the
-     * appropriate activity, corresponding to the user's choice.
+     * appropriate mContext, corresponding to the user's choice.
      *
      * */
     public void showDialogPhotoOrGallery() {

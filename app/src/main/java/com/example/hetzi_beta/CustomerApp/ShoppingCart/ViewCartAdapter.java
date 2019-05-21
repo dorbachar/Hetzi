@@ -46,14 +46,14 @@ public class ViewCartAdapter extends ArrayAdapter {
 
         TextView quantity_TextView       = rowView.findViewById(R.id.quantity_TextView);
         TextView title                   = rowView.findViewById(R.id.title_TextView);
-        TextView price_for_one           = rowView.findViewById(R.id.onepiece_TextView);
+        TextView short_description       = rowView.findViewById(R.id.short_description_TextView);
         TextView price                   = rowView.findViewById(R.id.price);
         CircularImageView img            = rowView.findViewById(R.id.offer_pic_CircularImageView);
 
         Integer quantity = trans_list.get(position).getQuantity();
         quantity_TextView       .setText(quantity.toString());
         title                   .setText(deals_list.get(position).getOffer().getTitle());
-        price_for_one           .setText(deals_list.get(position).getOffer().priceAfterDiscount().toString());
+        short_description        .setText(generateShortDescription(deals_list.get(position)));
         price                   .setText(((Float)(deals_list.get(position).getOffer().priceAfterDiscount() * quantity)).toString());
         Utils.updateViewImage(context, Uri.parse(deals_list.get(position).getOffer().getPhotoUrl()), img);
 
@@ -61,7 +61,7 @@ public class ViewCartAdapter extends ArrayAdapter {
 
     }
 
-    private String generateDescription(Deal deal) {
-        return deal.getShop().getShopName() + " ," + deal;
+    private String generateShortDescription(Deal deal) {
+        return deal.getShop().getShopName() + " ," + deal.getOffer().priceAfterDiscount().toString();
     }
 }

@@ -1,8 +1,6 @@
 package com.example.hetzi_beta.CustomerApp.HomePage;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -17,13 +15,9 @@ import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
-import com.example.hetzi_beta.CustomerApp.ShopsListFragment;
+import com.example.hetzi_beta.CustomerApp.ShopsList.ShopsListFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
-import com.example.hetzi_beta.Utils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -31,12 +25,10 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import mehdi.sakout.fancybuttons.FancyButton;
 
 import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
-import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
 
 public class CustomerHomeActivity extends AppCompatActivity {
     private ViewPager                       mViewPager;
-    private FusedLocationProviderClient     fusedLocationClient;
     private Toolbar                         mToolbar;
     private TextView                        mToolbarTitle;
     private FancyButton                     mNotifNumber;
@@ -67,8 +59,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
         final TabLayout tabLayout = setupTabLayout();
         setupKeyboardVisibility(tabLayout);
 
-        getUserLocation();
-
         mCartButton     = mToolbar.findViewById(R.id.cart_icon_ImageView);
         mCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,27 +68,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
                 startActivityForResult(intent, HTZ_ADD_OFFER);
             }
         });
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getUserLocation() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (Utils.isLocationPermissionGranted(this)) {
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                Utils.user_lat = location.getLatitude();
-                                Utils.user_lon = location.getLongitude();
-                            } else {
-                                Utils.user_lat = HTZ_LOCATION_NOT_FOUND;
-                                Utils.user_lon = HTZ_LOCATION_NOT_FOUND;
-                            }
-                        }
-                    });
-        }
     }
 
     private void setupKeyboardVisibility(final TabLayout tabLayout) {

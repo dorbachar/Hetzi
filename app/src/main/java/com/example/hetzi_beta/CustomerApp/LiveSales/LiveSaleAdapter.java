@@ -64,6 +64,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
             Utils.disableButton(holder.mAddOneButton, mContext, "offer");
             holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.Grey));
         } else if (!current_offer.hasStarted()) {
+            Utils.disableButton(holder.mAddOneButton, mContext, "offer");
             holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.White));
         }
     }
@@ -156,13 +157,18 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         holder.precentage_TextView  .setText(current_offer.getDiscount().toString());
         holder.mTimer               .setText(resetTimer(current_offer));
 
-        Float dist = current_deal.calcDistanceFromSale();
+        Float dist = current_deal.getDistanceFromUser();
         if (dist.equals(HTZ_INVALID_DISTANCE)) {
-            holder.mDistance.setText(dist.toString());
-            holder.mKilometerWord.setVisibility(View.VISIBLE);
-        } else {
-            holder.mKilometerWord.setVisibility(View.GONE);
             holder.mDistance.setText("מיקום כבוי");
+            holder.mKilometerWord.setText("");
+        } else {
+            if (dist < 1) {
+                holder.mDistance.setText(((Float)(dist*1000)).toString());
+                holder.mKilometerWord.setText(" מטר");
+            } else {
+                holder.mDistance.setText(dist.toString());
+                holder.mKilometerWord.setText(" קילומטר");
+            }
         }
 
     }
