@@ -50,8 +50,14 @@ public class Utils {
     public static final Float   HTZ_INVALID_DISTANCE = Float.valueOf(1000000000);
 
     public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>() {{
-        put("היונג מין סטור", new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
-        put("החנות של שירה", new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
+        put("ארומה אספרסו בר",  new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
+        put("רולדין",           new HtzAddress(32.082902, 34.781394, "אבן גבירול 90, תל אביב"));
+        put("ג'פאניקה",         new HtzAddress(32.084303, 34.774167, "שד' בן גוריון 40, תל אביב"));
+        put("המאפה הצרפתי",     new HtzAddress(32.023053, 34.799227, "הפלד 7, חולון"));
+        put("הו מאמא!",         new HtzAddress(32.072084, 34.773703, "קינג ג'ורג' 26, תל אביב"));
+        put("קפה נונה",         new HtzAddress(32.077034, 34.781574, "אבן גבירול 44, תל אביב"));
+        put("קפה טוסקנה",       new HtzAddress(32.167820, 34.840367, "הנדיב 3, הרצליה"));
+
     }};
 
     public static Double user_lat = HTZ_LOCATION_NOT_FOUND;

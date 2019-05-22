@@ -435,9 +435,8 @@ public class EditShopFragment extends Fragment {
         mSaveChanges.setEnabled(true);
     }
     private boolean     emptyEditTextExists() {
-        // mShopName.getText().toString().length() == 0
-        return mPhysicalAddress.getText().toString().length() == 0 ||
-                mWebsite.getText().toString().length() == 0 || mPhoneNumber.getText().toString().length() == 0;
+        // mPhysicalAddress.getText().toString().length() == 0 || mShopName.getText().toString().length() == 0
+       return mWebsite.getText().toString().length() == 0 || mPhoneNumber.getText().toString().length() == 0;
 
     }
 }

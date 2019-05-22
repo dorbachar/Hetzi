@@ -1,4 +1,4 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
 import android.content.Context;
 import android.graphics.Canvas;

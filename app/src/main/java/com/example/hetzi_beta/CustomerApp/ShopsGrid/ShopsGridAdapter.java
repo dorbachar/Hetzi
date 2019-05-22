@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.CustomerApp.ShopsList;
+package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
 
-public class ShopsListAdapter extends android.support.v7.widget.RecyclerView.Adapter<ShopsListAdapter.ShopViewHolder> {
+public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Adapter<ShopsGridAdapter.ShopViewHolder> {
     public ArrayList<Shop> shops_list;
     public Context mContext;
 
-    public ShopsListAdapter(ArrayList<Shop> shops_list, Activity activity) {
+    public ShopsGridAdapter(ArrayList<Shop> shops_list, Activity activity) {
         this.shops_list = shops_list;
         this.mContext = activity;
     }

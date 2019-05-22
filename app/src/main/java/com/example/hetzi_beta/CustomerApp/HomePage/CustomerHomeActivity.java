@@ -15,7 +15,7 @@ import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
-import com.example.hetzi_beta.CustomerApp.ShopsList.ShopsListFragment;
+import com.example.hetzi_beta.CustomerApp.ShopsGrid.ShopsGridFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 
@@ -119,7 +119,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         adapter.addFragment(new LiveSalesFragment(), "מבצעים");
-        adapter.addFragment(new ShopsListFragment(), "חנויות");
+        adapter.addFragment(new ShopsGridFragment(), "חנויות");
         adapter.addFragment(new FavouritesFragment(), "מועדפים");
         adapter.addFragment(new DiscoverFragment(), "Discover");
         adapter.addFragment(new CustomerSettingsFragment(), "הגדרות");

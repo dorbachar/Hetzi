@@ -1,18 +1,14 @@
-package com.example.hetzi_beta.CustomerApp.ShopsList;
+package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.hetzi_beta.CustomerApp.LiveSales.Deal;
-import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSaleAdapter;
-import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.google.firebase.database.DataSnapshot;
@@ -22,19 +18,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
-public class ShopsListFragment extends Fragment {
+public class ShopsGridFragment extends Fragment {
     private RecyclerView recyclerView;
-    public ShopsListAdapter mAdapter;
+    public ShopsGridAdapter mAdapter;
     public ArrayList<Shop> shops_list = new ArrayList<>();
 
     // Firebase related
     public FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mShopsDatabaseReference;
 
-    public ShopsListFragment() {
+    public ShopsGridFragment() {
     }
 
     @Override
@@ -76,7 +70,7 @@ public class ShopsListFragment extends Fragment {
 
     private void setupAdapter() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mAdapter            = new ShopsListAdapter(shops_list, getActivity());
+        mAdapter            = new ShopsGridAdapter(shops_list, getActivity());
         recyclerView.setAdapter(mAdapter);
     }
 
