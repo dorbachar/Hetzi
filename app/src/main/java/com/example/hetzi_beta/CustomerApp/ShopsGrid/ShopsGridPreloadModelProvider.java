@@ -1,4 +1,4 @@
-package com.example.hetzi_beta.CustomerApp.LiveSales;
+package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,25 +8,27 @@ import android.text.TextUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
+import com.example.hetzi_beta.Shops.Shop;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DealsPreloadModelProvider implements ListPreloader.PreloadModelProvider<String> {
-    private ArrayList<Deal> mDeals;
-    private Context mContext;
+public class ShopsGridPreloadModelProvider implements ListPreloader.PreloadModelProvider<String> {
+    private ArrayList<Shop> mShops;
+    private Context         mContext;
 
-    public DealsPreloadModelProvider(ArrayList<Deal> mDeals, Context mContext) {
-        this.mDeals = mDeals;
-        this.mContext = mContext;
+    public ShopsGridPreloadModelProvider(ArrayList<Shop> mShops, Context mContext) {
+        this.mShops     = mShops;
+        this.mContext   = mContext;
     }
 
     // TODO : Background thread (Service or asyntask)
     @Override
     @NonNull
     public List<String> getPreloadItems(int position) {
-        String url = mDeals.get(position).getOffer().getPhotoUrl();
+        // TODO : Get and Preload both images
+        String url = mShops.get(position).getLogoUri();
         if (TextUtils.isEmpty(url)) {
             return Collections.emptyList();
         }

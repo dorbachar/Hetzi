@@ -57,7 +57,6 @@ public class Utils {
         put("הו מאמא!",         new HtzAddress(32.072084, 34.773703, "קינג ג'ורג' 26, תל אביב"));
         put("קפה נונה",         new HtzAddress(32.077034, 34.781574, "אבן גבירול 44, תל אביב"));
         put("קפה טוסקנה",       new HtzAddress(32.167820, 34.840367, "הנדיב 3, הרצליה"));
-
     }};
 
     public static Double user_lat = HTZ_LOCATION_NOT_FOUND;

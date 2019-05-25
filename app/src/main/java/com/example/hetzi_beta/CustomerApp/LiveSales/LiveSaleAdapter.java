@@ -62,7 +62,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
 
         if (current_offer.hasEnded()) {
             Utils.disableButton(holder.mAddOneButton, mContext, "offer");
-            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.Grey));
+            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.darkGrey));
         } else if (!current_offer.hasStarted()) {
             Utils.disableButton(holder.mAddOneButton, mContext, "offer");
             holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.White));

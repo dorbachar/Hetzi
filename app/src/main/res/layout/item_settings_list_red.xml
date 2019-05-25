@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:text="כותרת הגדרה"
-        android:textColor="@color/Red"
+        android:textColor="@color/strongRed"
         android:layout_centerVertical="true"
         android:layout_marginRight="30dp"
         />

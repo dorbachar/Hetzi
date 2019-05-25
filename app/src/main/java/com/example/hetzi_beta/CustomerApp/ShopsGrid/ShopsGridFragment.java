@@ -9,6 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.ListPreloader;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
+import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
+import com.example.hetzi_beta.CustomerApp.HomePage.ShopSwitcherFromFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.google.firebase.database.DataSnapshot;
@@ -19,16 +25,23 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ShopsGridFragment extends Fragment {
+public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragment {
+    public ArrayList<Shop> shops_list = new ArrayList<>();
+
+    // RecyclerView related
     private RecyclerView recyclerView;
     public ShopsGridAdapter mAdapter;
-    public ArrayList<Shop> shops_list = new ArrayList<>();
 
     // Firebase related
     public FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mShopsDatabaseReference;
 
+    // Glide related
+    public ViewPreloadSizeProvider              mPreloadSizeProvider;
+    public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
+
     public ShopsGridFragment() {
+
     }
 
     @Override
@@ -44,7 +57,14 @@ public class ShopsGridFragment extends Fragment {
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
         mShopsDatabaseReference     = mFirebaseDatabase.getReference().child("shops");
 
-        // Add Shops as keys and Offer Lists as values in offers_n_stores_cache
+        getShopsFromDbToShopsList();
+        setupAdapter();
+        setupGlidePreloader();
+
+        return root_view;
+    }
+
+    private void getShopsFromDbToShopsList() {
         mShopsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -61,17 +81,38 @@ public class ShopsGridFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
 
-
-        setupAdapter();
-
-        return root_view;
+    private void setupGlidePreloader() {
+        // Glide preloader
+        mPreloadSizeProvider = new ViewPreloadSizeProvider();
+        mPreloadModelProvider = new ShopsGridPreloadModelProvider(shops_list, getActivity());
+        RecyclerViewPreloader<String> preloader =
+                new RecyclerViewPreloader<>(Glide.with(this), mPreloadModelProvider, mPreloadSizeProvider, 10);
+        recyclerView.addOnScrollListener(preloader);
     }
 
     private void setupAdapter() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mAdapter            = new ShopsGridAdapter(shops_list, getActivity());
+        mAdapter            = new ShopsGridAdapter(getActivity(), shops_list, this);
         recyclerView.setAdapter(mAdapter);
+
+
+        // The problem: this fragment stays below the ViewShop fragment. and then clicks in ViewShop
+        // are counted as clicks in this fragment too, and new ViewShop Fragments are opened.
+        // Solution, probably: close the currently displayed fragment somehow.
+        mAdapter.setClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = recyclerView.indexOfChild(v);
+                Shop this_shop = shops_list.get(pos);
+                switchToShopPage(this_shop);
+            }
+        });
     }
 
+    @Override
+    public void switchToShopPage(Shop shop) {
+        ((CustomerHomeActivity)getActivity()).switchToShopPage(shop);
+    }
 }

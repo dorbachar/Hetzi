@@ -1,6 +1,8 @@
 package com.example.hetzi_beta.Shops;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.example.hetzi_beta.HtzAddress;
 import com.example.hetzi_beta.Utils;
@@ -8,9 +10,9 @@ import com.example.hetzi_beta.Utils;
 import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
 import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
-public class Shop {
+public class Shop implements Parcelable {
     private String name;
-    private String fb_uid; // Firebase connected user uid
+    private String uid; // Firebase connected user uid
     private String fbKey; // Firebase unique random key
     private String logo_uri;
     private String cover_uri;
@@ -27,7 +29,7 @@ public class Shop {
 
     public Shop(String shop_name, String firebase_uid, String logo, String cover_photo, String website, String phone_number) {
         this.name           = shop_name;
-        this.fb_uid         = firebase_uid;
+        this.uid            = firebase_uid;
         this.logo_uri       = logo;
         this.cover_uri      = cover_photo;
         this.website        = website;
@@ -105,10 +107,10 @@ public class Shop {
 
 
     public String getUid() {
-        return fb_uid;
+        return uid;
     }
-    public void     setFb_uid(String fb_uid) {
-        this.fb_uid = fb_uid;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getFbKey() {
@@ -130,4 +132,51 @@ public class Shop {
 
         return Utils.round(res[0] / 1000,1);
     }
+
+    // ------------------------- Parcelable ------------------------- //
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Shop createFromParcel(Parcel in) {
+            return new Shop(in);
+        }
+
+        public Shop[] newArray(int size) {
+            return new Shop[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(uid);
+        dest.writeString(fbKey);
+        dest.writeString(logo_uri);
+        dest.writeString(cover_uri);
+        dest.writeString(website);
+        dest.writeDouble(lon);
+        dest.writeDouble(lat);
+        dest.writeString(phone);
+        dest.writeString(insta);
+        dest.writeString(facebook);
+    }
+
+    public Shop(Parcel in) {
+        name        = in.readString();
+        uid = in.readString();
+        fbKey       = in.readString();
+        logo_uri    = in.readString();
+        cover_uri   = in.readString();
+        website     = in.readString();
+        lon         = in.readDouble();
+        lat         = in.readDouble();
+        phone       = in.readString();
+        insta       = in.readString();
+        facebook    = in.readString();
+    }
+
 }

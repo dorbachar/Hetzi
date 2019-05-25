@@ -21,9 +21,7 @@ import android.widget.Toast;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.Utils;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,9 +40,7 @@ import java.util.Map;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
 import static com.example.hetzi_beta.Utils.HTZ_COVER_PHOTO_ULPOAD;
-import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
 import static com.example.hetzi_beta.Utils.HTZ_LOGO_ULPOAD;
 
 public class EditShopFragment extends Fragment {
@@ -367,7 +363,7 @@ public class EditShopFragment extends Fragment {
         shop_on_display.setWebsite(mWebsite.getText().toString());
         shop_on_display.setFacebookUri(mFacebookLink.getText().toString());
         shop_on_display.setInstagramUri(mInstagramLink.getText().toString());
-        shop_on_display.setFb_uid(user.getUid());
+        shop_on_display.setUid(user.getUid());
 
         if (Utils.SHOP_ADDRESS.containsKey(shop_name)) {
             shop_on_display.setLat(Utils.SHOP_ADDRESS.get(shop_name).getLatitude());

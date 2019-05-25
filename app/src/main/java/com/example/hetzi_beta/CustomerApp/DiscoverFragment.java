@@ -8,16 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.R;
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DiscoverFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DiscoverFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DiscoverFragment extends Fragment {
 
 //    private OnFragmentInteractionListener mListener;

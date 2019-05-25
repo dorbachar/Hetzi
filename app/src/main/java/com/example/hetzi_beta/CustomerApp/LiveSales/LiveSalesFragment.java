@@ -1,7 +1,5 @@
 package com.example.hetzi_beta.CustomerApp.LiveSales;
 
-import android.annotation.SuppressLint;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -25,9 +24,6 @@ import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.Utils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,27 +36,28 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
-
 public class LiveSalesFragment extends Fragment implements OnClickButtonListenerDeals {
-    private RecyclerView recyclerView;
-    public LiveSaleAdapter mAdapter;
-    public ArrayList<Deal> deals_list = new ArrayList<>();
+    private RecyclerView        recyclerView;
+    public LiveSaleAdapter      mAdapter;
+    public ArrayList<Deal>      deals_list = new ArrayList<>();
+    public Shop                 shop_to_fetch;
 
     // Firebase related
-    public FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mOffersDatabaseReference;
-    private DatabaseReference mShopsDatabaseReference;
+    public FirebaseDatabase     mFirebaseDatabase;
+    private DatabaseReference   mOffersDatabaseReference;
+    private DatabaseReference   mShopsDatabaseReference;
 
     // Glide related
     public ViewPreloadSizeProvider              mPreloadSizeProvider;
     public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
 
     // Views
-    public ProgressBar      mLoadingCircle;
-    public TextView         mLoadingText;
+    public ProgressBar  mLoadingCircle;
+    public TextView     mLoadingText;
+    public TextView     mNothingText;
 
     // Filter Buttons
+    private RelativeLayout mFilters;
     public ImageView    mDistanceFilter;
     public ImageView    mTimeFilter;
     public ImageView    mPriceFilter;
@@ -85,18 +82,30 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
 
         mLoadingCircle  = root_view.findViewById(R.id.loading_circle_ProgressBar);
         mLoadingText    = root_view.findViewById(R.id.loading_TextView);
+        mNothingText    = root_view.findViewById(R.id.nothing_TextView);
+        mNothingText.setVisibility(View.GONE);
 
         setupFilterButtons(root_view);
         Utils.updateUserLocation(getActivity());
 
+        shop_to_fetch = getArguments().getParcelable("shop_to_fetch");
+
         setupAdapter();
-        loadAllOffersFromDb();
+        if (inAllSalesTab()) {
+            loadAllOffersFromDb();
+        } else {
+            mFilters.setVisibility(View.GONE);
+            loadOffersOfShop(shop_to_fetch);
+        }
+
         setupGlidePreloader();
 
         return root_view;
     }
 
+
     private void setupFilterButtons(View root_view) {
+        mFilters                = root_view.findViewById(R.id.filters_RelativeLayout);
         mDistanceFilterText     = root_view.findViewById(R.id.distance_filter_TextView);
         mTimeFilterText         = root_view.findViewById(R.id.time_filter_TextView);
         mPriceFilterText        = root_view.findViewById(R.id.price_filter_TextView);
@@ -171,14 +180,61 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
     }
 
     private void setupAdapter() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (inAllSalesTab()) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()){
+                @Override
+                public boolean canScrollVertically() {
+                    return false;
+                }
+            });
+        }
+
         mAdapter            = new LiveSaleAdapter(deals_list, this);
         recyclerView.setAdapter(mAdapter);
     }
 
+    private boolean inAllSalesTab() {
+        return shop_to_fetch == null;
+    }
+
+
+    public void loadOffersOfShop(final Shop shop) {
+        mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers");
+        mOffersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot curr_shop_offers : dataSnapshot.getChildren()) {
+                    if (curr_shop_offers.getKey().equals(shop.getUid())) {
+                        for (DataSnapshot curr_offer : curr_shop_offers.getChildren()) {
+                            deals_list.add(new Deal(curr_offer.getValue(Offer.class), shop));
+                        }
+                        break;
+                    }
+
+                }
+                mAdapter.notifyDataSetChanged();
+                loadingDone();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void loadingDone() {
+        mLoadingCircle.setVisibility(View.GONE);
+        mLoadingText.setVisibility(View.GONE);
+        if (recyclerView.getAdapter().getItemCount() == 0 && !inAllSalesTab() ) {
+            mNothingText.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void loadAllOffersFromDb() {
-        final Map<String, ArrayList<Offer>> offers_cache_map = new HashMap<>();
-        final Map<Shop, ArrayList<Offer>> offers_n_stores_cache = new HashMap<>();
+        final Map<String, ArrayList<Offer>>     offers_cache_map = new HashMap<>();
+        final Map<Shop, ArrayList<Offer>>       offers_n_stores_cache = new HashMap<>();
 
         mOffersDatabaseReference    = mFirebaseDatabase.getReference().child("offers");
         mShopsDatabaseReference     = mFirebaseDatabase.getReference().child("shops");
@@ -195,6 +251,8 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
                     String curr_shop_uid = curr_shop_offers.getKey();
                     offers_cache_map.put(curr_shop_uid, shop_offers);
                 }
+                mAdapter.notifyDataSetChanged();
+                loadingDone();
             }
 
             @Override
@@ -208,6 +266,7 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot curr_shop : dataSnapshot.getChildren()) {
                     String curr_key = curr_shop.getKey();
+
                     ArrayList<Offer> shop_offers = offers_cache_map.get(curr_key);
                     for(DataSnapshot only_child : curr_shop.getChildren()) {
                         if ( shop_offers != null ) {
@@ -235,11 +294,12 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
                         }
                     }
 
+                    loadingDone();
+
                 }
                 mAdapter.notifyDataSetChanged();
 
-                mLoadingCircle.setVisibility(View.GONE);
-                mLoadingText.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -263,7 +323,7 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
     private void setupGlidePreloader() {
         // Glide preloader
         mPreloadSizeProvider = new ViewPreloadSizeProvider();
-        mPreloadModelProvider = new DealsPreloadModelProvider(deals_list, getActivity());
+        mPreloadModelProvider = new com.example.hetzi_beta.CustomerApp.LiveSales.DealsPreloadModelProvider(deals_list, getActivity());
         RecyclerViewPreloader<String> preloader =
                 new RecyclerViewPreloader<>(Glide.with(this), mPreloadModelProvider, mPreloadSizeProvider, 10);
         recyclerView.addOnScrollListener(preloader);

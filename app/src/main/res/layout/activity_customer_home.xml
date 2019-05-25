@@ -23,6 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/back_button_ImageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/baseline_arrow_back_ios_white_48dp"
+
+                />
+
             <TextView
                 android:id="@+id/toolbar_title_TextView"
                 android:layout_width="wrap_content"
@@ -56,10 +65,9 @@
 
                 fancy:fb_textSize="10sp"
                 fancy:fb_radius="7.5dp"
-                fancy:fb_defaultColor="@color/Red"
+                fancy:fb_defaultColor="@color/strongRed"
                 fancy:fb_borderColor="@color/White"
-                fancy:fb_borderWidth="1dp"
-                />
+                fancy:fb_borderWidth="1dp"/>
 
         </RelativeLayout>
 
@@ -67,23 +75,40 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+    <FrameLayout
+        android:id="@+id/fragments_frame"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
-        android:layout_weight="1"
-        />
+        android:layout_height="match_parent"
+        >
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:tabIndicatorGravity="top"
-        app:tabTextColor="@color/White"
-        app:tabTextAppearance="@style/HetziTabText"
-        app:tabIndicatorColor="@color/colorAccent"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+                />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorGravity="top"
+                app:tabTextColor="@color/White"
+                app:tabTextAppearance="@style/HetziTabText"
+                app:tabIndicatorColor="@color/colorAccent"
+                />
+
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

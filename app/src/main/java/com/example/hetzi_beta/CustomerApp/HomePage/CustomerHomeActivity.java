@@ -3,6 +3,9 @@ package com.example.hetzi_beta.CustomerApp.HomePage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +17,12 @@ import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
+import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
 import com.example.hetzi_beta.CustomerApp.ShopsGrid.ShopsGridFragment;
+import com.example.hetzi_beta.CustomerApp.ShopsGrid.ViewShopPageFragment;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
+import com.example.hetzi_beta.Shops.Shop;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -27,12 +32,16 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
 
 
-public class CustomerHomeActivity extends AppCompatActivity {
-    private ViewPager                       mViewPager;
-    private Toolbar                         mToolbar;
-    private TextView                        mToolbarTitle;
-    private FancyButton                     mNotifNumber;
-    private ImageView                       mCartButton;
+public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitcher {
+    private ViewPager       mViewPager;
+    private Toolbar         mToolbar;
+    private TextView        mToolbarTitle;
+    private FancyButton     mNotifNumber;
+    private ImageView       mCartButton;
+    private TabLayout       mTabLayout;
+    private ImageView       mBackButton;
+
+    private boolean filters_shown;
 
     String[] toolbar_titles = {
             "כל המבצעים",
@@ -49,6 +58,9 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
         // Toolbar related
         mToolbar        = findViewById(R.id.my_toolbar);
+        setSupportActionBar(mToolbar);
+        filters_shown = true;
+
         mNotifNumber    = findViewById(R.id.notif_num);
         mToolbarTitle   = mToolbar.findViewById(R.id.toolbar_title_TextView);
         mNotifNumber.setVisibility(View.GONE);
@@ -56,8 +68,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
         mViewPager      = findViewById(R.id.view_pager);
         setupViewPager(mViewPager);
 
-        final TabLayout tabLayout = setupTabLayout();
-        setupKeyboardVisibility(tabLayout);
+        mTabLayout = setupTabLayout();
+        setupKeyboardVisibility();
 
         mCartButton     = mToolbar.findViewById(R.id.cart_icon_ImageView);
         mCartButton.setOnClickListener(new View.OnClickListener() {
@@ -68,15 +80,33 @@ public class CustomerHomeActivity extends AppCompatActivity {
                 startActivityForResult(intent, HTZ_ADD_OFFER);
             }
         });
+
+        mBackButton     = mToolbar.findViewById(R.id.back_button_ImageView);
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                fm.popBackStackImmediate();
+            }
+        });
+        setEnableBackButton(false);
     }
 
-    private void setupKeyboardVisibility(final TabLayout tabLayout) {
+    public void setEnableBackButton(boolean enable) {
+        if (enable) {
+            mBackButton.setVisibility(View.VISIBLE);
+        } else {
+            mBackButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupKeyboardVisibility() {
         // TODO : Works but screen glitches and EditTexts gets squeeshed
         KeyboardVisibilityEvent.setEventListener(this,
                 new KeyboardVisibilityEventListener() {
                     @Override
                     public void onVisibilityChanged(boolean isOpen) {
-                        tabLayout.setVisibility(isOpen ? View.GONE : View.VISIBLE);
+                        mTabLayout.setVisibility(isOpen ? View.GONE : View.VISIBLE);
                     }
                 });
     }
@@ -95,7 +125,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mToolbarTitle.setText(toolbar_titles[tab.getPosition()]);
+                setToolbarTitle(toolbar_titles[tab.getPosition()]);
             }
 
             @Override
@@ -118,7 +148,13 @@ public class CustomerHomeActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new LiveSalesFragment(), "מבצעים");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("shop_uid_to_fetch", null);
+
+        Fragment fragment = new LiveSalesFragment();
+        fragment.setArguments(bundle);
+
+        adapter.addFragment(fragment, "מבצעים");
         adapter.addFragment(new ShopsGridFragment(), "חנויות");
         adapter.addFragment(new FavouritesFragment(), "מועדפים");
         adapter.addFragment(new DiscoverFragment(), "Discover");
@@ -150,6 +186,29 @@ public class CustomerHomeActivity extends AppCompatActivity {
         mNotifNumber.setText(curr_size.toString());
     }
 
+    @Override
+    public void switchToShopPage(Shop shop) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("shop_object", shop);
+
+        Fragment fragment = new ViewShopPageFragment();
+        fragment.setArguments(bundle);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_top, R.anim.slide_in_top, R.anim.slide_out_top)
+                .add(R.id.fragments_frame, fragment)
+                .addToBackStack(null)
+                .commit();
+
+        setToolbarTitle(shop.getShopName());
+    }
+
+    public void setToolbarTitle(String title) {
+        mToolbarTitle.setText(title);
+    }
+
 //    @Override
 //    public void onBackPressed () {
         // TODO : not working... see github for details
@@ -160,4 +219,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
 //            finish();
 //        }
 //    }
+
+
+
 }

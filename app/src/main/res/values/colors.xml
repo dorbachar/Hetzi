@@ -8,10 +8,12 @@
     <color name="colorDiscount">#47D476</color>
 
     <color name="White">#FFFFFF</color>
-    <color name="Grey">#757575</color>
+    <color name="darkGrey">#757575</color>
     <color name="LightGrey">#F5F5F5</color>
     <color name="Black">#000000</color>
-    <color name="Red">#ba000d</color>
+    <color name="strongRed">#ba000d</color>
     <color name="BgBlue">#e3f2fd</color>
     <color name="Black_Transparent">#80000000</color>
+    <color name="bazookaPink">#e91e63</color>
+    <color name="lightPink">#f8bbd0</color>
 </resources>

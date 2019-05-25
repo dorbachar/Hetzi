@@ -3,6 +3,7 @@ package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.hetzi_beta.CustomerApp.HomePage.ShopSwitcherFromFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.Utils;
@@ -22,10 +24,13 @@ import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
 public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Adapter<ShopsGridAdapter.ShopViewHolder> {
     public ArrayList<Shop> shops_list;
     public Context mContext;
+    public View.OnClickListener mClickListener;
+    public ShopSwitcherFromFragment mShopSwitcher;
 
-    public ShopsGridAdapter(ArrayList<Shop> shops_list, Activity activity) {
+    public ShopsGridAdapter(Activity activity, ArrayList<Shop> shops_list, ShopSwitcherFromFragment mShopSwitcher) {
         this.shops_list = shops_list;
         this.mContext = activity;
+        this.mShopSwitcher = mShopSwitcher;
     }
 
     @NonNull
@@ -33,8 +38,16 @@ public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Ada
     public ShopViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         mContext                        = viewGroup.getContext();
         int             layout_id       = R.layout.item_shop_preview;
-        LayoutInflater inflater         = LayoutInflater.from(mContext);
+        LayoutInflater  inflater        = LayoutInflater.from(mContext);
         View            view            = inflater.inflate(layout_id, viewGroup, false);
+
+        RecyclerView.ViewHolder holder = new ShopViewHolder(view);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClickListener.onClick(view);
+            }
+        });
 
         return new ShopViewHolder(view);
     }
@@ -78,6 +91,18 @@ public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Ada
     public int getItemCount() {
         return shops_list.size();
     }
+
+    public void setClickListener(View.OnClickListener callback) {
+        mClickListener = callback;
+    }
+
+
+
+
+
+
+
+
 
     class ShopViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
         CircularImageView logo;

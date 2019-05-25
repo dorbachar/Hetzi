@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.R;
 
 public class FavouritesFragment extends Fragment {
