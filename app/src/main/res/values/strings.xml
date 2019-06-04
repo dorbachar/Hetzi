@@ -25,6 +25,9 @@
     <string name="no_offers">אין מבצעים כרגע...</string>
     <string name="to_add">להוספת מבצע לחץ + בתחתית המסך</string>
     <string name="after_discount">אחרי הנחה:</string>
+    <string name="total">סה\"כ לתשלום</string>
+    <string name="original_total">סכום מקורי</string>
+    <string name="you_saved">חסכת</string>
     <string-array name="times_array">
         <item name="time1">00:30</item>
         <item name="time2">01:00</item>

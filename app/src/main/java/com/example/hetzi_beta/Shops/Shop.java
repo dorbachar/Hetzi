@@ -12,8 +12,8 @@ import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
 
 public class Shop implements Parcelable {
     private String name;
-    private String uid; // Firebase connected user uid
-    private String fbKey; // Firebase unique random key
+    private String uid;     // Firebase connected user uid
+    private String fbKey;   // Firebase unique random key
     private String logo_uri;
     private String cover_uri;
     private String website;

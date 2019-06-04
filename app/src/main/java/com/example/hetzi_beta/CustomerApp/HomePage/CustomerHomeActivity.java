@@ -2,6 +2,7 @@ package com.example.hetzi_beta.CustomerApp.HomePage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.hetzi_beta.BusinessApp.ShopSettings.ShopSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
@@ -21,8 +24,11 @@ import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
 import com.example.hetzi_beta.CustomerApp.ShopsGrid.ShopsGridFragment;
 import com.example.hetzi_beta.CustomerApp.ShopsGrid.ViewShopPageFragment;
+import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
@@ -30,6 +36,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import mehdi.sakout.fancybuttons.FancyButton;
 
 import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
+import static com.example.hetzi_beta.Utils.HTZ_CART_POPUP;
 
 
 public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitcher {
@@ -56,40 +63,47 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_home);
 
-        // Toolbar related
-        mToolbar        = findViewById(R.id.my_toolbar);
-        setSupportActionBar(mToolbar);
-        filters_shown = true;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "נא להיכנס למערכת", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // Toolbar related
+            mToolbar        = findViewById(R.id.my_toolbar);
+            setSupportActionBar(mToolbar);
+            filters_shown = true;
 
-        mNotifNumber    = findViewById(R.id.notif_num);
-        mToolbarTitle   = mToolbar.findViewById(R.id.toolbar_title_TextView);
-        mNotifNumber.setVisibility(View.GONE);
+            mNotifNumber    = findViewById(R.id.notif_num);
+            mToolbarTitle   = mToolbar.findViewById(R.id.toolbar_title_TextView);
+            mNotifNumber.setVisibility(View.GONE);
 
-        mViewPager      = findViewById(R.id.view_pager);
-        setupViewPager(mViewPager);
+            mViewPager      = findViewById(R.id.view_pager);
+            setupViewPager(mViewPager);
 
-        mTabLayout = setupTabLayout();
-        setupKeyboardVisibility();
+            mTabLayout = setupTabLayout();
+            setupKeyboardVisibility();
 
-        mCartButton     = mToolbar.findViewById(R.id.cart_icon_ImageView);
-        mCartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CustomerHomeActivity.this, ViewCartPopupActivity.class);
-                intent.putExtra("new", true);
-                startActivityForResult(intent, HTZ_ADD_OFFER);
-            }
-        });
+            mCartButton     = mToolbar.findViewById(R.id.cart_icon_ImageView);
+            mCartButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(CustomerHomeActivity.this, ViewCartPopupActivity.class);
+                    startActivityForResult(intent, HTZ_CART_POPUP);
+                }
+            });
 
-        mBackButton     = mToolbar.findViewById(R.id.back_button_ImageView);
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                fm.popBackStackImmediate();
-            }
-        });
-        setEnableBackButton(false);
+            mBackButton     = mToolbar.findViewById(R.id.back_button_ImageView);
+            mBackButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.popBackStackImmediate();
+                }
+            });
+            setEnableBackButton(false);
+        }
     }
 
     public void setEnableBackButton(boolean enable) {
@@ -119,7 +133,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
         tabLayout.getTabAt(1).setIcon(R.drawable.tab_icon_shops);
         tabLayout.getTabAt(2).setIcon(R.drawable.tab_icon_favourites);
         tabLayout.getTabAt(3).setIcon(R.drawable.tab_icon_discover);
-        tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_settings);
+        tabLayout.getTabAt(4).setIcon(R.drawable.tab_icon_shop_page);
 
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -149,7 +163,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("shop_uid_to_fetch", null);
+        bundle.putParcelable("shop_to_fetch", null);
 
         Fragment fragment = new LiveSalesFragment();
         fragment.setArguments(bundle);
@@ -158,32 +172,9 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
         adapter.addFragment(new ShopsGridFragment(), "חנויות");
         adapter.addFragment(new FavouritesFragment(), "מועדפים");
         adapter.addFragment(new DiscoverFragment(), "Discover");
-        adapter.addFragment(new CustomerSettingsFragment(), "הגדרות");
+        adapter.addFragment(new ShopSettingsFragment(), "העדפות אישיות");
 
         viewPager.setAdapter(adapter);
-    }
-
-    public void cartNotifPlus() {
-        ShoppingCart cart = ShoppingCart.getInstance();
-        Integer curr_size = cart.getSize();
-
-        if (curr_size == 1) {
-            mNotifNumber.setVisibility(View.VISIBLE);
-        }
-
-        mNotifNumber.setText(curr_size.toString());
-    }
-
-    public void cartNotifMinus(Integer amount) {
-        ShoppingCart cart = ShoppingCart.getInstance();
-        Integer curr_size = cart.getSize();
-        cart.setSize(curr_size - amount);
-
-        if (curr_size == 0) {
-            mNotifNumber.setVisibility(View.GONE);
-        }
-
-        mNotifNumber.setText(curr_size.toString());
     }
 
     @Override
@@ -207,6 +198,38 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
 
     public void setToolbarTitle(String title) {
         mToolbarTitle.setText(title);
+    }
+
+    public void cartNotifPlus() {
+        mNotifNumber.setText(((Integer)(Integer.parseInt(mNotifNumber.getText().toString()) + 1)).toString());
+
+        if (Integer.parseInt(mNotifNumber.getText().toString()) > 0) {
+            mNotifNumber.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void cartNotifMinus(Integer amount) {
+        mNotifNumber.setText(((Integer)(Integer.parseInt(mNotifNumber.getText().toString()) - amount)).toString());
+
+        if (Integer.parseInt(mNotifNumber.getText().toString()) == 0) {
+            mNotifNumber.setVisibility(View.GONE);
+        }
+    }
+
+    public void cartNotifEmpty() {
+        mNotifNumber.setText("0");
+        mNotifNumber.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == HTZ_CART_POPUP) {
+            if ( data != null && data.getBooleanExtra("empty_cart", true) )     {
+                cartNotifEmpty();
+                // TODO : Dialog with purchase summary and 'Thanks for buyingggggg'
+            }
+        }
     }
 
 //    @Override

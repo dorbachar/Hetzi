@@ -1,5 +1,6 @@
 package com.example.hetzi_beta.CustomerApp.LiveSales;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -111,21 +112,23 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
         mPriceFilterText        = root_view.findViewById(R.id.price_filter_TextView);
 
         mDistanceFilter         = root_view.findViewById(R.id.distance_filter_ImageView);
-        mDistanceFilter.setOnClickListener(new View.OnClickListener() {
+        mDistanceFilter         .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 applyFilter("distance");
             }
         });
-        mTimeFilter     = root_view.findViewById(R.id.time_filter_ImageView);
-        mTimeFilter.setOnClickListener(new View.OnClickListener() {
+
+        mTimeFilter             = root_view.findViewById(R.id.time_filter_ImageView);
+        mTimeFilter             .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 applyFilter("time");
             }
         });
-        mPriceFilter = root_view.findViewById(R.id.price_filter_ImageView);
-        mPriceFilter.setOnClickListener(new View.OnClickListener() {
+
+        mPriceFilter            = root_view.findViewById(R.id.price_filter_ImageView);
+        mPriceFilter             .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 applyFilter("price");
@@ -283,13 +286,15 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
                     if (deals_list.size() == 0) {
                         // Add all offers, since the list is empty
                         for(Offer ofr : (ArrayList<Offer>)(pair.getValue())) {
-                            deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
+                            if (ofr.getQuantity() > 0)
+                                deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
                         }
                     } else {
                         // Add only the non-existant offers
                         for(Offer ofr : (ArrayList<Offer>)(pair.getValue())) {
                             if (!offerInDealsList(ofr)) {
-                                deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
+                                if (ofr.getQuantity() > 0)
+                                    deals_list.add(new Deal(ofr, (Shop)(pair.getKey())));
                             }
                         }
                     }
@@ -329,23 +334,13 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
         recyclerView.addOnScrollListener(preloader);
     }
 
-    /*
-     * onClickButtonOffers -
-     *
-     * Implementation of OnClickButtonListenerOffers.onClickButtonOffers, so that when calling
-     * startActivityForResult, the onActivityResult method will be called as I want.
-     *
-     * */
     @Override
     public void onClickButtonDeals(View v, int position, ArrayList<Deal> deals, TextView card_quantity) {
         // (1) Update the shopping cart
         Deal from_item = deals.get(position);
 
-        ShoppingCart cart = ShoppingCart.getInstance();
+        ShoppingCart cart = ShoppingCart.getInstance(getActivity());
         cart.addDeal(from_item);
-
-        CustomerHomeActivity caller = (CustomerHomeActivity) getActivity();
-        caller.cartNotifPlus();
 
         // (2) Update the offer card
         Integer current_displayed_quantity = Integer.parseInt(card_quantity.getText().toString());

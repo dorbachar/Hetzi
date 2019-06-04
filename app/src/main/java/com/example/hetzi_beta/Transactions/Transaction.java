@@ -3,57 +3,25 @@ package com.example.hetzi_beta.Transactions;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.Utils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
+/*
+ * This class represents an Offer that items were bought from.
+ *
+ * So for example if a customer buys 2 donuts and 1 bread from the same shop there will be
+ * 2 BusinessTransaction objects created, one titled 'donuts' and quantity=2, and one titled 'bread'
+ * with quantity=1.
+ *
+ * */
 public class Transaction {
+    protected String  title;
+    protected Float   sum;
+    protected Integer quantity;
+    protected String  payment_id;
 
-    // TODO : fields of אמצעי תשלום etc. after payment is integrated into the system
-    /*
-    * The member 'title' will contain info about the name & quantity. For example if the Transaction
-    * was buying 2 Salads the title will be: "2 x Salad"
-    * */
-    private String  title;
-    private String  paying_uid;
-    private String  receive_uid;
-    private String  offer_id;
-
-    private Float   sum;
-    private Integer quantity;
-
-    // For Insights mainly
-    private Integer duration;
-    private String  s_time;
-    private Integer discount;
-
-    public Transaction(Offer offer, Shop shop) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+    public Transaction(Offer offer) {
         this.title          = offer.getTitle();
-        this.paying_uid     = user.getUid();
-        this.receive_uid    = shop.getUid();
-        this.offer_id       = offer.getFbKey();
         this.sum            = Utils.priceAfterDiscount(offer.getOrigPrice(), offer.getDiscount());
         this.quantity       = 1;
-        this.duration       = offer.durationMinutes();
-        this.s_time         = offer.getS_time();
-        this.discount       = offer.getDiscount();
-    }
-
-    public String   getPaying_uid() {
-        return paying_uid;
-    }
-
-    public void     setPaying_uid(String paying_uid) {
-        this.paying_uid = paying_uid;
-    }
-
-    public String   getReceive_uid() {
-        return receive_uid;
-    }
-
-    public void     setReceive_uid(String receive_uid) {
-        this.receive_uid = receive_uid;
     }
 
     public Float    getSum() {
@@ -62,30 +30,6 @@ public class Transaction {
 
     public void     setSum(Float sum) {
         this.sum = sum;
-    }
-
-    public String   getS_time() {
-        return s_time;
-    }
-
-    public void     setS_time(String s_time) {
-        this.s_time = s_time;
-    }
-
-    public int      getDiscount() {
-        return discount;
-    }
-
-    public void     setDiscount(int discount) {
-        this.discount = discount;
-    }
-
-    public Integer  getDuration() {
-        return duration;
-    }
-
-    public void     setDuration(Integer duration) {
-        this.duration = duration;
     }
 
     public String   getTitle() {
@@ -104,12 +48,17 @@ public class Transaction {
         this.quantity = quantity;
     }
 
-    public String   getOffer_id() {
-        return offer_id;
+    public String getPayment_id() {
+        return payment_id;
     }
 
-    public void     setOffer_id(String offer_id) {
-        this.offer_id = offer_id;
+    public void setPayment_id(String payment_id) {
+        this.payment_id = payment_id;
+    }
+
+    public void plusOneItem() {
+        sum += (sum / quantity);
+        quantity++;
     }
 
 }

@@ -92,6 +92,7 @@ public class Deal implements Comparable<Deal> {
     * */
     @Override
     public int compareTo(Deal o) {
+        Offer o_offer = o.getOffer();
         switch(sort_filter) {
             case "none":
                 return 0;
@@ -100,7 +101,15 @@ public class Deal implements Comparable<Deal> {
             case "price":
                 return this.getOffer().priceAfterDiscount().compareTo(o.getOffer().priceAfterDiscount());
             case "time":
-                return this.getOffer().getE_time().compareTo(o.getOffer().getE_time());
+                if (o_offer.hasEnded() && offer.hasEnded()) {
+                    return 0;
+                } else if (o_offer.hasEnded()) {
+                    return -1;
+                } else if (offer.hasEnded()) {
+                    return 1;
+                } else {
+                    return this.getOffer().getE_time().compareTo(o.getOffer().getE_time());
+                }
         }
 
         return 0;

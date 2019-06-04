@@ -31,7 +31,6 @@ public class Offer implements Parcelable {
 
     private String      s_time;
     private String      e_time;
-//    private boolean     active;
     private String      fbKey;
 
     @Override
@@ -48,7 +47,6 @@ public class Offer implements Parcelable {
         dest.writeInt(discount);
         dest.writeString(s_time);
         dest.writeString(e_time);
-//        dest.writeByte((byte) (active ? 1 : 0));
         dest.writeString(fbKey);
     }
 
@@ -60,7 +58,6 @@ public class Offer implements Parcelable {
         discount        = in.readInt();
         s_time          = in.readString();
         e_time          = in.readString();
-//        active          = in.readByte() != 0;
         fbKey           = in.readString();
     }
 
@@ -86,7 +83,6 @@ public class Offer implements Parcelable {
         this.discount       = discount;
         this.s_time         = getStartInstant(start_day, start_month, start_year, start_hour, start_minute);
         this.e_time         = getEndInstant(duration);
-//        this.active         = isActive();
         this.fbKey          = "none";
     }
 
@@ -103,7 +99,18 @@ public class Offer implements Parcelable {
         return e_time.toString();
     }
 
-    private String getStartInstant(Integer start_day, Integer start_month, Integer start_year, Integer start_hour, Integer start_minute) {
+    public String getNewEndInstant(Instant s_time_new) {
+        Instant s_time_orig = Instant.parse(this.s_time);
+        Instant e_time_orig = Instant.parse(this.e_time);
+
+        Long gap = ChronoUnit.MINUTES.between(s_time_orig, e_time_orig);
+
+        Instant e_time_new = s_time_new.plus(gap, ChronoUnit.MINUTES);
+
+        return e_time_new.toString();
+    }
+
+    public String getStartInstant(Integer start_day, Integer start_month, Integer start_year, Integer start_hour, Integer start_minute) {
         LocalDateTime ldt = LocalDateTime.of(start_year, start_month, start_day, start_hour, start_minute, 0);
         ZonedDateTime zdt = ldt.atZone(ZoneId.of("Israel"));
         Instant time_inst = zdt.toInstant();
@@ -275,14 +282,6 @@ public class Offer implements Parcelable {
     public void setE_time(String e_time) {
         this.e_time = e_time;
     }
-
-//    public void setActive(boolean active) {
-//        this.active = active;
-//    }
-//
-//    public boolean isActive() {
-//        return active;
-//    }
 
     public String getFbKey() {
         return fbKey;

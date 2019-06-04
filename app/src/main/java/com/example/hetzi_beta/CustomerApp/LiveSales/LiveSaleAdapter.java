@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,6 +17,7 @@ import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,33 +56,59 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
     }
 
     private void setupTimer(@NonNull SaleViewHolder holder, Offer current_offer) {
+        if (holder.timer != null) holder.timer.cancel();
+
         if(current_offer.isActive()) {
             activateTimer(holder, current_offer);
         } else {
             resetTimer(holder, current_offer);
         }
 
+        timerAndAddOneViewsBehavior(holder, current_offer);
+    }
+
+    /*
+    * Desired:
+    *
+    * Sale Live             : white clock (mTimer), enabled button (mAddOneButton).
+    * Sale Ended            : no clock, no button.
+    * Sale Haven't Begun    : grey clock, no button.
+    * */
+    private void timerAndAddOneViewsBehavior(@NonNull SaleViewHolder holder, Offer current_offer) {
+        TextView    mTimer_c        = holder.mTimer;
+        Button      mAddOneButton_c = holder.mAddOneButton;
+
         if (current_offer.hasEnded()) {
-            Utils.disableButton(holder.mAddOneButton, mContext, "offer");
-            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.darkGrey));
+            Utils.disableButton(mAddOneButton_c, mContext, "offer");
+            mAddOneButton_c.setTextColor(mContext.getResources().getColor(R.color.Black_Transparent));
+            mTimer_c.setTextColor(mContext.getResources().getColor(R.color.darkGrey));
         } else if (!current_offer.hasStarted()) {
-            Utils.disableButton(holder.mAddOneButton, mContext, "offer");
-            holder.mTimer.setTextColor(mContext.getResources().getColor(R.color.White));
+            Utils.disableButton(mAddOneButton_c, mContext, "offer");
+            mAddOneButton_c.setTextColor(mContext.getResources().getColor(R.color.Black_Transparent));
+            mTimer_c.setTextColor(mContext.getResources().getColor(R.color.darkGrey));
+        } else {
+            Utils.enableButton(mAddOneButton_c, mContext, "offer");
+            mAddOneButton_c.setTextColor(mContext.getResources().getColor(R.color.White));
+            mTimer_c.setTextColor(mContext.getResources().getColor(R.color.White));
         }
+    }
+
+    public void setTimer(final SaleViewHolder holder, Integer hours, Integer minutes, Integer seconds) {
+        String s_hours      = hours >= 10 ? hours.toString() : "0" + hours.toString();
+        String s_minutes    = minutes >= 10 ? minutes.toString() : "0" + minutes.toString();
+        String s_seconds    = seconds >= 10 ? seconds.toString() : "0" + seconds.toString();
+        holder.mTimer.setText( s_hours  + ":" + s_minutes  + ":" + s_seconds );
     }
 
     private void resetTimer(@NonNull final SaleViewHolder holder, final Offer current_offer) {
         Integer hours_for_timer     = current_offer.durationMinutes() / 60;
         Integer minutes_for_timer   = current_offer.durationMinutes() % 60 == 0 ? 0 : 30;
 
-        String s_hours      = hours_for_timer > 10 ? hours_for_timer.toString() : "0" + hours_for_timer.toString();
-        String s_minutes    = minutes_for_timer > 10 ? minutes_for_timer.toString() : "0" + minutes_for_timer.toString();
-
-        holder.mTimer.setText( s_hours  + ":" + s_minutes  + ":00" );
+        setTimer(holder, hours_for_timer, minutes_for_timer, 0);
     }
 
     private void activateTimer(@NonNull final SaleViewHolder holder, final Offer current_offer) {
-        new CountDownTimer(current_offer.secondsTillEnd()*1000, 1000) {
+        holder.timer = new CountDownTimer(current_offer.secondsTillEnd()*1000, 1000) {
             Integer hours_for_timer = current_offer.minutesTillEnd()/60;
             Integer minutes_for_timer = current_offer.minutesTillEnd() % 60;
 
@@ -96,11 +124,8 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
                 Integer hrs = time_counter.get("Hours");
                 Integer mns = time_counter.get("Minutes");
                 Integer scs = time_counter.get("Seconds");
-                String s_hours      = hrs > 10 ? hrs.toString() : "0" + hrs.toString();
-                String s_minutes    = mns > 10 ? mns.toString() : "0" + mns.toString();
-                String s_seconds    = scs > 10 ? scs.toString() : "0" + scs.toString();
 
-                holder.mTimer.setText( s_hours  + ":" + s_minutes  + ":" + s_seconds );
+                setTimer(holder, hrs, mns, scs);
             }
 
             private void updateTimeMap() {
@@ -170,7 +195,6 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
                 holder.mKilometerWord.setText(" קילומטר");
             }
         }
-
     }
 
     private String resetTimer(Offer offer) {
@@ -185,6 +209,7 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         return mDeals.size();
     }
 
+
     class SaleViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder  implements View.OnClickListener {
         // Offer Details
         ImageView                   background_image_offer_item;
@@ -196,13 +221,16 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         TextView                    orig_price_TextView;
         Button                      mAddOneButton;
         TextView                    mTimer;
-        TextView                    mDistance;
-        TextView                    mKilometerWord;
         OnClickButtonListenerDeals  mOnClickButtonListener;
 
         // Shop Details
-        ImageView               shopLogo;
-        TextView                shopName;
+        ImageView                   shopLogo;
+        TextView                    shopName;
+        TextView                    mDistance;
+        TextView                    mKilometerWord;
+
+        // Timer
+        CountDownTimer              timer;
 
         public SaleViewHolder(@NonNull View itemView, OnClickButtonListenerDeals mOnClickButtonListener) {
             super(itemView);

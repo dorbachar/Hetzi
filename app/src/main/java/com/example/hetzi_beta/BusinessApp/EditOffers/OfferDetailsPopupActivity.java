@@ -284,8 +284,18 @@ public class OfferDetailsPopupActivity extends AppCompatActivity {
      *
      * */
     private void getUserUpdateFromString(Offer n_offer, Map<String, Object> userUpdates, String field) {
-        if(field.equals("title") || field.equals("photoUrl") || field.equals("s_date"))
+        if(field.equals("title") || field.equals("photoUrl")) {
             userUpdates.put(field, n_offer.getFieldFromString(field));
+        } else if (field.equals("s_date")) {
+            Instant s_time_new =  Instant.parse(n_offer.getStartInstant(offer_date.start_day, offer_date.start_month, offer_date.start_year,
+                    offer_date.start_hour, offer_date.start_minute));
+
+            n_offer.setE_time(n_offer.getNewEndInstant(s_time_new));
+            n_offer.setS_time(s_time_new.toString());
+
+            userUpdates.put("s_time", n_offer.getS_time());
+            userUpdates.put("e_time", n_offer.getE_time());
+        }
         else if(field.equals("origPrice"))
             userUpdates.put(field, Float.parseFloat(n_offer.getFieldFromString(field)));
         else

@@ -48,6 +48,8 @@ public class Utils {
     public static final int     HTZ_LOCATION = 107;
     public static final Double  HTZ_LOCATION_NOT_FOUND = 0.0;
     public static final Float   HTZ_INVALID_DISTANCE = Float.valueOf(1000000000);
+    public static final int     HTZ_CART_POPUP = 108;
+
 
     public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>() {{
         put("ארומה אספרסו בר",  new HtzAddress(32.164903, 34.823134, "קניון שבעת הכוכבים, הרצליה"));
