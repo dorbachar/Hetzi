@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 
 import java.util.ArrayList;
 

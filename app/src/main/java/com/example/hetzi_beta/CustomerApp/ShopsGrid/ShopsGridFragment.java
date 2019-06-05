@@ -97,10 +97,6 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
         mAdapter            = new ShopsGridAdapter(getActivity(), shops_list, this);
         recyclerView.setAdapter(mAdapter);
 
-
-        // The problem: this fragment stays below the ViewShop fragment. and then clicks in ViewShop
-        // are counted as clicks in this fragment too, and new ViewShop Fragments are opened.
-        // Solution, probably: close the currently displayed fragment somehow.
         mAdapter.setClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

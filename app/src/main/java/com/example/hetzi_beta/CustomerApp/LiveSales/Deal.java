@@ -4,10 +4,10 @@ import android.location.Location;
 
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.Shops.Shop;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 
-import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
-import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_INVALID_DISTANCE;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_LOCATION_NOT_FOUND;
 
 public class Deal implements Comparable<Deal> {
     private Offer offer;

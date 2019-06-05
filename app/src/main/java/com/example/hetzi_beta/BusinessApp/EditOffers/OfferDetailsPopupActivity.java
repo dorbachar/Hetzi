@@ -22,7 +22,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -36,9 +35,10 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.hetzi_beta.Utils.HtzWrapperActivity;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,9 +52,9 @@ import com.google.firebase.storage.UploadTask;
 import org.threeten.bp.Instant;
 import org.threeten.bp.temporal.ChronoUnit;
 
-import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
-import static com.example.hetzi_beta.Utils.HTZ_CAMERA;
-import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_ADD_OFFER;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_CAMERA;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_GALLERY;
 
 /*
  * OfferDetailsPopupActivity -
@@ -63,7 +63,7 @@ import static com.example.hetzi_beta.Utils.HTZ_GALLERY;
  *
  * */
 
-public class OfferDetailsPopupActivity extends AppCompatActivity {
+public class OfferDetailsPopupActivity extends HtzWrapperActivity {
     public class OfferStartDate {
         public Integer     start_day;
         public Integer     start_month;

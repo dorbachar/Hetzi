@@ -22,16 +22,20 @@ public class BusinessTransaction extends Transaction {
     private String  s_time;
     private Integer discount;
 
+    public BusinessTransaction(){
+    }
+
     public BusinessTransaction(Offer offer) {
         super(offer);
 
         FirebaseUser user   = FirebaseAuth.getInstance().getCurrentUser();
 
         this.cust_uid       = user.getUid(); // When this is created, the current user is the paying one
+        this.name           = user.getDisplayName();
         this.offer_id       = offer.getFbKey();
 
         this.duration       = offer.durationMinutes();
-        this.s_time         = offer.getS_time();
+        this.s_time           = offer.getS_time();
         this.discount       = offer.getDiscount();
     }
 
@@ -51,19 +55,11 @@ public class BusinessTransaction extends Transaction {
         this.sum = sum;
     }
 
-    public String   getS_time() {
-        return s_time;
-    }
-
-    public void     setS_time(String s_time) {
-        this.s_time = s_time;
-    }
-
     public int      getDiscount() {
         return discount;
     }
 
-    public void     setDiscount(int discount) {
+    public void setDiscount(Integer discount) {
         this.discount = discount;
     }
 
@@ -97,6 +93,15 @@ public class BusinessTransaction extends Transaction {
 
     public void     setOffer_id(String offer_id) {
         this.offer_id = offer_id;
+    }
+
+
+    public String getS_time() {
+        return s_time;
+    }
+
+    public void setS_time(String s_time) {
+        this.s_time = s_time;
     }
 
     public void plusOneItem() {

@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.example.hetzi_beta.CustomerApp.LiveSales.Deal;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Transactions.BusinessTransaction;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;

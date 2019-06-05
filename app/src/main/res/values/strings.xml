@@ -28,6 +28,8 @@
     <string name="total">סה\"כ לתשלום</string>
     <string name="original_total">סכום מקורי</string>
     <string name="you_saved">חסכת</string>
+    <string name="oops">אופסי!</string>
+    <string name="trans_details">סיכום עסקה</string>
     <string-array name="times_array">
         <item name="time1">00:30</item>
         <item name="time2">01:00</item>

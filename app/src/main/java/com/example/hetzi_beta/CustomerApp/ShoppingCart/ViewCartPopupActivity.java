@@ -2,20 +2,18 @@ package com.example.hetzi_beta.CustomerApp.ShoppingCart;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
-import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.CustomerApp.LiveSales.Deal;
-import com.example.hetzi_beta.Offers.Offer;
+import com.example.hetzi_beta.Utils.HtzWrapperActivity;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Transactions.BusinessTransaction;
 import com.example.hetzi_beta.Transactions.CustomerTransaction;
+import com.example.hetzi_beta.Utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,10 +31,9 @@ import java.util.Map;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
-import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
-import static com.example.hetzi_beta.Utils.HTZ_CART_POPUP;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_CART_POPUP;
 
-public class ViewCartPopupActivity extends AppCompatActivity {
+public class ViewCartPopupActivity extends HtzWrapperActivity {
     private ListView                        offers_ListView;
 
     private ArrayList<Deal>                 deals_list = new ArrayList<>();
@@ -96,6 +93,8 @@ public class ViewCartPopupActivity extends AppCompatActivity {
         mTotalSaved.setText(((Float)(calcTotalOrigPrice() - calcTotalPriceToPay())).toString());
 
         mShopTitle.setText(cart.getCurrentShopName());
+        if (ShoppingCart.getInstance(ViewCartPopupActivity.this).isEmpty())
+            Utils.disableButton(mPayButton, this, "offer");
 
         ViewCartAdapter adapter = new ViewCartAdapter(this, R.layout.item_cart_list, deals_list, BT_list);
         offers_ListView = findViewById(R.id.offers_list);
@@ -114,14 +113,16 @@ public class ViewCartPopupActivity extends AppCompatActivity {
         mPayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pushTransactionsToDB();
-                updateOfferQuantity();
+                if(!ShoppingCart.getInstance(ViewCartPopupActivity.this).isEmpty()) {
+                    pushTransactionsToDB();
+                    updateOfferQuantity();
 
-                ShoppingCart.getInstance(ViewCartPopupActivity.this).clearCart();
+                    ShoppingCart.getInstance(ViewCartPopupActivity.this).clearCart();
 
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("empty_cart", true);
-                setResult(HTZ_CART_POPUP, resultIntent);
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("empty_cart", true);
+                    setResult(HTZ_CART_POPUP, resultIntent);
+                }
 
                 finish();
             }
@@ -154,23 +155,28 @@ public class ViewCartPopupActivity extends AppCompatActivity {
             }
 
             private void pushTransactionsToDB() {
-                FirebaseUser        user                    = FirebaseAuth.getInstance().getCurrentUser();
-                FirebaseDatabase    mFirebaseDatabase       = FirebaseDatabase.getInstance();
+                    FirebaseUser        user                    = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseDatabase    mFirebaseDatabase       = FirebaseDatabase.getInstance();
 
-                String payment_id   = Instant.now().toString().replaceAll("[^\\d]", "");
+                    // Unifies all transactions of this payment under the timestamp
+                    String payment_id   = Instant.now().toString().replaceAll("[^\\d]", "");
 
-                DatabaseReference   mBTsDatabaseReference   = mFirebaseDatabase.getReference().child("transactions/busi/" + deals_list.get(0).getShop().getUid() + "/" + payment_id);
-                DatabaseReference   mCTsDatabaseReference   = mFirebaseDatabase.getReference().child("transactions/cust/" + user.getUid() + "/" + payment_id);
+                    DatabaseReference   mBTsDatabaseReference   = mFirebaseDatabase.getReference().child("transactions/busi/" + deals_list.get(0).getShop().getUid() + "/" + payment_id);
+                    DatabaseReference   mCTsDatabaseReference   = mFirebaseDatabase.getReference().child("transactions/cust/" + user.getUid() + "/" + payment_id);
 
-                for (BusinessTransaction curr_bt : BT_list) {
-                    curr_bt.setPayment_id(payment_id);
-                    mBTsDatabaseReference.push().setValue(curr_bt);
+                    for (BusinessTransaction curr_bt : BT_list) {
+                        mBTsDatabaseReference.push().setValue(curr_bt);
 
-                    int i = BT_list.indexOf(curr_bt);
-                    CustomerTransaction curr_ct = new CustomerTransaction(deals_list.get(i).getOffer(), deals_list.get(i).getShop());
-                    mCTsDatabaseReference.push().setValue(curr_ct);
+                        int i = BT_list.indexOf(curr_bt);
+
+                        CustomerTransaction curr_ct = new CustomerTransaction(deals_list.get(i).getOffer(), deals_list.get(i).getShop());
+
+                        Float curr_sum = curr_ct.getSum();
+                        curr_ct.setQuantity(curr_bt.getQuantity());
+                        curr_ct.setSum(curr_ct.getQuantity() * curr_sum);
+                        mCTsDatabaseReference.push().setValue(curr_ct);
+                    }
                 }
-            }
         });
     }
 

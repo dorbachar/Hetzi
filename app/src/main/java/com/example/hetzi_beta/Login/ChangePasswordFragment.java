@@ -3,7 +3,6 @@ package com.example.hetzi_beta.Login;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthCredential;

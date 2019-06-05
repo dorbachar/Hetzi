@@ -3,20 +3,18 @@ package com.example.hetzi_beta;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 
 import com.example.hetzi_beta.BusinessApp.HomePage.BusinessHomeActivity;
 import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
-import com.example.hetzi_beta.Login.LoginActivity;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.hetzi_beta.Utils.HtzWrapperActivity;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends HtzWrapperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

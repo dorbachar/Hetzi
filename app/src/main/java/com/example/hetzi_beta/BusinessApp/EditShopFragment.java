@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,8 +40,8 @@ import java.util.Map;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.hetzi_beta.Utils.HTZ_COVER_PHOTO_ULPOAD;
-import static com.example.hetzi_beta.Utils.HTZ_LOGO_ULPOAD;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_COVER_PHOTO_ULPOAD;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_LOGO_ULPOAD;
 
 public class EditShopFragment extends Fragment {
     // This important member holds the currently displayed shop. It's loaded from the DB if the user

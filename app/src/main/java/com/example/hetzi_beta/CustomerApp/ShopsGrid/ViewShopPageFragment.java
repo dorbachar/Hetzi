@@ -15,7 +15,7 @@ import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class ViewShopPageFragment extends Fragment {

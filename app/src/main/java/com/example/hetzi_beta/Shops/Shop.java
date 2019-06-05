@@ -4,11 +4,11 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.hetzi_beta.HtzAddress;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.HtzAddress;
+import com.example.hetzi_beta.Utils.Utils;
 
-import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
-import static com.example.hetzi_beta.Utils.HTZ_LOCATION_NOT_FOUND;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_INVALID_DISTANCE;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_LOCATION_NOT_FOUND;
 
 public class Shop implements Parcelable {
     private String name;

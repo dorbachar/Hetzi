@@ -14,12 +14,12 @@ import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.CustomerApp.HomePage.ShopSwitcherFromFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 
-import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_INVALID_DISTANCE;
 
 public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Adapter<ShopsGridAdapter.ShopViewHolder> {
     public ArrayList<Shop> shops_list;

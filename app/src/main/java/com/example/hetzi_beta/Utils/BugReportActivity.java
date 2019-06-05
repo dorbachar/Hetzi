@@ -1,17 +1,15 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.Utils;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.example.hetzi_beta.R;
 
-public class ToolbarActivity extends AppCompatActivity {
+public class BugReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_toolbar);
-
-
+        setContentView(R.layout.activity_bug_report);
     }
 }

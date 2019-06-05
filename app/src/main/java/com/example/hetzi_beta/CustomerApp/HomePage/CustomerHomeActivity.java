@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,14 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hetzi_beta.BusinessApp.ShopSettings.ShopSettingsFragment;
-import com.example.hetzi_beta.CustomerApp.CustomerSettingsFragment;
 import com.example.hetzi_beta.CustomerApp.DiscoverFragment;
 import com.example.hetzi_beta.CustomerApp.FavouritesFragment;
 import com.example.hetzi_beta.CustomerApp.LiveSales.LiveSalesFragment;
-import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ViewCartPopupActivity;
 import com.example.hetzi_beta.CustomerApp.ShopsGrid.ShopsGridFragment;
 import com.example.hetzi_beta.CustomerApp.ShopsGrid.ViewShopPageFragment;
+import com.example.hetzi_beta.Utils.HtzWrapperActivity;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
@@ -35,11 +33,10 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
-import static com.example.hetzi_beta.Utils.HTZ_ADD_OFFER;
-import static com.example.hetzi_beta.Utils.HTZ_CART_POPUP;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_CART_POPUP;
 
 
-public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitcher {
+public class CustomerHomeActivity extends HtzWrapperActivity implements ShopSwitcher {
     private ViewPager       mViewPager;
     private Toolbar         mToolbar;
     private TextView        mToolbarTitle;
@@ -172,7 +169,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements ShopSwitc
         adapter.addFragment(new ShopsGridFragment(), "חנויות");
         adapter.addFragment(new FavouritesFragment(), "מועדפים");
         adapter.addFragment(new DiscoverFragment(), "Discover");
-        adapter.addFragment(new ShopSettingsFragment(), "העדפות אישיות");
+        adapter.addFragment(new ShopSettingsFragment(), "אישי");
 
         viewPager.setAdapter(adapter);
     }

@@ -1,18 +1,14 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.Utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -20,6 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.Offers.Offer;
+import com.example.hetzi_beta.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,8 +31,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
-import static com.firebase.ui.auth.AuthUI.TAG;
 
 public class Utils {
     // Constants
@@ -49,6 +47,8 @@ public class Utils {
     public static final Double  HTZ_LOCATION_NOT_FOUND = 0.0;
     public static final Float   HTZ_INVALID_DISTANCE = Float.valueOf(1000000000);
     public static final int     HTZ_CART_POPUP = 108;
+    public static final int     HTZ_CUSTOMER = 109;
+    public static final int     HTZ_BUSINESS = 110;
 
 
     public static Map<String, HtzAddress> SHOP_ADDRESS = new HashMap<String, HtzAddress>() {{
@@ -113,6 +113,31 @@ public class Utils {
     }
 
     public static void enableButton(Button button, Context context, String type) {
+        switch (type) {
+            case "round":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));
+                button.setTextColor(context.getResources().getColor(R.color.Black));
+                break;
+            case "offer":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_regular_button));
+                break;
+        }
+        button.setEnabled(true);
+    }
+
+    public static void disableButton(FancyButton button, Context context, String type) {
+        switch (type) {
+            case "round":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_disabled_button));
+                break;
+            case "offer":
+                button.setBackground(context.getResources().getDrawable(R.drawable.shape_regular_button_disabled));
+                break;
+        }
+        button.setEnabled(false);
+    }
+
+    public static void enableButton(FancyButton button, Context context, String type) {
         switch (type) {
             case "round":
                 button.setBackground(context.getResources().getDrawable(R.drawable.shape_enabled_button));

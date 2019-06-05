@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
@@ -13,19 +13,21 @@ import android.widget.Toast;
 
 import com.example.hetzi_beta.BusinessApp.EditOffers.EditableOffersListFragment;
 import com.example.hetzi_beta.BusinessApp.EditShopFragment;
-import com.example.hetzi_beta.BusinessApp.PastDealsFragment;
+import com.example.hetzi_beta.Utils.HtzWrapperActivity;
+import com.example.hetzi_beta.PastDeals.PastDealsFragment;
 import com.example.hetzi_beta.BusinessApp.ShopSettings.ShopSettingsFragment;
 import com.example.hetzi_beta.BusinessApp.StatsFragment;
 import com.example.hetzi_beta.Login.LoginActivity;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.ToolbarActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
-public class BusinessHomeActivity extends AppCompatActivity {
+import static com.example.hetzi_beta.Utils.Utils.HTZ_BUSINESS;
+
+public class BusinessHomeActivity extends HtzWrapperActivity {
 
     private ViewPager               mViewPager;
     private Toolbar                 mToolbar;
@@ -115,9 +117,16 @@ public class BusinessHomeActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("side", HTZ_BUSINESS);
+
+        Fragment past_deals_fragment = new PastDealsFragment();
+        past_deals_fragment.setArguments(bundle);
+
         adapter.addFragment(new EditableOffersListFragment(), tab_titles[0]);
         adapter.addFragment(new EditShopFragment(), tab_titles[1]);
-        adapter.addFragment(new PastDealsFragment(), tab_titles[2]);
+        adapter.addFragment(past_deals_fragment, tab_titles[2]);
         adapter.addFragment(new StatsFragment(), tab_titles[3]);
         adapter.addFragment(new ShopSettingsFragment(), tab_titles[4]);
 

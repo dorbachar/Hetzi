@@ -8,20 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.hetzi_beta.Utils.HTZ_INVALID_DISTANCE;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_INVALID_DISTANCE;
 
 public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adapter<LiveSaleAdapter.SaleViewHolder> {
     private ArrayList<Deal> mDeals;

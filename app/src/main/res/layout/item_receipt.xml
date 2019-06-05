@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/quantity_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryDark"
+        />
+
+    <TextView
+        android:id="@+id/x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@id/quantity_TextView"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/x"
+        android:layout_marginRight="10dp"
+        >
+
+        <TextView
+            android:id="@+id/title_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="שם המוצר"
+            android:textColor="@color/Black"
+            android:layout_alignParentRight="true"
+            />
+
+        <TextView
+            android:id="@+id/price_per_one_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="מחיר ליחידה"
+            android:layout_below="@id/title_TextView"
+            android:layout_alignParentRight="true"
+            />
+
+
+        <TextView
+            android:id="@+id/shekel2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shekel"
+            android:layout_toLeftOf="@id/price_per_one_TextView"
+            android:layout_below="@id/title_TextView"
+            />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/shekel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="@string/shekel"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/shekel"
+        android:text="15"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>

@@ -19,7 +19,7 @@ import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
-import static com.example.hetzi_beta.Utils.*;
+import static com.example.hetzi_beta.Utils.Utils.*;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -22,11 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:windowSoftInputMode="adjustPan">
-
-        <activity android:name=".CustomerApp.ShoppingCart.ViewCartPopupActivity"
+        <activity
+            android:name=".PastDeals.ViewPaymentPopupActivity"
+            android:theme="@style/PopupTheme" />
+        <activity
+            android:name=".Utils.BugReportActivity"
+            android:theme="@style/PopupTheme" />
+        <activity
+            android:name=".CustomerApp.ShoppingCart.ViewCartPopupActivity"
             android:theme="@style/PopupThemeBlueBg" />
-
-        <activity android:name=".ToolbarActivity" />
+        <activity android:name=".Utils.HtzWrapperActivity" />
         <activity
             android:name=".BusinessApp.HomePage.BusinessHomeActivity"
             android:label="חצי" />

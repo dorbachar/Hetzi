@@ -1,6 +1,5 @@
 package com.example.hetzi_beta.CustomerApp.LiveSales;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -19,12 +18,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
-import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.Offers.Offer;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
 import com.example.hetzi_beta.CustomerApp.ShoppingCart.ShoppingCart;
-import com.example.hetzi_beta.Utils;
+import com.example.hetzi_beta.Utils.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

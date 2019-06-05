@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PastDeals.ViewPaymentPopupActivity">
+
+    <ImageView
+        android:id="@+id/return_ImageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/back_icon_black_glow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="17dp"
+        android:layout_marginLeft="10dp"
+        />
+
+    <TextView
+        android:id="@+id/trans_conclusion_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trans_details"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/shop_name_TextView"
+        android:text="שם החנות"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/trans_conclusion_title"
+        android:textColor="@color/Black"
+        />
+
+    <TextView
+        android:id="@+id/date_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="06/07/19"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/shop_name_TextView"
+        />
+
+    <ListView
+        android:id="@+id/items_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@color/White"
+        android:layout_below="@id/date_TextView"
+        >
+
+    </ListView>
+
+</RelativeLayout>

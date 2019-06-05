@@ -9,13 +9,29 @@ package com.example.hetzi_beta.Transactions;
 *
 * */
 
-public class Payment {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+
+public class Payment implements Parcelable {
     private String title;
-    private String payer_uid;
-    private String payer_name;
-    private String receiver_uid;
-    private String receiver_name;
     private Float  sum;
+    private String date;
+    private ArrayList<Transaction> transactions;
+
+    public Payment() {
+        sum = 0f;
+        transactions = new ArrayList<>(); // comment this line out for an easy bug (for debugging BugReportActivity)
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(ArrayList<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 
     public String getTitle() {
         return title;
@@ -23,22 +39,6 @@ public class Payment {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getPayer_uid() {
-        return payer_uid;
-    }
-
-    public void setPayer_uid(String payer_uid) {
-        this.payer_uid = payer_uid;
-    }
-
-    public String getReceiver_uid() {
-        return receiver_uid;
-    }
-
-    public void setReceiver_uid(String receiver_uid) {
-        this.receiver_uid = receiver_uid;
     }
 
     public Float getSum() {
@@ -49,19 +49,67 @@ public class Payment {
         this.sum = sum;
     }
 
-    public String getPayer_name() {
-        return payer_name;
+    public void addToTransactions(Transaction t) {
+        transactions.add(t);
     }
 
-    public void setPayer_name(String payer_name) {
-        this.payer_name = payer_name;
+    public void updateDetailsAfterPopulation(int side) {
+        for (Transaction t : transactions) {
+            sum += t.getSum();
+        }
+
+        title   = transactions.get(0).getName();
+        date    = transactions.get(0).getTrans_time();
     }
 
-    public String getReceiver_name() {
-        return receiver_name;
+    public String getDate() {
+        return date;
     }
 
-    public void setReceiver_name(String receiver_name) {
-        this.receiver_name = receiver_name;
+    public void setDate(String date) {
+        this.date = date;
     }
+
+    // ~~~~~~~~~~~~~~ Implementing Parcelable ~~~~~~~~~~~~~~ //
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        if (sum == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(sum);
+        }
+        dest.writeString(date);
+        dest.writeTypedList(transactions);
+    }
+
+    protected Payment(Parcel in) {
+        title = in.readString();
+        if (in.readByte() == 0) {
+            sum = null;
+        } else {
+            sum = in.readFloat();
+        }
+        date = in.readString();
+        transactions = in.createTypedArrayList(Transaction.CREATOR);
+    }
+
+    public static final Creator<Payment> CREATOR = new Creator<Payment>() {
+        @Override
+        public Payment createFromParcel(Parcel in) {
+            return new Payment(in);
+        }
+
+        @Override
+        public Payment[] newArray(int size) {
+            return new Payment[size];
+        }
+    };
 }

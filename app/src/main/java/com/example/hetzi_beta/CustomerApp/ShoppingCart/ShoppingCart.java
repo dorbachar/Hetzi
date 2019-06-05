@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.hetzi_beta.Utils.HTZ_CART_POPUP;
+import static com.example.hetzi_beta.Utils.Utils.HTZ_CART_POPUP;
 
 public class ShoppingCart {
     // Key: receiver_uid, Value: Map of transactions/deals from the user to this shop (key: offer_id)
@@ -123,6 +123,10 @@ public class ShoppingCart {
         return size;
     }
 
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
     public void setSize(Integer size) {
         this.size = size;
     }
@@ -169,6 +173,7 @@ public class ShoppingCart {
         builder.setNegativeButton("אפשר למחוק", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 clearCart();
+                ((CustomerHomeActivity)mContext).cartNotifEmpty();
                 addDeal(deal);
                 dialog.cancel();
             }

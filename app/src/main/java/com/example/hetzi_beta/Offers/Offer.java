@@ -19,7 +19,7 @@ import org.threeten.bp.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.hetzi_beta.Utils.round;
+import static com.example.hetzi_beta.Utils.Utils.round;
 import static java.lang.Integer.parseInt;
 
 public class Offer implements Parcelable {

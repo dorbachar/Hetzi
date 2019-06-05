@@ -1,4 +1,4 @@
-package com.example.hetzi_beta;
+package com.example.hetzi_beta.Utils;
 
 public class HtzAddress {
     Double latitude;
