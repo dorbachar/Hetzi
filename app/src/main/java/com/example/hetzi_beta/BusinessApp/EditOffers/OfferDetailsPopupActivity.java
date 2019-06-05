@@ -100,11 +100,11 @@ public class OfferDetailsPopupActivity extends HtzWrapperActivity {
     private Button          mDeleteButton;
 
     // Firebase instance variables (Storage and Realtime Database)
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mOffersDatabaseReference;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mPhotosStorageReference;
-    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseDatabase    mFirebaseDatabase;
+    private DatabaseReference   mOffersDatabaseReference;
+    private FirebaseStorage     mFirebaseStorage;
+    private StorageReference    mPhotosStorageReference;
+    private final FirebaseUser  user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

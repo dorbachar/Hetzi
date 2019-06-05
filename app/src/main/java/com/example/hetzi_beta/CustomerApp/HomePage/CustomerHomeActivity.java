@@ -159,15 +159,24 @@ public class CustomerHomeActivity extends HtzWrapperActivity implements ShopSwit
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("shop_to_fetch", null);
+        Bundle live_sales_bundle = new Bundle();
+        live_sales_bundle.putParcelable("shop_to_fetch", null);
+        Fragment live_sales_fragment = new LiveSalesFragment();
+        live_sales_fragment.setArguments(live_sales_bundle);
 
-        Fragment fragment = new LiveSalesFragment();
-        fragment.setArguments(bundle);
+        Bundle shops_grid_bundle = new Bundle();
+        shops_grid_bundle.putBoolean("only_fav", false);
+        Fragment shops_grid_fragment = new ShopsGridFragment();
+        shops_grid_fragment.setArguments(shops_grid_bundle);
 
-        adapter.addFragment(fragment, "מבצעים");
-        adapter.addFragment(new ShopsGridFragment(), "חנויות");
-        adapter.addFragment(new FavouritesFragment(), "מועדפים");
+        Bundle favorites_bundle = new Bundle();
+        favorites_bundle.putBoolean("only_fav", true);
+        Fragment favorites_fragment = new ShopsGridFragment();
+        favorites_fragment.setArguments(favorites_bundle);
+
+        adapter.addFragment(live_sales_fragment, "מבצעים");
+        adapter.addFragment(shops_grid_fragment, "חנויות");
+        adapter.addFragment(favorites_fragment, "מועדפים");
         adapter.addFragment(new DiscoverFragment(), "Discover");
         adapter.addFragment(new ShopSettingsFragment(), "אישי");
 

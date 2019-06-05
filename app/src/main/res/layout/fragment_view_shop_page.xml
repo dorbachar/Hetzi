@@ -104,7 +104,7 @@
                 fancy:fb_radius="20dp"
                 fancy:fb_text="@string/follow"
                 fancy:fb_textColor="@color/White"
-                fancy:fb_textSize="18dp" />
+                fancy:fb_textSize="12dp" />
 
             <ImageView
                 android:id="@+id/horizontal_line_1"

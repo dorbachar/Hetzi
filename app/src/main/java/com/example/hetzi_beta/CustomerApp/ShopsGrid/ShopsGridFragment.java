@@ -1,6 +1,8 @@
 package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +19,7 @@ import com.example.hetzi_beta.CustomerApp.HomePage.CustomerHomeActivity;
 import com.example.hetzi_beta.CustomerApp.HomePage.ShopSwitcherFromFragment;
 import com.example.hetzi_beta.R;
 import com.example.hetzi_beta.Shops.Shop;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +29,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragment {
-    public ArrayList<Shop> shops_list = new ArrayList<>();
+    public ArrayList<Shop>      shops_list       = new ArrayList<>();
+    private ArrayList<String>   favorites_uids   =  new ArrayList<>();
+    private boolean             show_only_favorites = false;
 
     // RecyclerView related
     private RecyclerView recyclerView;
@@ -35,13 +40,13 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
     // Firebase related
     public FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mShopsDatabaseReference;
+    private DatabaseReference mFavoritesDatabaseReference;
 
     // Glide related
     public ViewPreloadSizeProvider              mPreloadSizeProvider;
     public ListPreloader.PreloadModelProvider   mPreloadModelProvider;
 
     public ShopsGridFragment() {
-
     }
 
     @Override
@@ -52,16 +57,42 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root_view = inflater.inflate(R.layout.fragment_shops_list, container, false);
-        recyclerView = root_view.findViewById(R.id.shops_RecyclerView);
-        mFirebaseDatabase   = FirebaseDatabase.getInstance();
+        View root_view              = inflater.inflate(R.layout.fragment_shops_list, container, false);
+        recyclerView                = root_view.findViewById(R.id.shops_RecyclerView);
+        mFirebaseDatabase           = FirebaseDatabase.getInstance();
         mShopsDatabaseReference     = mFirebaseDatabase.getReference().child("shops");
+        mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        getShopsFromDbToShopsList();
+        prepareFavorites();
+
+        if(!show_only_favorites)
+            getShopsFromDbToShopsList();
+
         setupAdapter();
         setupGlidePreloader();
 
         return root_view;
+    }
+
+    private void prepareFavorites() {
+        show_only_favorites = getArguments().getBoolean("only_fav");
+        if(show_only_favorites) {
+            mFavoritesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot fav_snap : dataSnapshot.getChildren()) {
+                        String uid = fav_snap.getValue(String.class);
+                        favorites_uids.add(uid);
+                    }
+                    getShopsFromDbToShopsList();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     private void getShopsFromDbToShopsList() {
@@ -71,7 +102,13 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
                 for(DataSnapshot curr_shop : dataSnapshot.getChildren()) {
                     for(DataSnapshot only_child : curr_shop.getChildren()) {
                         Shop shop = only_child.getValue(Shop.class);
-                        shops_list.add(shop);
+                        if(show_only_favorites) {
+                            if(favorites_uids.contains(shop.getUid())) {
+                                shops_list.add(shop);
+                            }
+                        } else {
+                            shops_list.add(shop);
+                        }
                     }
                 }
                 mAdapter.notifyDataSetChanged();
