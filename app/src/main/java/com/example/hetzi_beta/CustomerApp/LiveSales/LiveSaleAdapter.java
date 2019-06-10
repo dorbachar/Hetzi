@@ -207,6 +207,13 @@ public class LiveSaleAdapter extends android.support.v7.widget.RecyclerView.Adap
         return mDeals.size();
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        mDeals.clear();
+        notifyDataSetChanged();
+    }
+
+
 
     class SaleViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder  implements View.OnClickListener {
         // Offer Details

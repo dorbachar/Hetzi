@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
     public TextView                             mNoOffersTextView;
     public TextView                             mAddOffersTextView;
     private FloatingActionButton                fab;
+    private SwipeRefreshLayout                  mSwipeContainer;
 
     // Firebase related
     public FirebaseDatabase                     mFirebaseDatabase;
@@ -71,7 +73,14 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
         onClickFAB();
         setupAdapter();
         setupGlidePreloader();
+        setupSwipeRefresh(root_view);
 
+        loadOffersToScreen();
+
+        return root_view;
+    }
+
+    private void loadOffersToScreen() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             loadOffersFromDb(user);
@@ -79,8 +88,18 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
             Toast.makeText(getActivity(),"Business must be signed in!" +
                     " Please block this interaction for unsigned users",Toast.LENGTH_LONG).show();
         }
+    }
 
-        return root_view;
+    private void setupSwipeRefresh(View root_view) {
+        mSwipeContainer              = root_view.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                loadOffersToScreen();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight);
     }
 
     private void onClickFAB() {
@@ -125,6 +144,7 @@ public class EditableOffersListFragment extends Fragment implements OnClickButto
                     adapter.notifyDataSetChanged();
                     mNoOffersTextView.setVisibility(View.GONE);
                     mAddOffersTextView.setVisibility(View.GONE);
+                    mSwipeContainer.setRefreshing(false);
                 }
         }
 

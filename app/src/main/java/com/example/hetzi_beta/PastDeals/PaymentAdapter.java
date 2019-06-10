@@ -58,6 +58,11 @@ public class PaymentAdapter extends android.support.v7.widget.RecyclerView.Adapt
         mClickListener = callback;
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        payments_list.clear();
+        notifyDataSetChanged();
+    }
 
 
 

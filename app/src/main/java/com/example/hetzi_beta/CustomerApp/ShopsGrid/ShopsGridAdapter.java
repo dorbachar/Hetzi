@@ -56,7 +56,6 @@ public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Ada
     public void onBindViewHolder(@NonNull ShopViewHolder holder, int i) {
         Shop current_shop = shops_list.get(i);
 
-        // TODO : preloader
         Glide.with(mContext)
                 .load(current_shop.getLogoUri())
                 .centerCrop()
@@ -96,13 +95,11 @@ public class ShopsGridAdapter extends android.support.v7.widget.RecyclerView.Ada
         mClickListener = callback;
     }
 
-
-
-
-
-
-
-
+    // Clean all elements of the recycler
+    public void clear() {
+        shops_list.clear();
+        notifyDataSetChanged();
+    }
 
     class ShopViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
         CircularImageView logo;

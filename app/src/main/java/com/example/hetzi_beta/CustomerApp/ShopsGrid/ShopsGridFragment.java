@@ -1,10 +1,9 @@
 package com.example.hetzi_beta.CustomerApp.ShopsGrid;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,15 +31,16 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
     public ArrayList<Shop>      shops_list       = new ArrayList<>();
     private ArrayList<String>   favorites_uids   =  new ArrayList<>();
     private boolean             show_only_favorites = false;
+    private SwipeRefreshLayout  mSwipeContainer;
 
     // RecyclerView related
     private RecyclerView recyclerView;
-    public ShopsGridAdapter mAdapter;
+    public ShopsGridAdapter adapter;
 
     // Firebase related
-    public FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mShopsDatabaseReference;
-    private DatabaseReference mFavoritesDatabaseReference;
+    public FirebaseDatabase     mFirebaseDatabase;
+    private DatabaseReference   mShopsDatabaseReference;
+    private DatabaseReference   mFavoritesDatabaseReference;
 
     // Glide related
     public ViewPreloadSizeProvider              mPreloadSizeProvider;
@@ -57,14 +57,15 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root_view              = inflater.inflate(R.layout.fragment_shops_list, container, false);
+        View root_view              = inflater.inflate(R.layout.fragment_shops_grid, container, false);
         recyclerView                = root_view.findViewById(R.id.shops_RecyclerView);
         mFirebaseDatabase           = FirebaseDatabase.getInstance();
         mShopsDatabaseReference     = mFirebaseDatabase.getReference().child("shops");
         mFavoritesDatabaseReference = mFirebaseDatabase.getReference().child("favorites/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        prepareFavorites();
+        setupSwipeRefresh(root_view);
 
+        prepareFavorites();
         if(!show_only_favorites)
             getShopsFromDbToShopsList();
 
@@ -74,12 +75,28 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
         return root_view;
     }
 
+    private void setupSwipeRefresh(View root_view) {
+        mSwipeContainer              = root_view.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                if(show_only_favorites)
+                    prepareFavorites();
+                else
+                    getShopsFromDbToShopsList();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight);
+    }
+
     private void prepareFavorites() {
         show_only_favorites = getArguments().getBoolean("only_fav");
         if(show_only_favorites) {
             mFavoritesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    favorites_uids.clear();
                     for(DataSnapshot fav_snap : dataSnapshot.getChildren()) {
                         String uid = fav_snap.getValue(String.class);
                         favorites_uids.add(uid);
@@ -111,7 +128,8 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
                         }
                     }
                 }
-                mAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+                mSwipeContainer.setRefreshing(false);
             }
 
             @Override
@@ -131,10 +149,10 @@ public class ShopsGridFragment extends Fragment implements ShopSwitcherFromFragm
 
     private void setupAdapter() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        mAdapter            = new ShopsGridAdapter(getActivity(), shops_list, this);
-        recyclerView.setAdapter(mAdapter);
+        adapter            = new ShopsGridAdapter(getActivity(), shops_list, this);
+        recyclerView.setAdapter(adapter);
 
-        mAdapter.setClickListener(new View.OnClickListener() {
+        adapter.setClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int pos = recyclerView.indexOfChild(v);

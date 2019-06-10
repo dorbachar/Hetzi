@@ -63,6 +63,14 @@ public class EditOfferAdapter extends android.support.v7.widget.RecyclerView.Ada
         return mOffers.size();
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        mOffers.clear();
+        notifyDataSetChanged();
+    }
+
+
+
     class OfferViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView               background_image_offer_item;
         TextView                name_TextView;

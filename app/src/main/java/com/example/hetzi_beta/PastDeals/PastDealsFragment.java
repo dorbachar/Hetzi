@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import static com.example.hetzi_beta.Utils.Utils.HTZ_CUSTOMER;
 
 public class PastDealsFragment extends Fragment {
     private int side;
-
+    private SwipeRefreshLayout  mSwipeContainer;
     // RecyclerView Related
     public ArrayList<Payment>   payments_list = new ArrayList<>();
     public PaymentAdapter       adapter;
@@ -59,8 +60,22 @@ public class PastDealsFragment extends Fragment {
 
         setupAdapter();
         buildPaymentsList();
+        setupSwipeRefresh(root_view);
 
         return root_view;
+    }
+
+
+    private void setupSwipeRefresh(View root_view) {
+        mSwipeContainer              = root_view.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                buildPaymentsList();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight);
     }
 
     private void buildPaymentsList() {
@@ -95,6 +110,7 @@ public class PastDealsFragment extends Fragment {
                     payments_list.add(p);
                 }
                 adapter.notifyDataSetChanged();
+                mSwipeContainer.setRefreshing(false);
             }
 
             @Override

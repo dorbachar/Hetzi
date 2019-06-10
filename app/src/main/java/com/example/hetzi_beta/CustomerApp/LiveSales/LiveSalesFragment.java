@@ -3,6 +3,7 @@ package com.example.hetzi_beta.CustomerApp.LiveSales;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
     public LiveSaleAdapter      mAdapter;
     public ArrayList<Deal>      deals_list = new ArrayList<>();
     public Shop                 shop_to_fetch;
+    private SwipeRefreshLayout  mSwipeContainer;
 
     // Firebase related
     public FirebaseDatabase     mFirebaseDatabase;
@@ -85,23 +87,40 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
         mNothingText.setVisibility(View.GONE);
 
         setupFilterButtons(root_view);
+        setupSwipeRefresh(root_view);
         Utils.updateUserLocation(getActivity());
 
         shop_to_fetch = getArguments().getParcelable("shop_to_fetch");
 
         setupAdapter();
-        if (inAllSalesTab()) {
-            loadAllOffersFromDb();
-        } else {
-            mFilters.setVisibility(View.GONE);
-            loadOffersOfShop(shop_to_fetch);
-        }
+        loadOffersToScreen();
 
         setupGlidePreloader();
 
         return root_view;
     }
 
+    private void loadOffersToScreen() {
+        if (inAllSalesTab()) {
+            loadAllOffersFromDb();
+        } else {
+            mFilters.setVisibility(View.GONE);
+            loadOffersOfShop(shop_to_fetch);
+        }
+    }
+
+
+    private void setupSwipeRefresh(View root_view) {
+        mSwipeContainer              = root_view.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.clear();
+                loadOffersToScreen();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimaryLight);
+    }
 
     private void setupFilterButtons(View root_view) {
         mFilters                = root_view.findViewById(R.id.filters_RelativeLayout);
@@ -217,6 +236,7 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
                 }
                 mAdapter.notifyDataSetChanged();
                 loadingDone();
+                mSwipeContainer.setRefreshing(false);
             }
 
             @Override
@@ -254,6 +274,7 @@ public class LiveSalesFragment extends Fragment implements OnClickButtonListener
                 }
                 mAdapter.notifyDataSetChanged();
                 loadingDone();
+                mSwipeContainer.setRefreshing(false);
             }
 
             @Override
